@@ -1,0 +1,119 @@
+{
+  "comparedAt": "2026-07-23T00:50:40.172Z",
+  "engine": "pixelmatch@7",
+  "threshold": 0.1,
+  "results": [
+    {
+      "file": "luxury-baseline-detail-hh-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-detail-hh-1440.png"
+    },
+    {
+      "file": "luxury-baseline-detail-hh-375.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 304500,
+      "diffPct": 0,
+      "diffImage": "diff-detail-hh-375.png"
+    },
+    {
+      "file": "luxury-baseline-du-an-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-du-an-1440.png"
+    },
+    {
+      "file": "luxury-baseline-home-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-home-1440.png"
+    },
+    {
+      "file": "luxury-baseline-home-375.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 304500,
+      "diffPct": 0,
+      "diffImage": "diff-home-375.png"
+    },
+    {
+      "file": "luxury-baseline-home-dark-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-home-dark-1440.png"
+    },
+    {
+      "file": "luxury-baseline-lab-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-lab-1440.png"
+    },
+    {
+      "file": "luxury-baseline-map-loading-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-map-loading-1440.png"
+    },
+    {
+      "file": "luxury-baseline-mcp-home.png",
+      "status": "MISSING_GOLDEN"
+    },
+    {
+      "file": "luxury-baseline-phap-ly-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-phap-ly-1440.png"
+    },
+    {
+      "file": "luxury-baseline-phap-ly-375.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 304500,
+      "diffPct": 0,
+      "diffImage": "diff-phap-ly-375.png"
+    },
+    {
+      "file": "luxury-baseline-phap-ly-dark-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-phap-ly-dark-1440.png"
+    },
+    {
+      "file": "luxury-baseline-prod-home-1440.png",
+      "status": "MISSING_GOLDEN"
+    },
+    {
+      "file": "luxury-baseline-so-sanh-1440.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 1296000,
+      "diffPct": 0,
+      "diffImage": "diff-so-sanh-1440.png"
+    },
+    {
+      "file": "luxury-baseline-so-sanh-375.png",
+      "status": "IDENTICAL",
+      "mismatchedPixels": 0,
+      "totalPixels": 304500,
+      "diffPct": 0,
+      "diffImage": "diff-so-sanh-375.png"
+    }
+  ]
+}

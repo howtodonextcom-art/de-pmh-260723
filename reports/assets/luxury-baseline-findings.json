@@ -1,0 +1,236 @@
+{
+  "base": "http://localhost:3000",
+  "capturedAt": "2026-07-23T00:48:22.168Z",
+  "routes": {
+    "home-1440": {
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-home-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": 2,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": null,
+      "consoleErrors": []
+    },
+    "home-dark-1440": {
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": true,
+      "status": 200,
+      "screenshot": "luxury-baseline-home-dark-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": null,
+      "consoleErrors": []
+    },
+    "home-375": {
+      "route": "/",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-home-375.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": true,
+      "consoleErrors": []
+    },
+    "map-loading-1440": {
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-map-loading-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": 0,
+      "mapShimmerVisible": true,
+      "noHorizontalBleed": null,
+      "consoleErrors": []
+    },
+    "du-an-1440": {
+      "route": "/du-an",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-du-an-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": null,
+      "consoleErrors": []
+    },
+    "detail-hh-1440": {
+      "route": "/du-an/hong-hac-city",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-detail-hh-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": null,
+      "consoleErrors": [
+        "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+      ]
+    },
+    "detail-hh-375": {
+      "route": "/du-an/hong-hac-city",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-detail-hh-375.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": true,
+      "consoleErrors": []
+    },
+    "so-sanh-1440": {
+      "route": "/so-sanh",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-so-sanh-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": null,
+      "consoleErrors": []
+    },
+    "so-sanh-375": {
+      "route": "/so-sanh",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-so-sanh-375.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": true,
+      "consoleErrors": []
+    },
+    "phap-ly-1440": {
+      "route": "/phap-ly",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-phap-ly-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": null,
+      "consoleErrors": []
+    },
+    "phap-ly-dark-1440": {
+      "route": "/phap-ly",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": true,
+      "status": 200,
+      "screenshot": "luxury-baseline-phap-ly-dark-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": null,
+      "consoleErrors": []
+    },
+    "phap-ly-375": {
+      "route": "/phap-ly",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-phap-ly-375.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": true,
+      "consoleErrors": []
+    },
+    "lab-1440": {
+      "route": "/lab",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-lab-1440.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "hasFooter": true,
+      "radius": "0.5rem",
+      "mapMarkers": null,
+      "mapShimmerVisible": null,
+      "noHorizontalBleed": null,
+      "consoleErrors": []
+    }
+  },
+  "prod": {
+    "status": 200,
+    "screenshot": "luxury-baseline-prod-home-1440.png",
+    "h1Font": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+    "hasFooter": false,
+    "hasMinhBach": true
+  }
+}

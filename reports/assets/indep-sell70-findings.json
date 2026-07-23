@@ -1,0 +1,78 @@
+[
+  {
+    "id": "FAVICON",
+    "result": "PASS",
+    "detail": {
+      "status": 200,
+      "type": "image/png"
+    }
+  },
+  {
+    "id": "FAVICON-404-CONSOLE-PATH",
+    "result": "PASS",
+    "detail": {
+      "favicon404": []
+    }
+  },
+  {
+    "id": "DEMO-1-HERO",
+    "result": "PASS",
+    "detail": {
+      "heroVisible": true
+    }
+  },
+  {
+    "id": "DEMO-2-MAP",
+    "result": "PASS",
+    "detail": {
+      "markers": 2,
+      "stageHeight": 900,
+      "sidebarTopGapPx": 8
+    }
+  },
+  {
+    "id": "R10-SIDEBAR-ALIGN",
+    "result": "PASS",
+    "detail": {
+      "topGap": 8
+    }
+  },
+  {
+    "id": "DEMO-3-CTA",
+    "result": "PASS",
+    "detail": {
+      "href": "https://www.bacninhhonghaccity.vn/sa-ban?utm_source=ded-pmh&utm_medium=home-map&utm_campaign=map-cta",
+      "target": "_blank"
+    }
+  },
+  {
+    "id": "MAP-FILTER",
+    "result": "PASS",
+    "detail": {
+      "url": "http://localhost:3000/du-an?khu-vuc=bac-ninh"
+    }
+  },
+  {
+    "id": "SA-BAN-LIVE",
+    "result": "PASS",
+    "detail": {
+      "status": 200
+    }
+  },
+  {
+    "id": "PROD-URL",
+    "result": "PASS",
+    "detail": {
+      "status": 200
+    }
+  },
+  {
+    "id": "CONSOLE",
+    "result": "PASS",
+    "detail": {
+      "mapErr": [],
+      "allErrors": [],
+      "failed4xx": []
+    }
+  }
+]

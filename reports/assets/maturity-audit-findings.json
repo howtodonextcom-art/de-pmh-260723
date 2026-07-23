@@ -1,0 +1,262 @@
+{
+  "base": "http://localhost:3000",
+  "capturedAt": "2026-07-22T20:04:45.324Z",
+  "routes": {
+    "home-desktop-1440": {
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-home-desktop-1440.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Trung\ntâm\nThông\ntin\nDự\nán\nDED-PMH",
+      "consoleErrors": [],
+      "failedRequests": [],
+      "mapCanvasVisible": true,
+      "mapMarkers": 2,
+      "mapStageHeight": 900,
+      "hhCtaHref": "https://www.bacninhhonghaccity.vn/sa-ban?utm_source=ded-pmh&utm_medium=home-map&utm_campaign=map-cta",
+      "hhCtaTarget": "_blank",
+      "brandInHero": true
+    },
+    "du-an-desktop-1440": {
+      "route": "/du-an",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-du-an-desktop-1440.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Danh mục dự án",
+      "consoleErrors": [
+        "PAGEERROR: Invalid or unexpected token"
+      ],
+      "failedRequests": []
+    },
+    "detail-hh-desktop-1440": {
+      "route": "/du-an/hong-hac-city",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-detail-hh-desktop-1440.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Hồng Hạc City",
+      "consoleErrors": [],
+      "failedRequests": []
+    },
+    "so-sanh-desktop-1440": {
+      "route": "/so-sanh",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-so-sanh-desktop-1440.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "So sánh 4 dự án",
+      "consoleErrors": [],
+      "failedRequests": []
+    },
+    "phap-ly-desktop-1440": {
+      "route": "/phap-ly",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-phap-ly-desktop-1440.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Hồ sơ pháp lý",
+      "consoleErrors": [
+        "PAGEERROR: Invalid or unexpected token"
+      ],
+      "failedRequests": []
+    },
+    "lab-desktop-1440": {
+      "route": "/lab",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-lab-desktop-1440.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Hồng Hạc City",
+      "consoleErrors": [],
+      "failedRequests": []
+    },
+    "home-mobile-375": {
+      "route": "/",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-home-mobile-375.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Trung\ntâm\nThông\ntin\nDự\nán\nDED-PMH",
+      "consoleErrors": [
+        "PAGEERROR: Invalid or unexpected token"
+      ],
+      "failedRequests": []
+    },
+    "du-an-mobile-375": {
+      "route": "/du-an",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-du-an-mobile-375.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Danh mục dự án",
+      "consoleErrors": [],
+      "failedRequests": []
+    },
+    "so-sanh-mobile-375": {
+      "route": "/so-sanh",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-so-sanh-mobile-375.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "So sánh 4 dự án",
+      "consoleErrors": [
+        "PAGEERROR: Invalid or unexpected token"
+      ],
+      "failedRequests": []
+    },
+    "detail-hh-mobile-375": {
+      "route": "/du-an/hong-hac-city",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "maturity-audit-detail-hh-mobile-375.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Hồng Hạc City",
+      "consoleErrors": [
+        "PAGEERROR: Invalid or unexpected token"
+      ],
+      "failedRequests": []
+    },
+    "home-dark-1440": {
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": true,
+      "status": 200,
+      "screenshot": "maturity-audit-home-dark-1440.png",
+      "hasMinhBach": false,
+      "hasTransparencyCta": false,
+      "h1": "Trung\ntâm\nThông\ntin\nDự\nán\nDED-PMH",
+      "consoleErrors": [
+        "PAGEERROR: Invalid or unexpected token"
+      ],
+      "failedRequests": []
+    }
+  },
+  "checks": [
+    {
+      "id": "NO-MINH-BACH",
+      "result": "PASS",
+      "detail": {
+        "hasMinhBach": false,
+        "hasTransparencyCta": false
+      }
+    },
+    {
+      "id": "MAP-WAVE2",
+      "result": "PASS",
+      "detail": {
+        "mapCanvasVisible": true,
+        "mapMarkers": 2,
+        "mapStageHeight": 900
+      }
+    },
+    {
+      "id": "HH-CTA-UTM",
+      "result": "PASS",
+      "detail": {
+        "href": "https://www.bacninhhonghaccity.vn/sa-ban?utm_source=ded-pmh&utm_medium=home-map&utm_campaign=map-cta",
+        "target": "_blank"
+      }
+    },
+    {
+      "id": "ALL-ROUTES-200",
+      "result": "PASS",
+      "detail": {
+        "statuses": {
+          "home-desktop-1440": 200,
+          "du-an-desktop-1440": 200,
+          "detail-hh-desktop-1440": 200,
+          "so-sanh-desktop-1440": 200,
+          "phap-ly-desktop-1440": 200,
+          "lab-desktop-1440": 200,
+          "home-mobile-375": 200,
+          "du-an-mobile-375": 200,
+          "so-sanh-mobile-375": 200,
+          "detail-hh-mobile-375": 200,
+          "home-dark-1440": 200
+        }
+      }
+    }
+  ],
+  "consoleErrors": [
+    {
+      "name": "du-an-desktop-1440",
+      "t": "PAGEERROR: Invalid or unexpected token"
+    },
+    {
+      "name": "phap-ly-desktop-1440",
+      "t": "PAGEERROR: Invalid or unexpected token"
+    },
+    {
+      "name": "home-mobile-375",
+      "t": "PAGEERROR: Invalid or unexpected token"
+    },
+    {
+      "name": "so-sanh-mobile-375",
+      "t": "PAGEERROR: Invalid or unexpected token"
+    },
+    {
+      "name": "detail-hh-mobile-375",
+      "t": "PAGEERROR: Invalid or unexpected token"
+    },
+    {
+      "name": "home-dark-1440",
+      "t": "PAGEERROR: Invalid or unexpected token"
+    }
+  ],
+  "failedRequests": []
+}

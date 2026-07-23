@@ -1,0 +1,88 @@
+[
+  {
+    "id": "Q1",
+    "result": "PASS",
+    "detail": {
+      "svgCount": 0,
+      "canvasVisible": true
+    }
+  },
+  {
+    "id": "Q2",
+    "result": "PASS",
+    "detail": {
+      "markerCount": 2
+    }
+  },
+  {
+    "id": "AC1-desktop",
+    "result": "PASS",
+    "detail": {
+      "x": 104,
+      "y": 498.03125,
+      "width": 916,
+      "height": 900
+    }
+  },
+  {
+    "id": "MAP-CHROME",
+    "result": "PASS",
+    "detail": {
+      "hasMaplibreCanvas": true,
+      "hasCtrl": true,
+      "attribution": "MapLibre"
+    }
+  },
+  {
+    "id": "GEOJSON",
+    "result": "PASS",
+    "detail": {
+      "ok": true,
+      "features": 2,
+      "ids": [
+        "bac-ninh",
+        "tp-hcm"
+      ]
+    }
+  },
+  {
+    "id": "AC4",
+    "result": "PASS",
+    "detail": {
+      "href": "https://www.bacninhhonghaccity.vn/sa-ban?utm_source=ded-pmh&utm_medium=home-map&utm_campaign=map-cta"
+    }
+  },
+  {
+    "id": "Q3",
+    "result": "PASS",
+    "detail": {
+      "url": "http://localhost:3000/du-an?khu-vuc=bac-ninh"
+    }
+  },
+  {
+    "id": "AC2-scrollZoom",
+    "result": "PASS",
+    "detail": {
+      "before": 0,
+      "after": 500
+    }
+  },
+  {
+    "id": "AC1-mobile",
+    "result": "PASS",
+    "detail": {
+      "x": 16,
+      "y": 122.21875,
+      "width": 343,
+      "height": 568.390625
+    }
+  },
+  {
+    "id": "AC8-console",
+    "result": "PASS",
+    "detail": {
+      "mapErrors": [],
+      "allErrors": []
+    }
+  }
+]

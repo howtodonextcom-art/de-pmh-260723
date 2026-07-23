@@ -1,0 +1,128 @@
+{
+  "brand": {
+    "wordmark": "DED-PMH"
+  },
+  "nav": {
+    "soSanh": "So sánh",
+    "phapLy": "Pháp lý",
+    "search": "Tìm kiếm",
+    "searchShortcut": "⌘K",
+    "langSwitcherLabel": "Chuyển ngôn ngữ"
+  },
+  "home": {
+    "kicker": "DED · Phú Mỹ Hưng",
+    "titleWords": ["Trung", "tâm", "Thông", "tin", "Dự", "án", "DED-PMH"],
+    "ctaExplore": "Khám phá 4 dự án",
+    "featuredHeading": "Dự án nổi bật",
+    "explorerHeading": "Danh mục dự án",
+    "explorerCta": "Xem tất cả & bộ lọc",
+    "mapHeading": "Bản đồ phân bố",
+    "mapLoading": "Đang tải bản đồ…",
+    "mapWebglFallback": "Trình duyệt này không hỗ trợ hiển thị bản đồ tương tác — dùng danh sách khu vực bên dưới để lọc dự án.",
+    "mapUnit": "dự án",
+    "mapListIntro": "Chọn khu vực để lọc danh mục dự án.",
+    "mapSaBanCta": "Sa bàn Hồng Hạc →",
+    "statProjects": "Dự án",
+    "statRegions": "Khu vực",
+    "statMaxSiteArea": "Quy mô đất lớn nhất ({{project}})",
+    "statUnitsAnnounced": "Sản phẩm theo đợt đã công bố",
+    "statFootnote": "Tổng sản phẩm tính theo các đợt/giai đoạn đã công bố — không phải quy mô toàn khu.",
+    "timelineHeading": "Timeline phát triển danh mục",
+    "legalHeading": "Pháp lý minh bạch",
+    "updatesHeading": "Cập nhật gần đây",
+    "quickLookup": "Tra cứu nhanh",
+    "ctaCompare": "Xem bảng so sánh",
+    "ctaOfficialSites": "Website chính thức các dự án"
+  },
+  "footer": {
+    "brandStatementFallback": "Cổng thông tin nội bộ tra cứu dữ liệu dự án Phú Mỹ Hưng.",
+    "disclaimer": "Thông tin nội bộ, số liệu căn cứ nguồn công bố chính thức.",
+    "copyright": "© {{year}} DED-PMH"
+  },
+  "common": {
+    "xemChiTiet": "Xem chi tiết"
+  },
+  "duAn": {
+    "pageTitle": "Danh mục dự án",
+    "unit": "dự án",
+    "searchPlaceholder": "Tìm dự án…",
+    "allRegions": "Tất cả khu vực",
+    "allTypes": "Tất cả loại hình",
+    "allStatus": "Tất cả trạng thái",
+    "viewGrid": "Xem dạng lưới",
+    "viewTable": "Xem dạng bảng",
+    "noMatch": "Không dự án nào khớp bộ lọc.",
+    "clearFilters": "Xóa bộ lọc",
+    "matchSuffix": "khớp bộ lọc"
+  },
+  "detail": {
+    "architecturePartners": "Kiến trúc & đối tác",
+    "salesStatus": "Tiến độ & điều kiện bán",
+    "related": "Dự án liên quan",
+    "masterplan": "Masterplan & phân khu",
+    "legalDossier": "Hồ sơ pháp lý",
+    "location": "Vị trí & kết nối",
+    "amenities": "Tiện ích",
+    "productLine": "Dòng sản phẩm",
+    "gallery": "Thư viện ảnh dự án",
+    "closeImage": "Đóng",
+    "prevImage": "Ảnh trước",
+    "nextImage": "Ảnh tiếp theo",
+    "lightboxLabel": "Xem ảnh lớn"
+  },
+  "compare": {
+    "title": "So sánh 4 dự án",
+    "subtitle": "7 trường cốt lõi và pháp lý tóm tắt. GFA chưa có nguồn công bố cho cả 4 dự án."
+  },
+  "legal": {
+    "title": "Hồ sơ pháp lý",
+    "pageIntro": "7 nhóm hồ sơ pháp lý cho từng dự án — mỗi mục ghi rõ số văn bản, ngày ban hành, cơ quan cấp, có thể sao chép trực tiếp.",
+    "jumpTo": "Chuyển nhanh tới dự án",
+    "groupCount": "7 nhóm hồ sơ",
+    "updated": "Cập nhật",
+    "tableGroupCol": "Nhóm hồ sơ",
+    "tableContentCol": "Nội dung",
+    "note": "Lưu ý",
+    "noData": "Chưa có dữ liệu",
+    "copyLabel": "Sao chép nội dung",
+    "copied": "Đã sao chép",
+    "copyFailed": "Không thể sao chép"
+  },
+  "cmdk": {
+    "placeholder": "Tìm kiếm…",
+    "groupProjects": "Dự án",
+    "groupPages": "Trang",
+    "groupActions": "Hành động",
+    "noResults": "Không tìm thấy kết quả.",
+    "pageCompare": "So sánh dự án",
+    "pageLegal": "Pháp lý tổng hợp",
+    "themeLight": "Giao diện sáng",
+    "themeDark": "Giao diện tối",
+    "themeSystem": "Theo hệ thống",
+    "exportPdf": "Xuất PDF",
+    "legalDossierItem": "Hồ sơ pháp lý"
+  },
+  "lab": {
+    "legalHeading": "Hồ sơ pháp lý",
+    "tabTable": "Bảng",
+    "tabTimeline": "Timeline",
+    "galleryHeading": "Thư viện ảnh",
+    "noVerifiedGallery": "Chưa có ảnh đã xác minh cho dự án này.",
+    "selectProject": "Chọn dự án"
+  },
+  "pdf": {
+    "printToast": "Đang mở chế độ in — chọn \"Lưu thành PDF\" để xuất fact sheet.",
+    "functionAttemptToast": "Đang yêu cầu file PDF từ Cloud Function…",
+    "functionSuccessToast": "Đã tạo file PDF — đang mở link tải về.",
+    "functionErrorToast": "Không tạo được PDF từ Cloud Function. Vui lòng thử lại hoặc dùng chế độ in."
+  },
+  "sources": {
+    "heading": "Nguồn dữ liệu của trang này",
+    "appliesTo": "áp dụng",
+    "accessedAt": "tra cứu",
+    "lastVerified": "Cập nhật lần cuối",
+    "viewFullLegal": "Xem hồ sơ pháp lý đầy đủ",
+    "viewOfficialSite": "Xem website chính thức dự án",
+    "exportPdf": "Xuất PDF"
+  }
+}

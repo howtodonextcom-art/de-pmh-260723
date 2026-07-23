@@ -1,0 +1,128 @@
+{
+  "brand": {
+    "wordmark": "DED-PMH"
+  },
+  "nav": {
+    "soSanh": "Compare",
+    "phapLy": "Legal",
+    "search": "Search",
+    "searchShortcut": "⌘K",
+    "langSwitcherLabel": "Switch language"
+  },
+  "home": {
+    "kicker": "DED · Phú Mỹ Hưng",
+    "titleWords": ["DED-PMH", "Project", "Information", "Hub"],
+    "ctaExplore": "Explore 4 projects",
+    "featuredHeading": "Featured projects",
+    "explorerHeading": "Project catalog",
+    "explorerCta": "View all & filters",
+    "mapHeading": "Regional distribution map",
+    "mapLoading": "Loading map…",
+    "mapWebglFallback": "This browser doesn't support the interactive map — use the region list below to filter projects.",
+    "mapUnit": "projects",
+    "mapListIntro": "Select a region to filter the project catalog.",
+    "mapSaBanCta": "Hồng Hạc sa bàn →",
+    "statProjects": "Projects",
+    "statRegions": "Regions",
+    "statMaxSiteArea": "Largest site area ({{project}})",
+    "statUnitsAnnounced": "Announced units (by phase)",
+    "statFootnote": "Total units are counted per announced phase — not the full planned scale.",
+    "timelineHeading": "Portfolio development timeline",
+    "legalHeading": "Legal transparency",
+    "updatesHeading": "Recent updates",
+    "quickLookup": "Quick lookup",
+    "ctaCompare": "View comparison table",
+    "ctaOfficialSites": "Official project websites"
+  },
+  "footer": {
+    "brandStatementFallback": "Internal portal for looking up Phú Mỹ Hưng project data.",
+    "disclaimer": "Internal information — figures are based on officially published sources.",
+    "copyright": "© {{year}} DED-PMH"
+  },
+  "common": {
+    "xemChiTiet": "View details"
+  },
+  "duAn": {
+    "pageTitle": "Project catalog",
+    "unit": "projects",
+    "searchPlaceholder": "Search projects…",
+    "allRegions": "All regions",
+    "allTypes": "All types",
+    "allStatus": "All statuses",
+    "viewGrid": "Grid view",
+    "viewTable": "Table view",
+    "noMatch": "No projects match this filter.",
+    "clearFilters": "Clear filters",
+    "matchSuffix": "matches"
+  },
+  "detail": {
+    "architecturePartners": "Architecture & partners",
+    "salesStatus": "Sales progress & conditions",
+    "related": "Related projects",
+    "masterplan": "Masterplan & zoning",
+    "legalDossier": "Legal dossier",
+    "location": "Location & connectivity",
+    "amenities": "Amenities",
+    "productLine": "Product line",
+    "gallery": "Project gallery",
+    "closeImage": "Close",
+    "prevImage": "Previous image",
+    "nextImage": "Next image",
+    "lightboxLabel": "View full-size image"
+  },
+  "compare": {
+    "title": "Compare 4 projects",
+    "subtitle": "7 core fields plus a legal summary. GFA has no published source yet for any of the 4 projects."
+  },
+  "legal": {
+    "title": "Legal dossier",
+    "pageIntro": "7 legal document groups per project — each entry cites the document number, issue date, and issuing authority, and can be copied directly.",
+    "jumpTo": "Jump to a project",
+    "groupCount": "7 document groups",
+    "updated": "Updated",
+    "tableGroupCol": "Document group",
+    "tableContentCol": "Content",
+    "note": "Note",
+    "noData": "No data yet",
+    "copyLabel": "Copy content",
+    "copied": "Copied",
+    "copyFailed": "Copy failed"
+  },
+  "cmdk": {
+    "placeholder": "Search…",
+    "groupProjects": "Projects",
+    "groupPages": "Pages",
+    "groupActions": "Actions",
+    "noResults": "No results found.",
+    "pageCompare": "Compare projects",
+    "pageLegal": "Legal overview",
+    "themeLight": "Light theme",
+    "themeDark": "Dark theme",
+    "themeSystem": "System theme",
+    "exportPdf": "Export PDF",
+    "legalDossierItem": "Legal dossier"
+  },
+  "lab": {
+    "legalHeading": "Legal dossier",
+    "tabTable": "Table",
+    "tabTimeline": "Timeline",
+    "galleryHeading": "Gallery",
+    "noVerifiedGallery": "No verified images for this project yet.",
+    "selectProject": "Select a project"
+  },
+  "pdf": {
+    "printToast": "Opening print mode — choose \"Save as PDF\" to export the fact sheet.",
+    "functionAttemptToast": "Requesting the PDF from the Cloud Function…",
+    "functionSuccessToast": "PDF generated — opening the download link.",
+    "functionErrorToast": "Couldn't generate the PDF via the Cloud Function. Try again or use print instead."
+  },
+  "sources": {
+    "heading": "Data sources for this page",
+    "appliesTo": "applies to",
+    "accessedAt": "accessed",
+    "lastVerified": "Last verified",
+    "viewFullLegal": "View full legal dossier",
+    "viewOfficialSite": "View official project website",
+    "exportPdf": "Export PDF"
+  }
+}

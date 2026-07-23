@@ -1,0 +1,88 @@
+[
+  {
+    "id": "R07-SWITCHER-PRESENT",
+    "result": "PASS",
+    "detail": {
+      "switcherFound": true
+    }
+  },
+  {
+    "id": "R07-EN-COPY",
+    "result": "CONDITIONAL",
+    "detail": {
+      "sample": "DED-PMH Dự án So sánh Pháp lý Tìm kiếm… ⌘K VI EN Tìm kiếm Tìm dự án, trang hoặc thực hiện hành động DED · PHÚ MỸ HƯNG Trung tâm Thông tin Dự án DED-PMH DED-PMH tổng hợp và xác minh dữ liệu công khai của 4 dự án Phú Mỹ Hưng — Hồng Hạc City, The Regency, The Sculptura, Harmonie — để đội ngũ nội bộ tra cứu pháp lý, tiến độ và quy mô từ một nguồn duy nhất, minh bạch về nguồn và ngày cập nhật. Khá"
+    }
+  },
+  {
+    "id": "R05-MAP",
+    "result": "PASS",
+    "detail": {
+      "markers": 2,
+      "stageHeight": 900
+    }
+  },
+  {
+    "id": "R03-CTA-REGRESSION",
+    "result": "PASS",
+    "detail": {
+      "href": "https://www.bacninhhonghaccity.vn/sa-ban?utm_source=ded-pmh&utm_medium=home-map&utm_campaign=map-cta"
+    }
+  },
+  {
+    "id": "R08-NO-FAKE-FN",
+    "result": "PASS",
+    "detail": {
+      "pdfClicked": true,
+      "pdfFnHits": []
+    }
+  },
+  {
+    "id": "R06-GEO-SAMPLE",
+    "result": "PASS",
+    "detail": {
+      "status": 200
+    }
+  },
+  {
+    "id": "DOCS-ON-DISK",
+    "result": "PASS",
+    "detail": [
+      {
+        "p": "docs/DATA_CONTRACT_GEOJSON.md",
+        "ok": true
+      },
+      {
+        "p": "docs/PDF_EXPORT.md",
+        "ok": true
+      },
+      {
+        "p": "docs/ADR-001-enterprise-rbac-ai-algolia.md",
+        "ok": true
+      },
+      {
+        "p": "docs/I18N_EN.md",
+        "ok": true
+      },
+      {
+        "p": "lib/map-shell/README.md",
+        "ok": true
+      },
+      {
+        "p": "lib/i18n/en.json",
+        "ok": true
+      },
+      {
+        "p": "lib/geo/geojson-contract.ts",
+        "ok": true
+      }
+    ]
+  },
+  {
+    "id": "CONSOLE",
+    "result": "PASS",
+    "detail": {
+      "mapErr": [],
+      "all": []
+    }
+  }
+]

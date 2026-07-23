@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--browser=chromium",
+        "--viewport-size=1440,900",
+        "--caps=vision,devtools",
+        "--console-level=warning",
+        "--isolated",
+        "--output-dir=reports/mcp-browser",
+        "--test-id-attribute=data-testid"
+      ]
+    },
+    "vercel": {
+      "url": "https://mcp.vercel.com"
+    }
+  }
+}

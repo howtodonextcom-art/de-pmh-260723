@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { LayoutGridIcon, TableIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { TableIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { ProjectCard } from "@/components/project/project-card";
-import { CompareTable } from "@/components/project/compare-table";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { STATUS_LABEL } from "@/components/shared/status-badge";
 import { t } from "@/lib/i18n/t";
+import { cn } from "@/lib/utils";
 import { computeFieldStatusSummary } from "@library/lib/data/status-summary";
 import { citySlug } from "@library/lib/data/region-slug";
 import type { Project as FullProject, FieldStatus } from "@library/types/project";
@@ -56,13 +57,21 @@ export function ProjectExplorer({
   const loai = searchParams.get("loai") ?? "all";
   const nhan = searchParams.get("nhan") ?? "all";
   const sapXep = searchParams.get("sap-xep") ?? "ten";
-  const xem = searchParams.get("xem") ?? "grid";
+
+  // Option A: `/so-sanh` is the sole compare surface — legacy `?xem=bang` bookmarks redirect.
+  useEffect(() => {
+    if (searchParams.get("xem") === "bang") {
+      router.replace("/so-sanh");
+    }
+  }, [router, searchParams]);
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("xem");
     if (value === "all" || !value) params.delete(key);
     else params.set(key, value);
-    router.replace(`/du-an?${params.toString()}`, { scroll: false });
+    const qs = params.toString();
+    router.replace(qs ? `/du-an?${qs}` : "/du-an", { scroll: false });
   }
 
   const filtered = useMemo(() => {
@@ -173,24 +182,14 @@ export function ProjectExplorer({
             </SelectContent>
           </Select>
 
-          <div className="flex items-center gap-1 rounded-lg border border-border p-0.5">
-            <Button
-              variant={xem === "grid" ? "secondary" : "ghost"}
-              size="icon-sm"
-              aria-label={t("duAn.viewGrid")}
-              onClick={() => updateParam("xem", "grid")}
-            >
-              <LayoutGridIcon />
-            </Button>
-            <Button
-              variant={xem === "bang" ? "secondary" : "ghost"}
-              size="icon-sm"
-              aria-label={t("duAn.viewTable")}
-              onClick={() => updateParam("xem", "bang")}
-            >
-              <TableIcon />
-            </Button>
-          </div>
+          <Link
+            href="/so-sanh"
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1.5")}
+            aria-label={t("duAn.openCompare")}
+          >
+            <TableIcon />
+            {t("duAn.openCompare")}
+          </Link>
         </div>
       </div>
 
@@ -201,8 +200,6 @@ export function ProjectExplorer({
             {t("duAn.clearFilters")}
           </Button>
         </div>
-      ) : xem === "bang" ? (
-        <CompareTable projects={filtered} />
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {filtered.map((p, i) => (

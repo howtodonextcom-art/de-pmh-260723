@@ -1,5 +1,4 @@
-import Image from "next/image";
-
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
@@ -23,7 +22,7 @@ export function DetailMasterplan({
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.masterplan")}</h2>
       <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl bg-muted">
         {imageUrl ? (
-          <Image
+          <ImageWithFallback
             src={imageUrl}
             alt={masterplanAsset?.alt ?? "Masterplan"}
             fill

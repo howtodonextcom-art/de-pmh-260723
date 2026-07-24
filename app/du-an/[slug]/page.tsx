@@ -32,7 +32,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const { projects } = await getFullCatalog();
   const project = projects.find((p) => p.slug === slug);
-  if (!project) return {};
+  if (!project) return { title: "404 — DED-PMH" };
   return {
     title: `${project.displayNameVi} — DED-PMH`,
     description: project.shortDescriptionVi ?? undefined,

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import {
   AnimatePresence,
   motion,
@@ -61,7 +61,7 @@ function GalleryTile({ asset, onClick }: GalleryTileProps) {
     >
       {/* Natural aspect ratio via padding-bottom trick — NO forced aspect-square */}
       <div className="relative w-full">
-        <Image
+        <ImageWithFallback
           src={url}
           alt={asset.alt}
           width={800}
@@ -242,7 +242,7 @@ function Lightbox({ assets, initialIndex, onClose }: LightboxProps) {
             }}
             className="flex max-h-full max-w-full items-center justify-center"
           >
-            <Image
+            <ImageWithFallback
               src={url}
               alt={current.alt}
               width={1600}
@@ -308,7 +308,7 @@ function Lightbox({ assets, initialIndex, onClose }: LightboxProps) {
                   : "opacity-40 hover:opacity-70"
               )}
             >
-              <Image
+              <ImageWithFallback
                 src={getImageUrl(asset)}
                 alt={asset.alt}
                 fill
@@ -331,9 +331,22 @@ interface DetailGalleryProps {
   className?: string;
 }
 
+/** R3 (commercial audit Wave-2) — long detail pages had 25+ gallery images
+ *  mounted eagerly in one CSS-columns masonry. A true virtualizer doesn't
+ *  fit variable-height masonry well, so this chunk-loads instead: only
+ *  `CHUNK` tiles mount at a time, "Xem thêm" reveals more. Lightbox still
+ *  navigates the *full* filtered set regardless of how many tiles are
+ *  mounted in the grid (see `assets={visible}` below, not `shown`). */
+const GALLERY_CHUNK = 12;
+
 export function DetailGallery({ assets, className }: DetailGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = React.useState<number | null>(null);
   const [activeTab, setActiveTab] = React.useState("all");
+  const [visibleCount, setVisibleCount] = React.useState(GALLERY_CHUNK);
+
+  React.useEffect(() => {
+    setVisibleCount(GALLERY_CHUNK);
+  }, [activeTab]);
 
   // Product rule: show nothing if fewer than 4 verified assets
   const verified = React.useMemo(
@@ -360,6 +373,9 @@ export function DetailGallery({ assets, className }: DetailGalleryProps) {
 
   if (verified.length < 4) return null;
 
+  const shown = visible.slice(0, visibleCount);
+  const remaining = visible.length - shown.length;
+
   return (
     <section id="gallery" aria-label={t("detail.gallery")} className={cn("mx-auto max-w-7xl px-4 py-12 sm:px-6", className)}>
       {/* Category tabs */}
@@ -380,7 +396,7 @@ export function DetailGallery({ assets, className }: DetailGalleryProps) {
         <TabsContent value={activeTab} className="mt-4 focus-visible:ring-0">
           {/* Responsive masonry-style grid — 2 cols on mobile, 3 on md+ */}
           <div className="columns-2 gap-3 md:columns-3">
-            {visible.map((asset, i) => (
+            {shown.map((asset, i) => (
               <div key={asset.assetId} className="mb-3 break-inside-avoid">
                 <GalleryTile
                   asset={asset}
@@ -389,10 +405,23 @@ export function DetailGallery({ assets, className }: DetailGalleryProps) {
               </div>
             ))}
           </div>
+
+          {remaining > 0 && (
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((c) => c + GALLERY_CHUNK)}
+                className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                Xem thêm ({remaining} ảnh)
+              </button>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 
-      {/* Lightbox */}
+      {/* Lightbox — navigates the full filtered set (`visible`), independent
+          of how many tiles are currently chunk-mounted in the grid above. */}
       <AnimatePresence>
         {lightboxIndex !== null && (
           <Lightbox

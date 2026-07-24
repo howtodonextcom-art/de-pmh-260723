@@ -7,7 +7,12 @@
     "phapLy": "Pháp lý",
     "search": "Tìm kiếm",
     "searchShortcut": "⌘K",
-    "langSwitcherLabel": "Chuyển ngôn ngữ"
+    "langSwitcherLabel": "Chuyển ngôn ngữ",
+    "menuLabel": "Điều hướng",
+    "duAn": "Dự án",
+    "projectsUnit": "4 dự án",
+    "viewAllFilters": "Xem tất cả & bộ lọc dự án →",
+    "openMenu": "Mở menu điều hướng"
   },
   "home": {
     "kicker": "DED · Phú Mỹ Hưng",
@@ -39,6 +44,25 @@
     "disclaimer": "Thông tin nội bộ, số liệu căn cứ nguồn công bố chính thức.",
     "copyright": "© {{year}} DED-PMH"
   },
+  "projectStatus": {
+    "dang-trien-khai": "Đang triển khai",
+    "dang-ban": "Đang mở bán",
+    "da-ban-giao": "Đã bàn giao",
+    "sap-mo-ban": "Sắp mở bán"
+  },
+  "notFound": {
+    "kicker": "404",
+    "title": "Không tìm thấy trang",
+    "body": "Đường dẫn này không tồn tại hoặc đã được di chuyển. Kiểm tra lại URL hoặc quay về trang chủ.",
+    "ctaHome": "Về trang chủ",
+    "ctaCatalog": "Xem danh mục dự án"
+  },
+  "errorPage": {
+    "title": "Đã có lỗi xảy ra",
+    "body": "Rất tiếc, có lỗi không mong muốn khi tải trang này. Bạn có thể thử lại hoặc quay về trang chủ.",
+    "ctaRetry": "Thử lại",
+    "ctaHome": "Về trang chủ"
+  },
   "common": {
     "xemChiTiet": "Xem chi tiết"
   },
@@ -49,8 +73,7 @@
     "allRegions": "Tất cả khu vực",
     "allTypes": "Tất cả loại hình",
     "allStatus": "Tất cả trạng thái",
-    "viewGrid": "Xem dạng lưới",
-    "viewTable": "Xem dạng bảng",
+    "openCompare": "So sánh dự án",
     "noMatch": "Không dự án nào khớp bộ lọc.",
     "clearFilters": "Xóa bộ lọc",
     "matchSuffix": "khớp bộ lọc"

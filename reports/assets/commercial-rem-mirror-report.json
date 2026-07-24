@@ -1,0 +1,14 @@
+{
+  "ranAt": "2026-07-23T19:55:34.776Z",
+  "totalRows": 68,
+  "downloaded": 67,
+  "skippedExisting": 0,
+  "failed": 1,
+  "failures": [
+    {
+      "assetId": "ded-pmh-unclassified-001",
+      "url": "https://dedivisionpmh.vercel.app/",
+      "error": "Error: HTTP 404"
+    }
+  ]
+}

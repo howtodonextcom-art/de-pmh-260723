@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Tra cứu, lọc và so sánh nhanh 4 dự án Phú Mỹ Hưng theo khu vực, loại hình và trạng thái dữ liệu.",
 };
 
-/** §3.3 — H1 + live count, toolbar (search/filter/sort/grid-table), 4 project cards. */
+/** §3.3 — H1 + live count, toolbar (search/filter/sort + link to /so-sanh), 4 project cards. */
 export default async function ProjectListPage() {
   const [{ headerProjects, thumbBySlug }, { projects, assets, source }] = await Promise.all([
     getCatalogFromLibrary(),

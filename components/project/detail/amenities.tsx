@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
@@ -46,7 +46,7 @@ export function DetailAmenities({
         {shown.map((a) => (
           <figure key={a.assetId} className="overflow-hidden rounded-xl">
             <div className="relative aspect-[4/3]">
-              <Image
+              <ImageWithFallback
                 src={a.resolvedUrl ?? a.sourceFileUrl}
                 alt={a.alt}
                 fill

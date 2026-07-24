@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { StatusDot, STATUS_LABEL } from "@/components/shared/status-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { computeFieldStatusSummary, orderedStatusEntries } from "@library/lib/data/status-summary";
@@ -44,7 +44,7 @@ export function ProjectCard({
             the (unoptimized, remote) photo paints — no JS load-state needed. */}
         <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-shimmer-sweep" />
         {imageUrl && (
-          <Image
+          <ImageWithFallback
             src={imageUrl}
             alt={heroAsset?.alt ?? project.displayNameVi}
             fill

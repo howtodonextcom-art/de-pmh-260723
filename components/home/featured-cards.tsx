@@ -1,8 +1,8 @@
 import { ArrowRightIcon } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import { BlurFade } from "@/components/shared/blur-fade";
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { PROJECT_STATUS_LABEL } from "@library/components/layout/project-status-label";
 import { t } from "@/lib/i18n/t";
 import type { V0ImageAsset } from "@/lib/library-bridge";
@@ -30,7 +30,7 @@ export function FeaturedCards({
               >
                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-shimmer-sweep" />
                 {imageUrl ? (
-                  <Image
+                  <ImageWithFallback
                     src={imageUrl}
                     alt={asset?.alt ?? p.displayNameVi}
                     fill

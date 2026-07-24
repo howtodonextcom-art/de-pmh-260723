@@ -25,13 +25,16 @@ Ngày cập nhật: 2026-07-21
 | Khu vực | File |
 |---|---|
 | Header: wordmark, nav links, nút tìm kiếm, switcher | `components/shared/site-header.tsx` |
+| Header — dropdown "Dự án" (desktop) | `components/shared/project-nav-dropdown.tsx` (fix 2026-07-24, audit thương mại §II/§IV) |
+| Header — mobile nav drawer (☰): tiêu đề, 3 nav item, nhãn "N dự án" | `components/shared/mobile-nav.tsx` (fix 2026-07-24, audit thương mại §II/§IV) |
+| Header — nhãn trạng thái dự án ("Đang triển khai"/…) trong dropdown + drawer | `mobile-nav.tsx` + `project-nav-dropdown.tsx` (fix 2026-07-24, Wave-2 R5). Lưu ý kỹ thuật: `HeaderProject.status` đến từ `seed-adapter.ts` **đã pre-localize sang tiếng Việt** trước khi tới component, nên fix dịch ngược VI-label→key cục bộ tại 2 file này thay vì đổi contract dữ liệu dùng chung (tránh phá `/lab` DemoShell). |
 | Home — Hero: kicker, tiêu đề animate, CTA Explore | `components/home/hero.tsx` |
 | Home — StatStrip: 4 nhãn số liệu + footnote | `components/home/stat-strip.tsx` |
 
 ### CHƯA locale-reactive (vẫn tiếng Việt cố định — ghi rõ, không giấu):
 
 - **Nội dung dữ liệu dự án** (`brandStatementVi`, tên dự án, mô tả...) — đây là dữ liệu nghiệp vụ lấy từ `vendor/data/`, không phải chuỗi UI chrome; dịch nội dung này cần review nghiệp vụ, ngoài phạm vi R07.
-- **Status labels**: `STATUS_LABEL` (định nghĩa 5 nhãn trạng thái) trong `status-badge.tsx` — hardcode tiếng Việt, chưa qua `t()`.
+- **Status labels (hệ 5 nhãn minh bạch dữ liệu — SACRED, không đụng)**: `STATUS_LABEL` (`FieldStatus`: Đã có dữ liệu/Chưa xác thực/Mâu thuẫn/Chưa có dữ liệu/Bảo mật) trong `status-badge.tsx` — hardcode tiếng Việt, chưa qua `t()`. Đây **không phải** nhãn trạng thái dự án (đang triển khai/đang mở bán/...) đã fix ở bảng trên — hai hệ thống "STATUS_LABEL" khác tên trùng, khác mục đích.
 - Toàn bộ route `/du-an`, `/du-an/[slug]`, `/so-sanh`, `/phap-ly`, `/lab` — vẫn dùng `t()` tĩnh (`lib/i18n/t.ts`), không đổi theo switcher.
 - Bản đồ trang chủ (`region-map-canvas.tsx`, `vn-map.tsx`) — nhãn `mapUnit`/`mapLoading`/... vẫn dùng `t()` tĩnh.
 

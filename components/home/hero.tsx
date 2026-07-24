@@ -1,9 +1,9 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { buttonVariants } from "@/components/ui/button";
 import { heroTextCascade, kenBurns } from "@/lib/motion/presets";
 import { useLocale } from "@/lib/i18n/locale-context";
@@ -89,7 +89,7 @@ export function Hero({
                 animate={reduceMotion ? undefined : "animate"}
                 className="relative h-full w-full"
               >
-                <Image
+                <ImageWithFallback
                   src={imageUrl}
                   alt={heroAsset?.alt ?? "DED-PMH"}
                   fill

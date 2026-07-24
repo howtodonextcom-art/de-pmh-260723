@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import {
   MapPinIcon,
   CircleDotIcon,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 
 import { SiteHeader } from "@/components/shared/site-header";
 import { LegalDossierTable, LegalTimeline } from "@/components/project/legal-dossier-table";
@@ -66,7 +66,7 @@ function HeroBand({ slug, assets }: HeroBandProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: shouldReduceMotion ? 0 : 0.35 }}
         >
-          <Image
+          <ImageWithFallback
             src={url}
             alt={heroAsset?.alt ?? "Hero image"}
             fill

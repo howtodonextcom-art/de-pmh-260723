@@ -164,18 +164,34 @@ function readImageVerifyReport(repoRoot: string): Map<string, ImageVerifyResult>
   return new Map(results.map((r) => [r.assetId, r]));
 }
 
+/**
+ * R1 (commercial audit Wave-2) — assetId -> local `/vendor-images/...` path,
+ * written by `scripts/mirror-project-images.mjs`. Takes precedence over the
+ * live third-party URL so the UI no longer depends on `honghacphumyhung.vn`
+ * / `phumyhung.vn` staying online. Does NOT imply cleared usage rights — see
+ * the manifest's "Quyền sử dụng" column and docs/WHAT_YOU_BUY.md.
+ */
+function readImageMirrorMap(repoRoot: string): Map<string, string> {
+  const mapPath = path.join(repoRoot, "image-mirror-map.json");
+  if (!fs.existsSync(mapPath)) return new Map();
+  const map = JSON.parse(fs.readFileSync(mapPath, "utf-8")) as Record<string, string>;
+  return new Map(Object.entries(map));
+}
+
 export function loadImagesForV0(repoRoot = resolveRepoRoot()): V0ImageAsset[] {
   const csvPath = path.join(repoRoot, "08_IMAGE_ASSET_MANIFEST.csv");
   if (!fs.existsSync(csvPath)) return [];
 
   const rows = parseCsv(fs.readFileSync(csvPath, "utf-8"));
   const verifyReport = readImageVerifyReport(repoRoot);
+  const mirrorMap = readImageMirrorMap(repoRoot);
 
   return rows.map((r) => {
     const assetId = r["Asset ID"] ?? "";
     const check = verifyReport.get(assetId);
     const verified =
       check?.classification === "SAFE" || check?.classification === "RISKY";
+    const resolvedUrl = mirrorMap.get(assetId) ?? check?.resolvedUrl;
     return {
       assetId,
       projectSlug: NAME_TO_SLUG[r["Dự án"] ?? ""] ?? (r["Dự án"] ?? ""),
@@ -186,7 +202,7 @@ export function loadImagesForV0(repoRoot = resolveRepoRoot()): V0ImageAsset[] {
       sourceFileUrl: r["URL file"] ?? "",
       isRender: /\(render\)/i.test(r["Mô tả"] ?? ""),
       verified: verified || undefined,
-      ...(check?.resolvedUrl ? { resolvedUrl: check.resolvedUrl } : {}),
+      ...(resolvedUrl ? { resolvedUrl } : {}),
     };
   });
 }

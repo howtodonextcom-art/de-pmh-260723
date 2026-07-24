@@ -1,5 +1,4 @@
-import Image from "next/image";
-
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
@@ -39,7 +38,7 @@ export function DetailLocation({
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted">
           {imageUrl ? (
-            <Image
+            <ImageWithFallback
               src={imageUrl}
               alt={locationAsset?.alt ?? "Bản đồ vị trí"}
               fill

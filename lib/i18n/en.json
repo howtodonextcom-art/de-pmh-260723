@@ -7,7 +7,12 @@
     "phapLy": "Legal",
     "search": "Search",
     "searchShortcut": "⌘K",
-    "langSwitcherLabel": "Switch language"
+    "langSwitcherLabel": "Switch language",
+    "menuLabel": "Navigation",
+    "duAn": "Projects",
+    "projectsUnit": "4 projects",
+    "viewAllFilters": "View all & filters →",
+    "openMenu": "Open navigation menu"
   },
   "home": {
     "kicker": "DED · Phú Mỹ Hưng",
@@ -39,6 +44,25 @@
     "disclaimer": "Internal information — figures are based on officially published sources.",
     "copyright": "© {{year}} DED-PMH"
   },
+  "projectStatus": {
+    "dang-trien-khai": "In development",
+    "dang-ban": "Now selling",
+    "da-ban-giao": "Handed over",
+    "sap-mo-ban": "Coming soon"
+  },
+  "notFound": {
+    "kicker": "404",
+    "title": "Page not found",
+    "body": "This link doesn't exist or has moved. Check the URL or head back to the homepage.",
+    "ctaHome": "Back to homepage",
+    "ctaCatalog": "View project catalog"
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "body": "Sorry, an unexpected error occurred while loading this page. You can try again or go back home.",
+    "ctaRetry": "Try again",
+    "ctaHome": "Back to homepage"
+  },
   "common": {
     "xemChiTiet": "View details"
   },
@@ -49,8 +73,7 @@
     "allRegions": "All regions",
     "allTypes": "All types",
     "allStatus": "All statuses",
-    "viewGrid": "Grid view",
-    "viewTable": "Table view",
+    "openCompare": "Compare projects",
     "noMatch": "No projects match this filter.",
     "clearFilters": "Clear filters",
     "matchSuffix": "matches"

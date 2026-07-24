@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 
 import { PROJECT_STATUS_LABEL } from "@library/components/layout/project-status-label";
 import type { Project as FullProject } from "@library/types/project";
@@ -20,7 +20,7 @@ export function DetailHero({
   return (
     <section className="relative flex h-[60vh] min-h-96 items-end overflow-hidden">
       {imageUrl ? (
-        <Image
+        <ImageWithFallback
           src={imageUrl}
           alt={heroAsset?.alt ?? project.displayNameVi}
           fill

@@ -1,0 +1,282 @@
+{
+  "capturedAt": "2026-07-23T17:28:59.296Z",
+  "routes": {
+    "home": {
+      "status": 200,
+      "file": "indep-bf-home.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": false,
+      "markers": 0,
+      "hh": "https://www.bacninhhonghaccity.vn/sa-ban?utm_source=ded-pmh&utm_medium=home-map&utm_campaign=map-cta",
+      "mapLoadingText": true,
+      "cardHover": {
+        "transformChanged": false,
+        "shadowChanged": true,
+        "before": {
+          "t": "none",
+          "s": "none"
+        },
+        "after": {
+          "t": "none",
+          "s": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.36 -0.0695467 0.018635 / 0.15) 0px 20px 25px -5px, oklab(0.36 -0.0695467 0.018635 / 0.15) 0px 8px 10px -6px"
+        }
+      },
+      "jump": null,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": [
+        "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+        "Image with src \"https://phumyhung.vn/the-regency/wp-content/uploads/2025/10/70638-726.webp\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading"
+      ]
+    },
+    "home-dark": {
+      "status": 200,
+      "file": "indep-bf-home-dark.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": true,
+      "cardHover": {
+        "transformChanged": false,
+        "shadowChanged": true,
+        "before": {
+          "t": "none",
+          "s": "none"
+        },
+        "after": {
+          "t": "none",
+          "s": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.62 -0.0695467 0.018635 / 0.15) 0px 20px 25px -5px, oklab(0.62 -0.0695467 0.018635 / 0.15) 0px 8px 10px -6px"
+        }
+      },
+      "jump": null,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": []
+    },
+    "home-375": {
+      "status": 200,
+      "file": "indep-bf-home-375.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": true,
+      "cardHover": {
+        "transformChanged": false,
+        "shadowChanged": true,
+        "before": {
+          "t": "none",
+          "s": "none"
+        },
+        "after": {
+          "t": "none",
+          "s": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.36 -0.0695467 0.018635 / 0.15) 0px 20px 25px -5px, oklab(0.36 -0.0695467 0.018635 / 0.15) 0px 8px 10px -6px"
+        }
+      },
+      "jump": null,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": [
+        "Image with src \"https://phumyhung.vn/the-regency/wp-content/uploads/2025/10/70638-726.webp\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading"
+      ]
+    },
+    "du-an": {
+      "status": 200,
+      "file": "indep-bf-du-an.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": false,
+      "cardHover": {
+        "transformChanged": false,
+        "shadowChanged": true,
+        "before": {
+          "t": "none",
+          "s": "none"
+        },
+        "after": {
+          "t": "none",
+          "s": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.36 -0.0695467 0.018635 / 0.1) 0px 20px 25px -5px, oklab(0.36 -0.0695467 0.018635 / 0.1) 0px 8px 10px -6px"
+        }
+      },
+      "jump": null,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": []
+    },
+    "detail": {
+      "status": 200,
+      "file": "indep-bf-detail.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": false,
+      "cardHover": {
+        "transformChanged": false,
+        "shadowChanged": true,
+        "before": {
+          "t": "none",
+          "s": "none"
+        },
+        "after": {
+          "t": "none",
+          "s": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.36 -0.0695467 0.018635 / 0.1) 0px 20px 25px -5px, oklab(0.36 -0.0695467 0.018635 / 0.1) 0px 8px 10px -6px"
+        }
+      },
+      "jump": null,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": [
+        "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+      ]
+    },
+    "so-sanh": {
+      "status": 200,
+      "file": "indep-bf-so-sanh.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": false,
+      "cardHover": null,
+      "jump": null,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": []
+    },
+    "so-sanh-375": {
+      "status": 200,
+      "file": "indep-bf-so-sanh-375.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": false,
+      "cardHover": null,
+      "jump": null,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": []
+    },
+    "phap-ly": {
+      "status": 200,
+      "file": "indep-bf-phap-ly.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": false,
+      "cardHover": null,
+      "jump": 4,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": []
+    },
+    "phap-ly-375": {
+      "status": 200,
+      "file": "indep-bf-phap-ly-375.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": false,
+      "cardHover": null,
+      "jump": 4,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": []
+    },
+    "lab": {
+      "status": 200,
+      "file": "indep-bf-lab.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": "0.5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": false,
+      "cardHover": null,
+      "jump": null,
+      "labBanner": true,
+      "robotsMeta": "noindex, nofollow",
+      "cons": []
+    },
+    "prod-home": {
+      "status": 200,
+      "file": "indep-bf-prod-home.png",
+      "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+      "footer": true,
+      "radius": ".5rem",
+      "minh": false,
+      "ctaTrans": false,
+      "mapCanvas": null,
+      "markers": null,
+      "hh": null,
+      "mapLoadingText": true,
+      "cardHover": {
+        "transformChanged": false,
+        "shadowChanged": true,
+        "before": {
+          "t": "none",
+          "s": "none"
+        },
+        "after": {
+          "t": "none",
+          "s": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.359998 -0.0695446 0.0186413 / 0.15) 0px 20px 25px -5px, oklab(0.359998 -0.0695446 0.0186413 / 0.15) 0px 8px 10px -6px"
+        }
+      },
+      "jump": null,
+      "labBanner": null,
+      "robotsMeta": null,
+      "cons": []
+    }
+  },
+  "seo": {
+    "sitemap": 200,
+    "robots": 200,
+    "disallowLab": true,
+    "prodRobots": 200
+  }
+}

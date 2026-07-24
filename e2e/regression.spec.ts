@@ -57,6 +57,19 @@ test.describe("Compare @375 — no regression", () => {
   });
 });
 
+test.describe("IA — /so-sanh is sole compare surface", () => {
+  test("/du-an links to /so-sanh; ?xem=bang redirects", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/du-an");
+    await expect(page.getByRole("link", { name: "So sánh dự án" })).toHaveAttribute("href", "/so-sanh");
+    await expect(page.getByRole("button", { name: "Ẩn hàng giống nhau" })).toHaveCount(0);
+
+    await page.goto("/du-an?xem=bang");
+    await expect(page).toHaveURL(/\/so-sanh$/, { timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: "So sánh 4 dự án" })).toBeVisible();
+  });
+});
+
 test.describe("Pháp lý — no regression", () => {
   test("loads with 4 project anchors", async ({ page }) => {
     await page.goto("/phap-ly");

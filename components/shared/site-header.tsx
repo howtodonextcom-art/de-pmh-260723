@@ -9,6 +9,7 @@ import { CmdKSearch } from "@/components/shared/cmdk";
 import { ProjectNavDropdown } from "@/components/shared/project-nav-dropdown";
 import { MobileNav } from "@/components/shared/mobile-nav";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/lib/i18n/locale-context";
 import type { HeaderProject } from "@/lib/types";
@@ -100,6 +101,8 @@ export function SiteHeader({ headerProjects, thumbBySlug = {} }: SiteHeaderProps
           </button>
 
           <LocaleSwitcher />
+
+          <ThemeToggle />
 
           <MobileNav projects={headerProjects} thumbBySlug={thumbBySlug} activeKey={activeKey} />
         </div>

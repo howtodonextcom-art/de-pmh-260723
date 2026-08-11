@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { SiteHeader } from "@/components/shared/site-header";
 import { CompareTable } from "@/components/project/compare-table";
@@ -6,8 +7,9 @@ import { getCatalogFromLibrary, getCompareProjects } from "@/lib/library-bridge"
 import { t } from "@/lib/i18n/t";
 
 export const metadata: Metadata = {
-  title: "So sánh 4 dự án — DED-PMH",
-  description: "Bảng so sánh 7 trường cốt lõi và pháp lý tóm tắt của 4 dự án Phú Mỹ Hưng.",
+  title: "So sánh dự án — DED-PMH",
+  description:
+    "So sánh dự án Phú Mỹ Hưng theo vùng (Phía Bắc / Phía Nam), nhóm Site A / Outsite — tối đa 4 cột mỗi lần.",
 };
 
 export default async function ComparePage() {
@@ -32,7 +34,9 @@ export default async function ComparePage() {
           {t("compare.title")}
         </h1>
         <p className="mb-8 text-sm text-muted-foreground">{t("compare.subtitle")}</p>
-        <CompareTable projects={projects} />
+        <Suspense fallback={<p className="text-sm text-muted-foreground">{t("compare.loading")}</p>}>
+          <CompareTable projects={projects} />
+        </Suspense>
       </main>
     </div>
   );

@@ -55,7 +55,8 @@ export const LEGAL_DOSSIER_LABELS: Record<LegalDossierKey, string> = {
   disputes: "Tranh chấp / cảnh báo",
 };
 
-// Keys shown in the main table (excludes constructionPermitsNote)
+// Keys shown in legacy consumers — full table order (incl. designUnit) lives in
+// `lib/legal-documents.ts` → LEGAL_TABLE_ROW_ORDER.
 export const LEGAL_DOSSIER_TABLE_KEYS: LegalDossierKey[] = [
   "investmentApproval",
   "landAllocation",

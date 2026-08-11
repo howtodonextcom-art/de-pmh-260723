@@ -7,7 +7,7 @@ import { revealUp, viewportOnce } from "@/lib/motion/presets";
 
 /**
  * Scroll-reveal wrapper for home sections that are Server Components — lets
- * them opt into the same `revealUp`/`viewportOnce` catalogue as StatStrip
+ * them opt into the same `revealUp`/`viewportOnce` catalogue as other home sections.
  * without converting the whole section to a Client Component.
  */
 export function Reveal({ children, className }: { children: ReactNode; className?: string }) {

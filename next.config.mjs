@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   // Next.js 16 blocks cross-origin dev requests (HMR + client bundle fetches)
   // by default, which silently breaks hydration for interactive components

@@ -2,31 +2,25 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { MenuIcon } from "lucide-react";
+import { ChevronDownIcon, MenuIcon } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/lib/i18n/locale-context";
 import type { HeaderProject } from "@/lib/types";
 import type { V0ImageAsset } from "@/lib/library-bridge";
+import {
+  PROJECT_NAV_ZONES,
+  getZoneProjects,
+  resolveNavLeaves,
+  type ProjectNavZoneId,
+  type ResolvedNavLeaf,
+} from "@/lib/project-nav-taxonomy";
 
-/**
- * R5 (commercial audit Wave-2) — `HeaderProject.status` arrives already
- * pre-localized to Vietnamese by `vendor/library/library/seed-adapter.ts`
- * (`loadProjectsForV0` runs it through its own VI `STATUS_LABEL` map before
- * this component ever sees it). Re-deriving the i18n key from that VI text
- * here is more surgical than changing the shared loader's status contract,
- * which `/lab`'s DemoShell also depends on (out of this wave's scope).
- */
-const STATUS_KEY_BY_VI_LABEL: Record<string, string> = {
-  "Đang triển khai": "dang-trien-khai",
-  "Đang mở bán": "dang-ban",
-  "Đã bàn giao": "da-ban-giao",
-  "Sắp mở bán": "sap-mo-ban",
-};
-
-/** SPEC §3.1 "Mobile nav (<1024)" — accessible Dialog-based panel, not dead links. */
+/** SPEC §3.1 "Mobile nav (<1024)" — accessible Dialog-based panel, not dead links.
+ *  Mirrors desktop's Phía Bắc / Phía Nam → Site A / Outsite taxonomy
+ *  (`project-nav-dropdown.tsx`) as a two-level touch accordion: Phía Bắc's
+ *  leaves show directly, Phía Nam expands into Site A / Outsite sub-groups. */
 export function MobileNav({
   projects,
   thumbBySlug,
@@ -37,7 +31,11 @@ export function MobileNav({
   activeKey: string | null;
 }) {
   const [open, setOpen] = React.useState(false);
+  const [expandedZone, setExpandedZone] = React.useState<ProjectNavZoneId | null>(null);
   const { t } = useLocale();
+
+  const bacZone = PROJECT_NAV_ZONES.find((z) => z.id === "bac");
+  const namZone = PROJECT_NAV_ZONES.find((z) => z.id === "nam");
 
   const navItems = [
     { key: "du-an", label: t("nav.duAn"), href: "/du-an" },
@@ -85,35 +83,124 @@ export function MobileNav({
         <p className="mb-2 px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("nav.projectsUnit")}
         </p>
-        <div className="space-y-1">
-          {projects.map((p) => {
-            const thumb = thumbBySlug[p.slug];
-            const url = thumb ? (thumb.resolvedUrl ?? thumb.sourceFileUrl) : null;
-            return (
-              <Link
-                key={p.slug}
-                href={`/du-an/${p.slug}`}
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 rounded-lg p-2 hover:bg-muted"
-              >
-                <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
-                  {url ? (
-                    <ImageWithFallback src={url} alt={thumb?.alt ?? p.displayNameVi} fill unoptimized sizes="64px" className="object-cover" />
-                  ) : (
-                    <span className="absolute inset-0 bg-gradient-to-br from-primary/20 to-background" />
-                  )}
-                </span>
-                <span className="flex min-w-0 flex-col">
-                  <span className="truncate text-sm font-medium text-foreground">{p.displayNameVi}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {p.region} · {t(`projectStatus.${STATUS_KEY_BY_VI_LABEL[p.status] ?? p.status}`)}
-                  </span>
-                </span>
-              </Link>
-            );
-          })}
+        <div className="space-y-2">
+          {bacZone ? (
+            <MobileNavZoneSection
+              label={t("nav.zoneBac")}
+              expanded={expandedZone === "bac"}
+              onToggle={() => setExpandedZone((z) => (z === "bac" ? null : "bac"))}
+            >
+              <MobileNavLeafList
+                leaves={resolveNavLeaves(getZoneProjects(bacZone, "site-a"), projects)}
+                comingSoonLabel={t("nav.comingSoon")}
+                onNavigate={() => setOpen(false)}
+              />
+            </MobileNavZoneSection>
+          ) : null}
+
+          {namZone && namZone.groups ? (
+            <MobileNavZoneSection
+              label={t("nav.zoneNam")}
+              expanded={expandedZone === "nam"}
+              onToggle={() => setExpandedZone((z) => (z === "nam" ? null : "nam"))}
+            >
+              <div className="space-y-3">
+                {namZone.groups.map((group) => (
+                  <div key={group.id}>
+                    <p className="px-2 pb-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">
+                      {group.id === "site-a" ? t("nav.siteA") : t("nav.outsite")}
+                    </p>
+                    <MobileNavLeafList
+                      leaves={resolveNavLeaves(getZoneProjects(namZone, group.id), projects)}
+                      comingSoonLabel={t("nav.comingSoon")}
+                      onNavigate={() => setOpen(false)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </MobileNavZoneSection>
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/** Top-level accordion row (Phía Bắc / Phía Nam). */
+function MobileNavZoneSection({
+  label,
+  expanded,
+  onToggle,
+  children,
+}: {
+  label: string;
+  expanded: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-lg border border-border/60">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground hover:bg-muted"
+      >
+        {label}
+        <ChevronDownIcon
+          aria-hidden
+          className={cn("size-4 shrink-0 text-muted-foreground transition-transform", expanded && "rotate-180")}
+        />
+      </button>
+      {expanded ? <div className="px-2 pb-2 pt-1">{children}</div> : null}
+    </div>
+  );
+}
+
+/** Leaf rows for a zone (or Nam sub-group): live projects link out, coming-soon leaves are muted. */
+function MobileNavLeafList({
+  leaves,
+  comingSoonLabel,
+  onNavigate,
+}: {
+  leaves: ResolvedNavLeaf[];
+  comingSoonLabel: string;
+  onNavigate: () => void;
+}) {
+  const live = leaves.filter((leaf) => leaf.href);
+  const soon = leaves.filter((leaf) => !leaf.href);
+
+  return (
+    <div className="space-y-0.5">
+      {live.map((leaf) => (
+        <Link
+          key={leaf.id}
+          href={leaf.href as string}
+          onClick={onNavigate}
+          className="flex flex-col gap-0.5 rounded-lg px-2 py-1.5 hover:bg-muted"
+        >
+          <span className="text-sm font-medium text-foreground">{leaf.label}</span>
+          <span className="text-xs text-muted-foreground">{leaf.location}</span>
+        </Link>
+      ))}
+
+      {soon.length > 0 ? (
+        <div className={cn(live.length > 0 && "mt-1.5 border-t border-border/60 pt-1.5")}>
+          <p className="px-2 pb-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground/70">
+            {comingSoonLabel}
+          </p>
+          {soon.map((leaf) => (
+            <div
+              key={leaf.id}
+              aria-disabled="true"
+              className="flex cursor-default flex-col gap-0.5 rounded-lg px-2 py-1.5 opacity-55"
+            >
+              <span className="text-sm font-medium text-foreground">{leaf.label}</span>
+              <span className="text-xs text-muted-foreground">{leaf.location}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }

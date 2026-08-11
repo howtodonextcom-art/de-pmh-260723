@@ -10,6 +10,11 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { cn } from "@/lib/utils";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 
+/**
+ * Variant A (A/B winner 2026-08-12) — full-bleed cinematic hero.
+ * Image is the edge-to-edge plane; copy sits in a safe column with scrim.
+ * No inset media card, no hero badges/stats.
+ */
 export function Hero({
   brandStatementVi,
   heroAsset,
@@ -23,9 +28,39 @@ export function Hero({
   const imageUrl = heroAsset ? (heroAsset.resolvedUrl ?? heroAsset.sourceFileUrl) : null;
 
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-12 md:items-center md:py-24">
-        <div className="order-2 space-y-6 md:order-1 md:col-span-7">
+    <section className="relative flex min-h-[calc(100dvh-60px)] items-end overflow-hidden sm:items-center">
+      {/* Full-bleed visual plane */}
+      <div className="absolute inset-0 bg-muted" aria-hidden={!imageUrl}>
+        {imageUrl ? (
+          <motion.div
+            className="absolute inset-0"
+            variants={reduceMotion ? undefined : kenBurns}
+            animate={reduceMotion ? undefined : "animate"}
+          >
+            <ImageWithFallback
+              src={imageUrl}
+              alt=""
+              fill
+              unoptimized
+              sizes="100vw"
+              priority
+              className="object-cover object-center"
+            />
+          </motion.div>
+        ) : null}
+        {/* Readable scrim — teal-ink wash, not purple glow */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/25 dark:from-background/95 dark:via-background/75 dark:to-background/35"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-background/20 sm:hidden"
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-20 md:py-24">
+        <div className="max-w-xl space-y-6 md:max-w-2xl">
           <motion.p
             initial={reduceMotion ? undefined : "hidden"}
             animate="show"
@@ -34,7 +69,7 @@ export function Hero({
           >
             {t("home.kicker")}
           </motion.p>
-          <h1 className="flex flex-wrap gap-x-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="flex flex-wrap gap-x-3 font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             {words.map((w, i) => (
               <motion.span
                 key={w + i}
@@ -52,7 +87,7 @@ export function Hero({
             animate="show"
             custom={words.length + 1}
             variants={heroTextCascade}
-            className="max-w-xl text-lg text-muted-foreground"
+            className="max-w-lg text-base text-muted-foreground sm:text-lg"
           >
             {brandStatementVi}
           </motion.p>
@@ -66,40 +101,6 @@ export function Hero({
             <Link href="/du-an" className={cn(buttonVariants({ size: "lg" }))}>
               {t("home.ctaExplore")}
             </Link>
-          </motion.div>
-        </div>
-
-        <div className="relative order-1 md:order-2 md:col-span-5">
-          {/* Soft halo behind the hero image — extends the atmosphere wash
-              into a full-bleed feel around the frame instead of a hard-edged
-              card floating on flat background. Teal only, no glow cliché. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-primary/10 blur-2xl dark:bg-primary/15"
-          />
-          <motion.div
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 1.06 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2 }}
-            className="aspect-4/5 overflow-hidden rounded-2xl bg-muted md:aspect-3/2"
-          >
-            {imageUrl ? (
-              <motion.div
-                variants={reduceMotion ? undefined : kenBurns}
-                animate={reduceMotion ? undefined : "animate"}
-                className="relative h-full w-full"
-              >
-                <ImageWithFallback
-                  src={imageUrl}
-                  alt={heroAsset?.alt ?? "DED-PMH"}
-                  fill
-                  unoptimized
-                  sizes="(max-width: 768px) 100vw, 40vw"
-                  priority
-                  className="object-cover"
-                />
-              </motion.div>
-            ) : null}
           </motion.div>
         </div>
       </div>

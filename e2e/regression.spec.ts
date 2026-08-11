@@ -66,15 +66,30 @@ test.describe("IA — /so-sanh is sole compare surface", () => {
 
     await page.goto("/du-an?xem=bang");
     await expect(page).toHaveURL(/\/so-sanh$/, { timeout: 10_000 });
-    await expect(page.getByRole("heading", { name: "So sánh 4 dự án" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "So sánh dự án" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ẩn hàng giống nhau" })).toBeVisible();
   });
 });
 
-test.describe("Pháp lý — no regression", () => {
-  test("loads with 4 project anchors", async ({ page }) => {
-    await page.goto("/phap-ly");
-    for (const slug of ["hong-hac-city", "the-regency", "the-sculptura", "harmonie"]) {
-      await expect(page.locator(`#${slug}`)).toHaveCount(1);
-    }
+test.describe("Pháp lý — single project panel", () => {
+  test("shows one dossier at a time and switches via slug tabs", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/phap-ly?zone=nam&nhom=site-a");
+
+    const active = page.getByTestId("legal-active-project");
+    await expect(active).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("legal-active-project")).toHaveCount(1);
+
+    await page.getByTestId("legal-project-tab-the-sculptura").click();
+    await expect(page).toHaveURL(/slug=the-sculptura/);
+    await expect(active).toHaveAttribute("data-slug", "the-sculptura");
+    await expect(page.getByRole("heading", { name: "The Sculptura", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The Regency", exact: true })).toHaveCount(0);
+
+    await page.getByTestId("legal-project-tab-the-regency").click();
+    await expect(page).toHaveURL(/slug=the-regency/);
+    await expect(active).toHaveAttribute("data-slug", "the-regency");
+    await expect(page.getByRole("heading", { name: "The Regency", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The Sculptura", exact: true })).toHaveCount(0);
   });
 });

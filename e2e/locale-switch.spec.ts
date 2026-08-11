@@ -15,8 +15,8 @@ test.describe("home — locale switcher", () => {
     await page.getByTestId("locale-switch-en").click();
 
     await expect(page.getByRole("link", { name: "Explore 4 projects" })).toBeVisible();
-    await expect(page.getByText("Projects", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText("Regions", { exact: true }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Compare" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Legal" })).toBeVisible();
   });
 
   test("locale choice persists across reload via localStorage", async ({ page }) => {

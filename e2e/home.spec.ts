@@ -25,30 +25,6 @@ test.describe("home H5 — explorer preview", () => {
   });
 });
 
-test.describe("home H7 — timeline", () => {
-  test("milestone cards link to their project", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("heading", { name: "Timeline phát triển danh mục" }).scrollIntoViewIfNeeded();
-    await expect(page.getByRole("link", { name: "Hồng Hạc City" }).first()).toHaveAttribute(
-      "href",
-      "/du-an/hong-hac-city",
-    );
-  });
-});
-
-test.describe("home H8 — legal teaser", () => {
-  test("links to /phap-ly and per-project #phap-ly anchors", async ({ page }) => {
-    await page.goto("/");
-    const section = page.locator("section", { has: page.getByRole("heading", { name: "Pháp lý minh bạch" }) });
-    await section.scrollIntoViewIfNeeded();
-    await expect(section.getByRole("link", { name: "Pháp lý", exact: true })).toHaveAttribute("href", "/phap-ly");
-    await expect(section.getByRole("link", { name: /Hồng Hạc City/ })).toHaveAttribute(
-      "href",
-      "/du-an/hong-hac-city#phap-ly",
-    );
-  });
-});
-
 test.describe("home H10 — updates", () => {
   test("shows recent updates and a compare CTA", async ({ page }) => {
     await page.goto("/");

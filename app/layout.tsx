@@ -11,7 +11,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "DED-PMH — Hồ sơ dự án",
   description: "Tra cứu pháp lý và thư viện ảnh các dự án Phú Mỹ Hưng và Hồng Hạc City",
-  generator: "v0.app",
 };
 
 export const viewport: Viewport = {
@@ -38,7 +37,7 @@ export default function RootLayout({
         >
           <LocaleProvider>
             {/* R10 — sitewide `prefers-reduced-motion` respect: several
-                scroll-triggered sections (StatStrip, ExplorerPreview)
+                scroll-triggered sections (ExplorerPreview, map, legal, updates)
                 use Framer Motion variants without an individual
                 useReducedMotion() guard; MotionConfig covers them all
                 in one place instead of touching each component. */}

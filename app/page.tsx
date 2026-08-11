@@ -2,20 +2,15 @@ import type { Metadata } from "next";
 
 import { SiteHeader } from "@/components/shared/site-header";
 import { Hero } from "@/components/home/hero";
-import { StatStrip } from "@/components/home/stat-strip";
 import { FeaturedCards } from "@/components/home/featured-cards";
 import { ExplorerPreview } from "@/components/home/explorer-preview";
 import { VnMap } from "@/components/home/vn-map";
-import { PortfolioTimeline } from "@/components/home/portfolio-timeline";
-import { LegalTeaser } from "@/components/home/legal-teaser";
 import { Updates } from "@/components/home/updates";
 import { getCatalogFromLibrary, getFullCatalog } from "@/lib/library-bridge";
 import {
-  buildMilestones,
   buildSiteSettings,
   buildUpdates,
   citySlug,
-  getPortfolioStats,
   REGION_LNG_LAT,
 } from "@/lib/home-content";
 
@@ -40,8 +35,6 @@ export default async function HomePage() {
   );
 
   const settings = buildSiteSettings(projects);
-  const stats = getPortfolioStats(projects);
-  const milestones = buildMilestones();
   const updates = buildUpdates();
 
   const featured = projects.filter((p) => p.featured).slice(0, 2);
@@ -69,7 +62,7 @@ export default async function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background text-foreground">
-      {/* Atmosphere — soft teal wash behind Hero/StatStrip only; fades out before
+      {/* Atmosphere — soft teal wash behind Hero only; fades out before
           the card sections so it reads as depth, not a colored background. */}
       <div
         aria-hidden
@@ -86,12 +79,9 @@ export default async function HomePage() {
       ) : null}
 
       <Hero brandStatementVi={settings.brandStatementVi} heroAsset={brandHeroAsset} />
-      <StatStrip stats={stats} />
       <FeaturedCards projects={featuredFinal} heroAssetsBySlug={heroAssetsBySlug} />
       <ExplorerPreview projects={projects} heroAssetsBySlug={heroAssetsBySlug} />
       <VnMap regionCounts={regionCounts} />
-      <PortfolioTimeline milestones={milestones} projects={projects} />
-      <LegalTeaser projects={projects} />
       <Updates updates={updates} projects={projects} />
     </div>
   );

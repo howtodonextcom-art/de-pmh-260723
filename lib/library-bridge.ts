@@ -31,7 +31,12 @@ export async function getCatalogFromLibrary(): Promise<{
       throw new Error("library returned zero projects");
     }
     return { source: "library", headerProjects, projects, assets, thumbBySlug: buildThumbBySlug(headerProjects, assets) };
-  } catch {
+  } catch (err) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "Library catalog unavailable in production: " + (err instanceof Error ? err.message : String(err)),
+      );
+    }
     const mock = await import("@/lib/mock-data");
     return {
       source: "mock",
@@ -72,7 +77,12 @@ export async function getCompareProjects(): Promise<{
       throw new Error("library returned zero projects");
     }
     return { source: "library", projects };
-  } catch {
+  } catch (err) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "Library catalog unavailable in production: " + (err instanceof Error ? err.message : String(err)),
+      );
+    }
     const mock = await import("@/lib/mock-data");
     return { source: "mock", projects: mock.MOCK_COMPARE_PROJECTS };
   }
@@ -95,7 +105,12 @@ export async function getFullCatalog(): Promise<{
     }
     const assets = ensureGalleryFloor(loadImagesForV0(root), 4);
     return { source: "library", projects, assets };
-  } catch {
+  } catch (err) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "Library catalog unavailable in production: " + (err instanceof Error ? err.message : String(err)),
+      );
+    }
     const mock = await import("@/lib/mock-data");
     return { source: "mock", projects: mock.MOCK_COMPARE_PROJECTS, assets: mock.MOCK_ASSETS };
   }

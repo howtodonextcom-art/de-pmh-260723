@@ -107,6 +107,17 @@
     "nextImage": "Ảnh tiếp theo",
     "lightboxLabel": "Xem ảnh lớn"
   },
+  "flipbook": {
+    "allPages": "Tất cả ảnh",
+    "closeThumbnails": "Đóng lưới thumbnail",
+    "page": "Trang",
+    "controls": "Điều khiển flipbook",
+    "thumbnailGrid": "Xem lưới thumbnail",
+    "zoomIn": "Phóng to",
+    "zoomOut": "Thu nhỏ",
+    "enterFullscreen": "Toàn màn hình",
+    "exitFullscreen": "Thoát toàn màn hình"
+  },
   "compare": {
     "title": "So sánh dự án",
     "subtitle": "Chọn vùng / nhóm, rồi tối đa 4 dự án. Lô đất · tên thương mại · thiết kế · tổng thầu và các trường cốt lõi. GFA chưa có nguồn công bố đầy đủ.",

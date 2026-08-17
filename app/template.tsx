@@ -9,7 +9,7 @@ import type { ReactNode } from "react";
  * short fade on route change. Opacity-only on purpose: a `transform` (e.g. a
  * `y` offset) on this wrapper would create a new CSS containing block for
  * every `position: fixed`/`sticky` descendant — breaking the sticky header,
- * the gallery lightbox (`fixed inset-0`), and CMDK/dialog overlays. Opacity
+ * the gallery flipbook viewer (`fixed inset-0`), and CMDK/dialog overlays. Opacity
  * doesn't have that side effect, so it's the safe choice here.
  */
 export default function Template({ children }: { children: ReactNode }) {

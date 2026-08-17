@@ -225,3 +225,56 @@
     }
   }
 }
+
+/* ── Flipbook viewer (ported from 260531-grok) ── */
+:root {
+  --bg-reader-toolbar: #121212;
+  --border-toolbar: #2a2a2a;
+  --bg-reader-frame: #111111;
+  --bg-editorial: #f8f5f0;
+  --accent-gold: #c5a46e;
+}
+
+.flipbook-page {
+  will-change: transform, width, height;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+@keyframes gridFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.flipbook-container .stf__block {
+  box-shadow:
+    0 0 20px rgba(0, 0, 0, 0.15),
+    0 0 60px rgba(0, 0, 0, 0.08);
+}
+
+.flipbook-container .stf__item {
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 200ms ease;
+}
+
+@media (max-width: 767px) {
+  .flipbook-container {
+    touch-action: pan-x pan-y;
+  }
+
+  .flipbook-page {
+    touch-action: manipulation;
+  }
+}
+
+.flipbook-container {
+  touch-action: manipulation;
+}

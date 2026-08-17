@@ -107,6 +107,17 @@
     "nextImage": "Next image",
     "lightboxLabel": "View full-size image"
   },
+  "flipbook": {
+    "allPages": "All images",
+    "closeThumbnails": "Close thumbnail grid",
+    "page": "Page",
+    "controls": "Flipbook controls",
+    "thumbnailGrid": "Thumbnail grid view",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "enterFullscreen": "Enter fullscreen",
+    "exitFullscreen": "Exit fullscreen"
+  },
   "compare": {
     "title": "Compare projects",
     "subtitle": "Pick a zone / group, then up to 4 projects. Plot · trade name · design unit · main contractor plus core fields. GFA is not fully published yet.",

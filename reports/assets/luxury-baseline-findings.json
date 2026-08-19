@@ -1,6 +1,6 @@
 {
   "base": "http://localhost:3000",
-  "capturedAt": "2026-07-23T00:48:22.168Z",
+  "capturedAt": "2026-08-19T06:58:45.502Z",
   "routes": {
     "home-1440": {
       "route": "/",
@@ -102,9 +102,7 @@
       "mapMarkers": null,
       "mapShimmerVisible": null,
       "noHorizontalBleed": null,
-      "consoleErrors": [
-        "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
-      ]
+      "consoleErrors": []
     },
     "detail-hh-375": {
       "route": "/du-an/hong-hac-city",
@@ -138,7 +136,9 @@
       "mapMarkers": null,
       "mapShimmerVisible": null,
       "noHorizontalBleed": null,
-      "consoleErrors": []
+      "consoleErrors": [
+        "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+      ]
     },
     "so-sanh-375": {
       "route": "/so-sanh",
@@ -229,8 +229,8 @@
   "prod": {
     "status": 200,
     "screenshot": "luxury-baseline-prod-home-1440.png",
-    "h1Font": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
-    "hasFooter": false,
-    "hasMinhBach": true
+    "h1Font": "Fraunces, \"Fraunces Fallback\", Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+    "hasFooter": true,
+    "hasMinhBach": false
   }
 }

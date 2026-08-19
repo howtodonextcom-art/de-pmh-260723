@@ -12,7 +12,13 @@ const outDir = path.resolve("reports/assets");
 fs.mkdirSync(outDir, { recursive: true });
 
 const findings = { base: BASE, capturedAt: new Date().toISOString(), routes: {}, prod: null };
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({
+  headless: true,
+  ...(process.env.PW_CHANNEL ? { channel: process.env.PW_CHANNEL } : {}),
+  ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+    ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+    : {}),
+});
 
 async function shot(page, name, fullPage = false) {
   const file = path.join(outDir, `luxury-baseline-${name}.png`);

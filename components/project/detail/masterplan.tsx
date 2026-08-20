@@ -18,7 +18,7 @@ export function DetailMasterplan({
   const imageUrl = masterplanAsset ? (masterplanAsset.resolvedUrl ?? masterplanAsset.sourceFileUrl) : null;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.masterplan")}</h2>
       <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl bg-muted">
         {imageUrl ? (

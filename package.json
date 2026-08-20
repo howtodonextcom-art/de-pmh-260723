@@ -8,11 +8,12 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "verify:i18n": "node scripts/verify-i18n-keys.mjs",
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
     "luxury:capture": "node scripts/luxury/capture.mjs",
     "luxury:diff": "node scripts/luxury/diff.mjs",
     "luxury:score": "node scripts/luxury/score.mjs",
-    "luxury:qa": "node scripts/luxury/capture.mjs && node scripts/luxury/diff.mjs && node scripts/luxury/score.mjs",
     "luxury:qa:auto": "node scripts/luxury/capture.mjs && node scripts/luxury/diff.mjs && node scripts/luxury/score.mjs"
   },
   "dependencies": {
@@ -49,6 +50,7 @@
     "pngjs": "^7.0.0",
     "postcss": "^8.5",
     "tailwindcss": "^4.3.3",
-    "typescript": "5.7.3"
+    "typescript": "5.7.3",
+    "vitest": "^4.1.11"
   }
 }

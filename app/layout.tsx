@@ -2,9 +2,12 @@ import { Analytics } from "@vercel/analytics/next";
 import { MotionConfig } from "framer-motion";
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "next-themes";
+import { cookies } from "next/headers";
+import Script from "next/script";
 import { Toaster } from "sonner";
-import { LocaleProvider } from "@/lib/i18n/locale-context";
+import { LocaleProvider, type Locale } from "@/lib/i18n/locale-context";
 import { SiteFooter } from "@/components/shared/site-footer";
+import { themeInitScript } from "@/lib/theme-init-script";
 import { fraunces, inter } from "./fonts";
 import "./globals.css";
 
@@ -21,13 +24,32 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // F18 — server-side half of the locale split-brain fix. `middleware.ts`
+  // guarantees a NEXT_LOCALE cookie is present (defaulted from
+  // Accept-Language on first visit) before this render runs, so we just
+  // read it here — a Server Component can read cookies but never set them.
+  // `<html lang>` and LocaleProvider's initial client state both derive
+  // from this same value, so first paint (SSR) and hydration (CSR) agree
+  // instead of always defaulting to "vi" regardless of the visitor's
+  // actual selected/detected locale.
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get("NEXT_LOCALE")?.value;
+  const locale: Locale = localeCookie === "en" ? "en" : "vi";
+
   return (
-    <html lang="vi" suppressHydrationWarning className={`bg-background ${inter.variable} ${fraunces.variable}`}>
+    <html lang={locale} suppressHydrationWarning className={`bg-background ${inter.variable} ${fraunces.variable}`}>
+      <head>
+        {/* F04 — runs before hydration to apply `.dark` from localStorage/system
+            preference ahead of first paint, preventing a light/dark flash. */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
+      </head>
       <body className="antialiased">
         <ThemeProvider
           attribute="class"
@@ -35,7 +57,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <LocaleProvider>
+          <LocaleProvider initialLocale={locale}>
             {/* R10 — sitewide `prefers-reduced-motion` respect: several
                 scroll-triggered sections (ExplorerPreview, map, legal, updates)
                 use Framer Motion variants without an individual

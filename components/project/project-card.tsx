@@ -8,6 +8,7 @@ import { StatusDot, STATUS_LABEL } from "@/components/shared/status-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { computeFieldStatusSummary, orderedStatusEntries } from "@library/lib/data/status-summary";
 import { PROJECT_STATUS_LABEL } from "@library/components/layout/project-status-label";
+import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 
@@ -24,15 +25,59 @@ export function ProjectCard({
   project,
   heroAsset,
   priority = false,
+  layout = "catalog",
 }: {
   project: FullProject;
   heroAsset?: V0ImageAsset | null;
   /** Set on the first above-the-fold card so Next.js doesn't flag it as an unmarked LCP image. */
   priority?: boolean;
+  /**
+   * `"catalog"` (default) — compact grid card used by /du-an and related-projects rails:
+   * bordered card shell, image capped at aspect-[3/2], details below the photo.
+   * `"featured"` — home hero-adjacent card: full-bleed photo (aspect-3/2 → video on sm+),
+   * larger title, dark gradient scrim with white overlay text, no status-dot row/footer.
+   */
+  layout?: "catalog" | "featured";
 }) {
-  const summary = orderedStatusEntries(computeFieldStatusSummary(project));
-  const primaryType = (project.projectType ?? []).find((t) => PROJECT_TYPE_LABEL[t]);
   const imageUrl = heroAsset ? (heroAsset.resolvedUrl ?? heroAsset.sourceFileUrl) : null;
+
+  if (layout === "featured") {
+    return (
+      <Link
+        href={`/du-an/${project.slug}`}
+        className="group focus-visible:ring-ring relative block aspect-3/2 overflow-hidden rounded-2xl bg-gradient-to-br from-muted via-primary/5 to-muted transition-[transform,box-shadow] duration-300 ease-out motion-safe:hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/15 focus-visible:ring-2 focus-visible:outline-none motion-reduce:hover:translate-y-0 sm:aspect-video"
+      >
+        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-shimmer-sweep" />
+        {imageUrl ? (
+          <ImageWithFallback
+            src={imageUrl}
+            alt={heroAsset?.alt ?? project.displayNameVi}
+            fill
+            unoptimized
+            priority={priority}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover transition-transform duration-400 group-hover:scale-[1.04]"
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <span className="absolute top-3 right-3 rounded-full bg-background/85 px-2 py-0.5 text-[11px] font-medium backdrop-blur-sm">
+          {PROJECT_STATUS_LABEL[project.status] ?? project.status}
+        </span>
+        <div className="absolute bottom-0 left-0 p-5 text-white">
+          <h3 className="text-xl font-semibold">{project.displayNameVi}</h3>
+          {project.highlights?.[0] ? (
+            <p className="mt-1 line-clamp-2 max-w-md text-sm text-white/85">{project.highlights[0]}</p>
+          ) : null}
+          <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium">
+            {t("common.xemChiTiet")} <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />
+          </span>
+        </div>
+      </Link>
+    );
+  }
+
+  const summary = orderedStatusEntries(computeFieldStatusSummary(project));
+  const primaryType = (project.projectType ?? []).find((pt) => PROJECT_TYPE_LABEL[pt]);
 
   return (
     <Link

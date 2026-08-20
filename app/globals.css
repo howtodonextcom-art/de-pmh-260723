@@ -278,3 +278,69 @@
 .flipbook-container {
   touch-action: manipulation;
 }
+
+/* ── Luxury skeleton animation ── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%       { opacity: 0.85; }
+}
+.animate-skeleton {
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+  background: var(--color-muted);
+}
+
+/* ── Per-theme card shadow (teal) ── */
+:root { --shadow-card: 0 8px 24px oklch(0.36 0.072 165 / 0.08); }
+.dark { --shadow-card: 0 8px 32px oklch(0 0 0 / 0.35); }
+
+/* ── Reduced-motion hard override (covers FlipbookEngine, kenBurns, etc.) ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Flipbook reader background token ── */
+:root, .dark { --bg-reader: #111111; }
+
+/* ── Flipbook reader foreground token ──
+   FlipbookToolbar's chrome (--bg-reader-toolbar, --border-toolbar above, and
+   --bg-reader) is intentionally fixed-dark regardless of the app's light/dark
+   theme — none of those are overridden inside .dark. The global --foreground
+   token IS theme-reactive (near-black in light mode), so swapping the
+   toolbar's hardcoded text-[#ededed] for var(--foreground) would make toolbar
+   text nearly invisible whenever the app is in light mode. Adding a
+   reader-scoped foreground token instead, matching the existing
+   --bg-reader-toolbar convention, rather than reusing --foreground. */
+:root, .dark { --fg-reader: #ededed; }
+
+/* ── Gallery tab horizontal scroll fade (mobile) ── */
+.tabs-scroll-fade {
+  mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+}
+@media (min-width: 640px) {
+  .tabs-scroll-fade { mask-image: none; }
+}
+
+/* ── Text selection ── */
+::selection {
+  background: oklch(0.36 0.072 165 / 0.15);
+  color: var(--foreground);
+}
+
+/* ── F09: teal primary/on-primary AA pair ──
+   --primary / --primary-foreground (defined above) already equal the teal
+   values this feature asked to introduce as --primary-solid /
+   --primary-on-solid: oklch(0.36 0.072 165) on oklch(0.98 0.006 165) in light
+   mode, oklch(0.62 0.072 165) on oklch(0.12 0.018 165) in dark mode — same
+   numbers, not just similar. components/ui/button.tsx's `default` variant
+   already wires `bg-primary text-primary-foreground`, and the L-channel gap
+   in both pairs (0.62 light / 0.50 dark) is large enough to clear WCAG AA for
+   normal text with margin. Intentionally not adding a duplicate
+   --primary-solid/--accent-solid token: it would just be a same-value alias
+   of --primary/--primary-foreground with no visual change, and --accent in
+   this file already names a different (light-tint) pair, so reusing "accent"
+   here would be misleading. No globals.css variables or button.tsx changes
+   were needed for this feature. */

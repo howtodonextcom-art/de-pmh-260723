@@ -44,17 +44,6 @@ export interface ImageAsset {
   resolvedUrl?: string;
 }
 
-export const LEGAL_DOSSIER_LABELS: Record<LegalDossierKey, string> = {
-  investmentApproval: "Chấp thuận chủ trương đầu tư",
-  landAllocation: "Giao đất / cho thuê đất",
-  detailedPlanning: "Quy hoạch chi tiết 1/500",
-  constructionPermits: "Giấy phép xây dựng",
-  constructionPermitsNote: "Ghi chú GPXD",
-  salesEligibility: "Đủ điều kiện bán",
-  mainContractor: "Tổng thầu thi công",
-  disputes: "Tranh chấp / cảnh báo",
-};
-
 // Keys shown in legacy consumers — full table order (incl. designUnit) lives in
 // `lib/legal-documents.ts` → LEGAL_TABLE_ROW_ORDER.
 export const LEGAL_DOSSIER_TABLE_KEYS: LegalDossierKey[] = [
@@ -66,6 +55,25 @@ export const LEGAL_DOSSIER_TABLE_KEYS: LegalDossierKey[] = [
   "mainContractor",
   "disputes",
 ];
+
+/** One row of the home "Updates" feed — see `lib/home-content.ts` → `buildUpdates`. */
+export interface SiteContentUpdate {
+  id: string;
+  date: string;
+  projectSlug: string;
+  textVi: string;
+}
+
+/**
+ * White-label brand content: PMH-specific copy shown on the home page
+ * (brand statement + updates feed). See `lib/home-content.ts` → `buildSiteSettings`/`buildUpdates`.
+ */
+export interface SiteContent {
+  /** Brand statement shown on home hero (SPEC §5.2, ≤80 words, fact-first). */
+  brandStatementVi: string;
+  /** Seed updates feed (SPEC §H10, "3 bản ghi mới nhất"). */
+  updates: SiteContentUpdate[];
+}
 
 export const CATEGORY_LABELS: Record<string, string> = {
   all: "Tất cả",

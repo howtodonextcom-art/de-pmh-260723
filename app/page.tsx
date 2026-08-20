@@ -6,7 +6,7 @@ import { FeaturedCards } from "@/components/home/featured-cards";
 import { ExplorerPreview } from "@/components/home/explorer-preview";
 import { VnMap } from "@/components/home/vn-map";
 import { Updates } from "@/components/home/updates";
-import { getCatalogFromLibrary, getFullCatalog } from "@/lib/library-bridge";
+import { buildHeroAssetsBySlug, getCatalogFromLibrary, getFullCatalog } from "@/lib/library-bridge";
 import {
   buildSiteSettings,
   buildUpdates,
@@ -25,14 +25,7 @@ export default async function HomePage() {
     getFullCatalog(),
   ]);
 
-  const heroAssetsBySlug = Object.fromEntries(
-    projects.map((p) => [
-      p.slug,
-      p.heroAssetId
-        ? (assets.find((a) => a.assetId === p.heroAssetId) ?? null)
-        : (assets.find((a) => a.projectSlug === p.slug) ?? null),
-    ]),
-  );
+  const heroAssetsBySlug = buildHeroAssetsBySlug(projects, assets);
 
   const settings = buildSiteSettings(projects);
   const updates = buildUpdates();
@@ -78,10 +71,16 @@ export default async function HomePage() {
         </p>
       ) : null}
 
+      {/* First viewport (1440px, no scroll): Hero + Featured (2 cards) + Map.
+          Catalog preview and Updates are intentionally pushed below the fold
+          so they don't compete with Hero/Featured/Map for critical
+          above-fold real estate — see prompts/2026-08-19 F25. */}
       <Hero brandStatementVi={settings.brandStatementVi} heroAsset={brandHeroAsset} />
       <FeaturedCards projects={featuredFinal} heroAssetsBySlug={heroAssetsBySlug} />
-      <ExplorerPreview projects={projects} heroAssetsBySlug={heroAssetsBySlug} />
       <VnMap regionCounts={regionCounts} />
+
+      {/* Below the fold */}
+      <ExplorerPreview projects={projects} heroAssetsBySlug={heroAssetsBySlug} />
       <Updates updates={updates} projects={projects} />
     </div>
   );

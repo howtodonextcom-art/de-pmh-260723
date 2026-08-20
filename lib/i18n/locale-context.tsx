@@ -37,16 +37,25 @@ interface LocaleContextValue {
 const LocaleContext = React.createContext<LocaleContextValue | null>(null);
 
 /**
- * Client-only locale switch, modeled on `next-themes`: renders `vi` (the
- * default, matching SSR output) on first paint, then syncs from
- * `localStorage` in an effect — no hydration mismatch, no cookie/route
- * plumbing. Only components that opt in via `useLocale()` are reactive; the
- * rest of the app still reads the static `vi.json` via `t()` in
- * `lib/i18n/t.ts` and stays Vietnamese-only. See `docs/I18N_EN.md` for which
- * sections are covered.
+ * Client-only locale switch, modeled on `next-themes`: renders `initialLocale`
+ * (the value app/layout.tsx resolved server-side from the `NEXT_LOCALE`
+ * cookie — see F18) on first paint, then syncs from `localStorage` in an
+ * effect if the visitor has an explicit stored preference — no hydration
+ * mismatch, since the server and the client agree on the seed value instead
+ * of both silently assuming `vi`. Only components that opt in via
+ * `useLocale()` are reactive; the rest of the app still reads the static
+ * `vi.json` via `t()` in `lib/i18n/t.ts` and stays Vietnamese-only. See
+ * `docs/I18N_EN.md` for which sections are covered.
  */
-export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = React.useState<Locale>(DEFAULT_LOCALE);
+export function LocaleProvider({
+  children,
+  initialLocale = DEFAULT_LOCALE,
+}: {
+  children: React.ReactNode;
+  /** Locale resolved server-side (NEXT_LOCALE cookie) by app/layout.tsx. */
+  initialLocale?: Locale;
+}) {
+  const [locale, setLocaleState] = React.useState<Locale>(initialLocale);
 
   React.useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);

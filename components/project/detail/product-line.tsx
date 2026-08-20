@@ -6,7 +6,7 @@ import type { Project as FullProject } from "@library/types/project";
 export function DetailProductLine({ project }: { project: FullProject }) {
   if (project.unitMix?.length) {
     return (
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.productLine")}</h2>
         <div className="overflow-hidden rounded-xl border border-border">
           <table className="w-full text-sm">
@@ -34,7 +34,7 @@ export function DetailProductLine({ project }: { project: FullProject }) {
 
   if ((project.productTypes ?? []).length > 0) {
     return (
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.productLine")}</h2>
         <div className="flex flex-wrap gap-2">
           {project.productTypes.map((t) => (

@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { SiteHeader } from "@/components/shared/site-header";
 import { PdfExportTrigger } from "@/components/project/detail/pdf-export-trigger";
 import { DetailHero } from "@/components/project/detail/hero";
+import { SectionDivider } from "@/components/project/detail/section-divider";
 import { DetailFactGrid } from "@/components/project/detail/fact-grid";
 import { DetailStory } from "@/components/project/detail/story";
 import { DetailLocation } from "@/components/project/detail/location";
@@ -17,7 +18,8 @@ import { DetailLegalTeaser } from "@/components/project/detail/legal-teaser";
 import { DetailSalesStatus } from "@/components/project/detail/sales-status";
 import { DetailRelated } from "@/components/project/detail/related";
 import { DetailSources } from "@/components/project/detail/sources";
-import { getCatalogFromLibrary, getFullCatalog } from "@/lib/library-bridge";
+import { buildHeroAssetsBySlug, getCatalogFromLibrary, getFullCatalog } from "@/lib/library-bridge";
+import { buildTitle } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const { projects } = await getFullCatalog();
@@ -32,9 +34,9 @@ export async function generateMetadata({
   const { slug } = await params;
   const { projects } = await getFullCatalog();
   const project = projects.find((p) => p.slug === slug);
-  if (!project) return { title: "404 — DED-PMH" };
+  if (!project) return { title: buildTitle("404") };
   return {
-    title: `${project.displayNameVi} — DED-PMH`,
+    title: buildTitle(project.displayNameVi),
     description: project.shortDescriptionVi ?? undefined,
   };
 }
@@ -73,12 +75,7 @@ export default async function ProjectDetailPage({
       return aSame - bSame;
     })
     .slice(0, 3);
-  const heroAssetsBySlug = Object.fromEntries(
-    related.map((p) => [
-      p.slug,
-      p.heroAssetId ? (assets.find((a) => a.assetId === p.heroAssetId) ?? null) : (assets.find((a) => a.projectSlug === p.slug) ?? null),
-    ]),
-  );
+  const heroAssetsBySlug = buildHeroAssetsBySlug(related, assets);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -89,7 +86,9 @@ export default async function ProjectDetailPage({
       <div className="print:hidden">
         <DetailHero project={project} heroAsset={heroAsset} />
       </div>
+      <SectionDivider />
       <DetailFactGrid project={project} />
+      <SectionDivider />
       <div className="print:hidden">
         <DetailStory project={project} />
         <DetailLocation project={project} locationAsset={locationAsset} />
@@ -97,10 +96,15 @@ export default async function ProjectDetailPage({
         <DetailArchitecturePartners project={project} />
         <DetailProductLine project={project} />
         <DetailAmenities project={project} amenityAssets={amenityAssets} hasGallery={hasGallery} />
+      </div>
+      <SectionDivider />
+      <div className="print:hidden">
         <DetailGallery assets={projectAssets} />
       </div>
+      <SectionDivider />
       <DetailLegalTeaser project={project} />
       <DetailSalesStatus project={project} />
+      <SectionDivider />
       <div className="print:hidden">
         <DetailRelated projects={related} heroAssetsBySlug={heroAssetsBySlug} />
       </div>

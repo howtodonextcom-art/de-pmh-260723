@@ -112,10 +112,13 @@ export function DetailGallery({ assets, className }: DetailGalleryProps) {
     <section
       id="gallery"
       aria-label={t("detail.gallery")}
-      className={cn("mx-auto max-w-7xl px-4 py-12 sm:px-6", className)}
+      className={cn("mx-auto max-w-7xl px-4 py-16 sm:px-6", className)}
     >
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
-        <TabsList variant="line" className="h-auto flex-wrap gap-1">
+        <TabsList
+          variant="line"
+          className="h-auto max-w-full flex-nowrap gap-1 overflow-x-auto no-scrollbar tabs-scroll-fade sm:flex-wrap sm:overflow-visible"
+        >
           <TabsTrigger value="all">Tất cả</TabsTrigger>
           {categories.map((cat) => (
             <TabsTrigger key={cat} value={cat}>

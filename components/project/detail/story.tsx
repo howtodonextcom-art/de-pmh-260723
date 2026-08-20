@@ -6,7 +6,7 @@ export function DetailStory({ project }: { project: FullProject }) {
 
   const paragraphs = project.longDescriptionVi.split("\n\n");
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <div className="mx-auto max-w-[65ch] space-y-4 text-foreground">
         {paragraphs.map((para, i) => (
           <p

@@ -1,6 +1,6 @@
 {
   "base": "http://localhost:3000",
-  "capturedAt": "2026-08-19T06:58:45.502Z",
+  "capturedAt": "2026-08-20T04:23:59.016Z",
   "routes": {
     "home-1440": {
       "route": "/",
@@ -121,6 +121,18 @@
       "noHorizontalBleed": true,
       "consoleErrors": []
     },
+    "flipbook-open-1440": {
+      "route": "/du-an/hong-hac-city",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dark": false,
+      "status": 200,
+      "screenshot": "luxury-baseline-flipbook-open-1440.png",
+      "dialogOpened": true,
+      "consoleErrors": []
+    },
     "so-sanh-1440": {
       "route": "/so-sanh",
       "viewport": {
@@ -136,9 +148,7 @@
       "mapMarkers": null,
       "mapShimmerVisible": null,
       "noHorizontalBleed": null,
-      "consoleErrors": [
-        "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
-      ]
+      "consoleErrors": []
     },
     "so-sanh-375": {
       "route": "/so-sanh",

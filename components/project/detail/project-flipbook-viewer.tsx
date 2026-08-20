@@ -41,7 +41,7 @@ export function ProjectFlipbookViewer({
       role="dialog"
       aria-modal="true"
       aria-label={t("detail.lightboxLabel")}
-      className={cn("fixed inset-0 z-50 flex flex-col bg-[#111111]", className)}
+      className={cn("fixed inset-0 z-50 flex flex-col bg-[var(--bg-reader)]", className)}
     >
       <div className="absolute top-3 right-3 z-[60]">
         <button

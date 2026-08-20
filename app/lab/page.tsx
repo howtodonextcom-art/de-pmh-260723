@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 
 import { DemoShell } from "@/components/demo-shell";
 import { getCatalogFromLibrary } from "@/lib/library-bridge";
+import { buildTitle } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Lab — DED-PMH v0",
+  title: buildTitle("Lab", "DED-PMH v0"),
   description: "Track A component lab: legal dossier + gallery demo shell (moved off the home route).",
   robots: { index: false, follow: false },
 };

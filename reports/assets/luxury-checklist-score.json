@@ -1,8 +1,8 @@
 {
   "schema": "v0-luxury-checklist-score/1.0",
   "inspiredBy": "personal-data-cloud-vault package.json luxury:capture|diff|score (tools/260528-codex absent — reconstructed)",
-  "scoredAt": "2026-08-19T07:01:55.764Z",
-  "evidenceBase": "2026-08-19T06:58:45.502Z",
+  "scoredAt": "2026-08-20T04:27:46.836Z",
+  "evidenceBase": "2026-08-20T04:23:59.016Z",
   "screenshots": [
     "luxury-baseline-home-1440.png",
     "luxury-baseline-home-dark-1440.png",
@@ -11,6 +11,7 @@
     "luxury-baseline-du-an-1440.png",
     "luxury-baseline-detail-hh-1440.png",
     "luxury-baseline-detail-hh-375.png",
+    "luxury-baseline-flipbook-open-1440.png",
     "luxury-baseline-so-sanh-1440.png",
     "luxury-baseline-so-sanh-375.png",
     "luxury-baseline-phap-ly-1440.png",
@@ -100,7 +101,7 @@
         "evidence": "luxury-baseline-home-dark-1440.png"
       },
       "04_Hierarchy": {
-        "score": 8.5,
+        "score": 9,
         "criteria": [
           {
             "id": "sectionJobs",
@@ -124,8 +125,8 @@
           },
           {
             "id": "detailDensity",
-            "pass": false,
-            "note": "AUDIT 2026-08-19 — /du-an/hong-hac-city rất dài/dày (hero+stats+masterplan+gallery+legal+related); scannable nhưng chưa editorial luxury breathing"
+            "pass": true,
+            "note": "FIXED 2026-08-20 (F22) — SectionDivider rules between chapters, py-16 section rhythm (was py-12), legal dossier accordion collapsed by default; verified via 1440/375 capture, no overflow"
           }
         ],
         "evidence": "luxury-baseline-detail-hh-1440.png"
@@ -151,13 +152,13 @@
           {
             "id": "flipbookGallery",
             "pass": true,
-            "note": "AUDIT 2026-08-19 — Issuu-style flipbook fullscreen (toolbar, thumbnail grid, zoom); masonry grid + category tabs retained. Signature moment nhưng chrome #111 hardcoded, tách khỏi teal brand"
+            "note": "AUDIT 2026-08-19 — Issuu-style flipbook fullscreen (toolbar, thumbnail grid, zoom); masonry grid + category tabs retained. UPDATED 2026-08-20 (F07) — reader chrome now reads var(--bg-reader)/var(--fg-reader) tokens instead of hardcoded #111/#ededed, on-brand token layer in place"
           }
         ],
         "evidence": "luxury-flipbook-open-1440.png + luxury-baseline-detail-hh-1440.png"
       },
       "06_Motion": {
-        "score": 8.5,
+        "score": 9,
         "criteria": [
           {
             "id": "presets",
@@ -176,8 +177,8 @@
           },
           {
             "id": "flipbookMotion",
-            "pass": false,
-            "note": "AUDIT 2026-08-19 — FlipbookEngine page-flip không guard useReducedMotion; toolbar zoom OK"
+            "pass": true,
+            "note": "FIXED 2026-08-20 (F06+F05) — FlipbookEngine reads useReducedMotion() and collapses react-pageflip's flippingTime to near-instant; global @media (prefers-reduced-motion: reduce) CSS override also added"
           }
         ],
         "evidence": "components/flipbook/FlipbookEngine.tsx + components/shared/reveal.tsx"
@@ -209,7 +210,7 @@
         "evidence": "reports/assets/luxury-baseline-findings.json noHorizontalBleed + components/project/detail/masterplan.tsx"
       },
       "08_Invisible": {
-        "score": 8,
+        "score": 8.5,
         "criteria": [
           {
             "id": "focusRing",
@@ -223,8 +224,8 @@
           },
           {
             "id": "emptyLuxury",
-            "pass": false,
-            "note": "compare/legal Suspense fallback vẫn plain <p> text-muted-foreground"
+            "pass": true,
+            "note": "FIXED 2026-08-20 (F01-F03) — CompareTableSkeleton + LegalLoadingSkeleton (layout-matched, .animate-skeleton pulse) replace plain <p> Suspense fallbacks on /so-sanh and /phap-ly"
           },
           {
             "id": "flipbookA11y",
@@ -380,7 +381,7 @@
           {
             "id": "routesCoverage",
             "pass": true,
-            "note": "EXPANDED — 15 local views (was 9): +map-loading throttled capture, +/lab, +dark phap-ly, +detail mobile + prod spot"
+            "note": "EXPANDED — 15 local views (was 9): +map-loading throttled capture, +/lab, +dark phap-ly, +detail mobile + prod spot. UPDATED 2026-08-20 (F27) — flipbook viewer open state now auto-captured (bespoke visitFlipbookOpen(), clicks a gallery tile and waits for role=dialog) instead of manual-only"
           },
           {
             "id": "assertionsNotJustPixels",
@@ -430,7 +431,7 @@
         ]
       },
       "C4_DensityWhitespace": {
-        "score": 7.5,
+        "score": 9,
         "criteria": [
           {
             "id": "rhythm",
@@ -444,8 +445,8 @@
           },
           {
             "id": "cardBreathing",
-            "pass": false,
-            "note": "AUDIT 2026-08-19 — detail page gallery+legal stack dense; chưa editorial whitespace luxury"
+            "pass": true,
+            "note": "FIXED 2026-08-20 (F22) — detail page section padding bumped py-12→py-16 across fact-grid/story/location/masterplan/partners/product-line/amenities/gallery/sales-status/related/sources, SectionDivider rules added between chapters"
           }
         ]
       },
@@ -472,24 +473,24 @@
     }
   },
   "qualitative": {
-    "balance": "cân đối trên home/catalog; detail page dày",
-    "color": "teal restrained + amber meta; flipbook dùng palette riêng #111/#ededed",
-    "luxuryVsTemplate": "AUDIT 2026-08-19 — craft score cao (~85) nhưng perceived luxury thấp hơn (~65): polished shadcn internal hub + 1 signature flipbook moment, chưa vault editorial",
+    "balance": "cân đối trên home/catalog; detail page giờ có chapter dividers + py-16 rhythm (F22)",
+    "color": "teal restrained + amber meta; flipbook giờ dùng var(--bg-reader)/var(--fg-reader) token thay #111/#ededed hardcode (F07)",
+    "luxuryVsTemplate": "UPDATED 2026-08-20 — Wave 1-4 refactor (F01-F25) landed: skeleton loading states, flipbook reduced-motion + brand token, detail page editorial whitespace, ScopeChip/HeroBlock/Reveal dedup (~1,249 net LOC removed), i18n split-brain fix, vitest + i18n verify script added",
     "radiusOveruse": false,
     "radiusValue": "0.5rem",
-    "effects": "Hero cinematic + reveals + flipbook; gap: route continuity, empty states luxury, detail whitespace",
-    "perceivedLuxury": 6.5,
-    "perceivedLuxuryNote": "Cảm giác chủ quan tách khỏi automation gate — user có thể không thấy khác biệt vì 80% UI vẫn card-grid + teal shadcn",
-    "completionPct": 72,
-    "completionNote": "Hoàn thành ~72% mục tiêu vault-grade luxury internal hub; typography/color/motion craft done, editorial identity chưa",
+    "effects": "Hero cinematic + reveals + flipbook (now reduced-motion guarded); gap: route continuity (B4, deferred P2)",
+    "perceivedLuxury": 7.3,
+    "perceivedLuxuryNote": "Estimate per pattern-transfer report's Wave-1 forecast (6.5 → ~7.3-7.5 after skeleton/flipbook-brand/motion fixes) — qualitative, not re-measured by a fresh audit pass",
+    "completionPct": 80,
+    "completionNote": "P0+P1 roadmap items from luxury-full-audit.md done (empty-state skeletons, flipbook reduced-motion + brand, detail density/whitespace); P2 items (route continuity, CI hook) still open",
     "prodLag": "RESOLVED 2026-08-19 — prod Fraunces H1 + footer + flipbook deployed; hasMinhBach:false",
-    "deltaVs20260723": "LuxuryIndex flat 85; +flipbook imagery, -detail density, B4 corrected (template fade exists)"
+    "deltaVs20260723": "LuxuryIndex 85→87 — detailDensity/flipbookMotion/emptyLuxury/cardBreathing criteria flipped to pass with evidence (F01-F03 skeletons, F06 flipbook reduced-motion, F22 detail rhythm)"
   },
   "aggregates": {
-    "Design01_08": 8.94,
+    "Design01_08": 9.13,
     "Effects": 8.17,
-    "ToolingGap": 8.3,
-    "LuxuryIndex": 85,
+    "ToolingGap": 8.6,
+    "LuxuryIndex": 87,
     "formula": "round((Design*0.45 + Effects*0.35 + Tooling*0.20) * 10)"
   },
   "absoluteS5": {

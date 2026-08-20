@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   Accordion,
@@ -11,17 +10,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { ScopeChip } from "@/components/shared/scope-chip";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/lib/i18n/locale-context";
-import {
-  getBranchSlugs,
-  parseNamGroupId,
-  parseNavZoneId,
-  type ProjectNamGroupId,
-  type ProjectNavZoneId,
-} from "@/lib/project-nav-taxonomy";
+import { useReplaceSearchParams } from "@/lib/hooks/use-replace-search-params";
+import { useNavScopeFilter } from "@/lib/hooks/use-nav-scope-filter";
 import { COMPARE_COLUMN_CAP, COMPARE_FIELDS } from "@library/lib/data/compare-fields";
 import type { Project } from "@library/types/project";
 
@@ -31,18 +26,17 @@ import type { Project } from "@library/types/project";
  */
 export function CompareTable({ projects }: { projects: Project[] }) {
   const { t } = useLocale();
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [hideIdentical, setHideIdentical] = useState(false);
-
-  const zone = parseNavZoneId(searchParams.get("zone"));
-  const nhom = zone === "nam" ? parseNamGroupId(searchParams.get("nhom")) : null;
-
-  const candidates = useMemo(() => {
-    if (!zone) return projects;
-    const allowed = new Set(getBranchSlugs(zone, nhom));
-    return projects.filter((p) => allowed.has(p.slug));
-  }, [projects, zone, nhom]);
+  const { searchParams, replaceParams } = useReplaceSearchParams("/so-sanh");
+  const {
+    zone,
+    nhom,
+    filtered: candidates,
+    setZoneFilter,
+    setNhomFilter,
+  } = useNavScopeFilter(projects, searchParams, replaceParams, {
+    clearParamsOnScopeChange: ["slugs"],
+  });
 
   const slugsParam = searchParams.get("slugs");
   const selectedSlugs = useMemo(() => {
@@ -66,42 +60,6 @@ export function CompareTable({ projects }: { projects: Project[] }) {
         .filter((p): p is Project => Boolean(p)),
     [selectedSlugs, candidates, projects]
   );
-
-  const replaceParams = useCallback(
-    (mutate: (params: URLSearchParams) => void) => {
-      const params = new URLSearchParams(searchParams.toString());
-      mutate(params);
-      const qs = params.toString();
-      router.replace(qs ? `/so-sanh?${qs}` : "/so-sanh", { scroll: false });
-    },
-    [router, searchParams]
-  );
-
-  function setZoneFilter(next: ProjectNavZoneId | "all") {
-    replaceParams((params) => {
-      params.delete("slugs");
-      if (next === "all") {
-        params.delete("zone");
-        params.delete("nhom");
-      } else {
-        params.set("zone", next);
-        if (next === "nam") {
-          if (!parseNamGroupId(params.get("nhom"))) params.set("nhom", "site-a");
-        } else {
-          params.delete("nhom");
-        }
-      }
-    });
-  }
-
-  function setNhomFilter(next: ProjectNamGroupId | "all") {
-    replaceParams((params) => {
-      params.delete("slugs");
-      params.set("zone", "nam");
-      if (next === "all") params.delete("nhom");
-      else params.set("nhom", next);
-    });
-  }
 
   function toggleSlug(slug: string) {
     replaceParams((params) => {
@@ -377,29 +335,3 @@ export function CompareTable({ projects }: { projects: Project[] }) {
   );
 }
 
-function ScopeChip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={cn(
-        "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        active
-          ? "bg-primary text-primary-foreground shadow-sm"
-          : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
-      )}
-    >
-      {label}
-    </button>
-  );
-}

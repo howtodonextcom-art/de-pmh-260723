@@ -24,7 +24,7 @@ export function DetailAmenities({
 
   if (amenityAssets.length === 0) {
     return (
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.amenities")}</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {amenities.map((a) => (
@@ -40,7 +40,7 @@ export function DetailAmenities({
   const shown = amenityAssets.slice(0, 8);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.amenities")}</h2>
       <div className="columns-2 gap-3 sm:columns-3 [&>*]:mb-3 [&>*]:break-inside-avoid">
         {shown.map((a) => (

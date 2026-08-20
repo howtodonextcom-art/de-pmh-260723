@@ -1,5 +1,6 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { FlipbookToolbar } from "./FlipbookToolbar";
@@ -95,6 +96,13 @@ export function FlipbookEngine({
 }: FlipbookEngineProps) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<{ pageFlip: () => { flipNext: () => void; flipPrev: () => void; flip: (page: number) => void } } | null>(null);
+
+  // F06 — react-pageflip drives its own page-flip animation outside of
+  // framer-motion (MotionConfig's `reducedMotion="user"` in app/layout.tsx
+  // doesn't reach it), so honor the user's preference explicitly via its
+  // `flippingTime` prop.
+  const prefersReducedMotion = useReducedMotion();
+  const flippingTime = prefersReducedMotion ? 1 : 520;
 
   const totalPages = assets.length;
   const safeInitial = Math.min(Math.max(initialIndex, 0), Math.max(totalPages - 1, 0));
@@ -260,7 +268,7 @@ export function FlipbookEngine({
                 style={STABLE_STYLE}
                 startPage={safeInitial}
                 drawShadow
-                flippingTime={520}
+                flippingTime={flippingTime}
                 usePortrait={isMobile}
                 startZIndex={0}
                 autoSize={false}

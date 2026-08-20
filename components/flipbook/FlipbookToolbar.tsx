@@ -39,7 +39,7 @@ function ToolbarIconButton({
       title={ariaLabel}
       className={cn(
         "group flex h-9 w-9 items-center justify-center rounded-[3px]",
-        "text-[#ededed] transition-all duration-150",
+        "text-[var(--fg-reader)] transition-all duration-150",
         "hover:bg-[#2a2a2a] hover:text-white",
         "active:scale-[0.985] active:bg-[#1f1f1f]",
         "focus-visible:ring-1 focus-visible:ring-[#c5a46e]/60 focus-visible:outline-none",
@@ -187,7 +187,7 @@ export function FlipbookToolbar({
       role="toolbar"
       aria-label={t("flipbook.controls")}
       className={cn(
-        "z-30 flex h-16 w-full items-center justify-between px-5 text-[#ededed] select-none",
+        "z-30 flex h-16 w-full items-center justify-between px-5 text-[var(--fg-reader)] select-none",
         !className?.includes("bg-transparent") &&
           "border-t border-[var(--border-toolbar)] bg-[var(--bg-reader-toolbar)] backdrop-blur-md",
         className,
@@ -195,7 +195,7 @@ export function FlipbookToolbar({
     >
       <div className="flex min-w-0 flex-shrink-0 items-center gap-3">
         <div
-          className="text-[12px] leading-none font-medium tracking-[1.5px] whitespace-nowrap text-[#ededed]/95 tabular-nums"
+          className="text-[12px] leading-none font-medium tracking-[1.5px] whitespace-nowrap text-[var(--fg-reader)]/95 tabular-nums"
           aria-live="polite"
         >
           {pageLabel || `${currentPage} / ${totalPages}`}

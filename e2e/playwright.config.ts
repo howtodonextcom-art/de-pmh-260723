@@ -19,7 +19,16 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  // channel: "chrome" — the bundled headless_shell binary reliably fails to
+  // download on this machine's network (see reports/2026-08-19-luxury-full-audit.md
+  // Appendix "Tooling note"); reuse the same installed-Chrome workaround
+  // scripts/luxury/capture.mjs already relies on via PW_CHANNEL.
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], channel: process.env.PW_CHANNEL || "chrome" },
+    },
+  ],
   webServer: {
     // --webpack: Turbopack's dev-mode worker crash-restart loop is unusable
     // on this machine (spawns 1000+ node.exe processes within seconds and

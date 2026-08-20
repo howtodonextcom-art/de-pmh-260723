@@ -20,7 +20,7 @@ export function DetailLocation({
   const imageUrl = locationAsset ? (locationAsset.resolvedUrl ?? locationAsset.sourceFileUrl) : null;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.location")}</h2>
       <div className="grid gap-8 md:grid-cols-2">
         <div>

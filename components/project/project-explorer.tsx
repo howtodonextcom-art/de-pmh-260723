@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDownIcon, SlidersHorizontalIcon, TableIcon, XIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { ProjectCard } from "@/components/project/project-card";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -18,13 +18,8 @@ import {
 import { STATUS_LABEL } from "@/components/shared/status-badge";
 import { t } from "@/lib/i18n/t";
 import { cn } from "@/lib/utils";
-import {
-  getBranchSlugs,
-  parseNamGroupId,
-  parseNavZoneId,
-  type ProjectNamGroupId,
-  type ProjectNavZoneId,
-} from "@/lib/project-nav-taxonomy";
+import { useReplaceSearchParams } from "@/lib/hooks/use-replace-search-params";
+import { useNavScopeFilter } from "@/lib/hooks/use-nav-scope-filter";
 import { computeFieldStatusSummary } from "@library/lib/data/status-summary";
 import { citySlug } from "@library/lib/data/region-slug";
 import type { Project as FullProject, FieldStatus } from "@library/types/project";
@@ -58,13 +53,20 @@ export function ProjectExplorer({
   heroAssetsBySlug: Record<string, V0ImageAsset | null>;
 }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const { searchParams, replaceParams } = useReplaceSearchParams("/du-an");
+  const {
+    zone,
+    nhom,
+    filtered: zoneScoped,
+    setZoneFilter,
+    setNhomFilter,
+  } = useNavScopeFilter(projects, searchParams, replaceParams, {
+    clearParamsOnScopeChange: ["xem"],
+  });
 
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [moreOpen, setMoreOpen] = useState(false);
   const khuVuc = searchParams.get("khu-vuc") ?? "all";
-  const zone = parseNavZoneId(searchParams.get("zone"));
-  const nhom = zone === "nam" ? parseNamGroupId(searchParams.get("nhom")) : null;
   const loai = searchParams.get("loai") ?? "all";
   const nhan = searchParams.get("nhan") ?? "all";
   const sapXep = searchParams.get("sap-xep") ?? "ten";
@@ -82,50 +84,17 @@ export function ProjectExplorer({
   }, [secondaryActive]);
 
   function updateParam(key: string, value: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("xem");
-    if (value === "all" || !value) params.delete(key);
-    else params.set(key, value);
-    if (key === "zone" && value !== "nam") params.delete("nhom");
-    if (key === "zone" && value === "all") params.delete("nhom");
-    const qs = params.toString();
-    router.replace(qs ? `/du-an?${qs}` : "/du-an", { scroll: false });
-  }
-
-  function setZoneFilter(next: ProjectNavZoneId | "all") {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("xem");
-    if (next === "all") {
-      params.delete("zone");
-      params.delete("nhom");
-    } else {
-      params.set("zone", next);
-      if (next === "nam") {
-        if (!parseNamGroupId(params.get("nhom"))) params.set("nhom", "site-a");
-      } else {
-        params.delete("nhom");
-      }
-    }
-    const qs = params.toString();
-    router.replace(qs ? `/du-an?${qs}` : "/du-an", { scroll: false });
-  }
-
-  function setNhomFilter(next: ProjectNamGroupId | "all") {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("xem");
-    params.set("zone", "nam");
-    if (next === "all") params.delete("nhom");
-    else params.set("nhom", next);
-    const qs = params.toString();
-    router.replace(qs ? `/du-an?${qs}` : "/du-an", { scroll: false });
+    replaceParams((params) => {
+      params.delete("xem");
+      if (value === "all" || !value) params.delete(key);
+      else params.set(key, value);
+      if (key === "zone" && value !== "nam") params.delete("nhom");
+      if (key === "zone" && value === "all") params.delete("nhom");
+    });
   }
 
   const filtered = useMemo(() => {
-    let list = projects;
-    if (zone) {
-      const slugs = new Set(getBranchSlugs(zone, nhom));
-      list = list.filter((p) => slugs.has(p.slug));
-    }
+    let list = zoneScoped;
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       list = list.filter(
@@ -154,7 +123,7 @@ export function ProjectExplorer({
     else if (sapXep === "cap-nhat")
       sorted.sort((a, b) => (b.lastVerifiedAt ?? "").localeCompare(a.lastVerifiedAt ?? ""));
     return sorted;
-  }, [projects, query, khuVuc, zone, nhom, loai, nhan, sapXep]);
+  }, [zoneScoped, query, khuVuc, loai, nhan, sapXep]);
 
   function clearFilters() {
     setQuery("");

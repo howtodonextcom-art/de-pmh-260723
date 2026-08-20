@@ -8,7 +8,7 @@ export function DetailFactGrid({ project }: { project: FullProject }) {
   const cells = buildFactGrid(project);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {cells.map((cell) => (
           <div key={cell.label} className="rounded-xl border border-border p-4">

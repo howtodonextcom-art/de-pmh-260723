@@ -1,47 +1,16 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo } from "react";
+import { Suspense, useEffect } from "react";
 
 import { LegalDossierTable } from "@/components/project/legal-dossier-table";
+import { LegalLoadingSkeleton } from "@/components/project/legal-loading-skeleton";
+import { ScopeChip } from "@/components/shared/scope-chip";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/lib/i18n/locale-context";
-import {
-  getBranchSlugs,
-  parseNamGroupId,
-  parseNavZoneId,
-  type ProjectNamGroupId,
-  type ProjectNavZoneId,
-} from "@/lib/project-nav-taxonomy";
+import { useReplaceSearchParams } from "@/lib/hooks/use-replace-search-params";
+import { useNavScopeFilter } from "@/lib/hooks/use-nav-scope-filter";
 import { LEGAL_TABLE_ROW_ORDER } from "@/lib/legal-documents";
 import type { Project as FullProject } from "@library/types/project";
-
-function ScopeChip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={cn(
-        "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        active
-          ? "bg-primary text-primary-foreground shadow-sm"
-          : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
-      )}
-    >
-      {label}
-    </button>
-  );
-}
 
 /**
  * Variant A — single-project panel: zone/group scope + project tabs.
@@ -49,18 +18,17 @@ function ScopeChip({
  */
 function LegalScopedBody({ projects }: { projects: FullProject[] }) {
   const { t } = useLocale();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const zone = parseNavZoneId(searchParams.get("zone"));
-  const nhom = zone === "nam" ? parseNamGroupId(searchParams.get("nhom")) : null;
+  const { searchParams, replaceParams } = useReplaceSearchParams("/phap-ly");
+  const {
+    zone,
+    nhom,
+    filtered: scoped,
+    setZoneFilter,
+    setNhomFilter,
+  } = useNavScopeFilter(projects, searchParams, replaceParams, {
+    clearParamsOnScopeChange: ["slug"],
+  });
   const requestedSlug = searchParams.get("slug");
-
-  const scoped = useMemo(() => {
-    if (!zone) return projects;
-    const allowed = new Set(getBranchSlugs(zone, nhom));
-    return projects.filter((p) => allowed.has(p.slug));
-  }, [projects, zone, nhom]);
 
   const activeSlug =
     requestedSlug && scoped.some((p) => p.slug === requestedSlug)
@@ -70,13 +38,6 @@ function LegalScopedBody({ projects }: { projects: FullProject[] }) {
   const activeProject = activeSlug
     ? (scoped.find((p) => p.slug === activeSlug) ?? null)
     : null;
-
-  function replaceParams(mutate: (params: URLSearchParams) => void) {
-    const params = new URLSearchParams(searchParams.toString());
-    mutate(params);
-    const qs = params.toString();
-    router.replace(qs ? `/phap-ly?${qs}` : "/phap-ly", { scroll: false });
-  }
 
   // Keep ?slug= coherent when zone/group changes or slug is missing/invalid.
   useEffect(() => {
@@ -109,32 +70,6 @@ function LegalScopedBody({ projects }: { projects: FullProject[] }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync URL from scoped/requested only
   }, [scoped, requestedSlug]);
-
-  function setZoneFilter(next: ProjectNavZoneId | "all") {
-    replaceParams((params) => {
-      params.delete("slug");
-      if (next === "all") {
-        params.delete("zone");
-        params.delete("nhom");
-      } else {
-        params.set("zone", next);
-        if (next === "nam") {
-          if (!parseNamGroupId(params.get("nhom"))) params.set("nhom", "site-a");
-        } else {
-          params.delete("nhom");
-        }
-      }
-    });
-  }
-
-  function setNhomFilter(next: ProjectNamGroupId | "all") {
-    replaceParams((params) => {
-      params.delete("slug");
-      params.set("zone", "nam");
-      if (next === "all") params.delete("nhom");
-      else params.set("nhom", next);
-    });
-  }
 
   function setActiveSlug(slug: string) {
     replaceParams((params) => {
@@ -252,9 +187,8 @@ function LegalScopedBody({ projects }: { projects: FullProject[] }) {
 }
 
 export function LegalPageClient({ projects }: { projects: FullProject[] }) {
-  const { t } = useLocale();
   return (
-    <Suspense fallback={<p className="text-sm text-muted-foreground">{t("legal.loading")}</p>}>
+    <Suspense fallback={<LegalLoadingSkeleton />}>
       <LegalScopedBody projects={projects} />
     </Suspense>
   );

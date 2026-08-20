@@ -48,6 +48,26 @@ export async function getCatalogFromLibrary(): Promise<{
   }
 }
 
+/**
+ * Maps each project's slug to its designated hero image asset — prefers the
+ * project's `heroAssetId` when set, falling back to the first photo tagged
+ * with that project's slug. Shared by `/`, `/du-an`, and `/du-an/[slug]` to
+ * feed ProjectCard / DetailHero / DetailRelated.
+ */
+export function buildHeroAssetsBySlug(
+  projects: Pick<FullProject, "slug" | "heroAssetId">[],
+  assets: V0ImageAsset[],
+): Record<string, V0ImageAsset | null> {
+  return Object.fromEntries(
+    projects.map((p) => [
+      p.slug,
+      p.heroAssetId
+        ? (assets.find((a) => a.assetId === p.heroAssetId) ?? null)
+        : (assets.find((a) => a.projectSlug === p.slug) ?? null),
+    ]),
+  );
+}
+
 /** Nav dropdown (R04) doesn't need the exact `heroAssetId` — any verified photo works for a 96×64 thumb. */
 function buildThumbBySlug(
   headerProjects: { slug: string }[],

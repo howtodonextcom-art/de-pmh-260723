@@ -18,7 +18,7 @@ import type { Project as FullProject } from "@library/types/project";
 /** D13 — thin "sources" accordion, can stay collapsed by default. */
 export function DetailSources({ project }: { project: FullProject }) {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <Accordion defaultValue={["sources"]}>
         <AccordionItem value="sources">
           <AccordionTrigger className="text-lg font-semibold">

@@ -35,6 +35,16 @@ export function DetailLocation({
               ))}
             </ul>
           )}
+          {project.saBanUrl ? (
+            <a
+              href={project.saBanUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {t("home.mapSaBanCta")}
+            </a>
+          ) : null}
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted">
           {imageUrl ? (

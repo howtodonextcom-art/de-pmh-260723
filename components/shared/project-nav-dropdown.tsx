@@ -13,7 +13,7 @@ import type { V0ImageAsset } from "@/lib/library-bridge";
 import {
   PROJECT_NAV_ZONES,
   buildCatalogHref,
-  getZoneProjects,
+  catalogLeavesForZone,
   previewNavLeaves,
   resolveNavLeaves,
   type ProjectNamGroupId,
@@ -40,7 +40,7 @@ export function ProjectNavDropdown({
   const [namGroupId, setNamGroupId] = React.useState<ProjectNamGroupId>("site-a");
 
   const zone = PROJECT_NAV_ZONES.find((z) => z.id === zoneId) ?? PROJECT_NAV_ZONES[0];
-  const leaves = resolveNavLeaves(getZoneProjects(zone, namGroupId), projects);
+  const leaves = resolveNavLeaves(catalogLeavesForZone(projects, zoneId, namGroupId), projects);
   const { preview, hiddenCount } = previewNavLeaves(leaves);
   const live = preview.filter((l) => l.href);
   const soon = preview.filter((l) => !l.href);

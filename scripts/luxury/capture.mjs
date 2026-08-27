@@ -154,9 +154,8 @@ await visit("/", { width: 1440, height: 900 }, "home-dark-1440", { dark: true, w
 await visit("/", { width: 375, height: 812 }, "home-375", { waitMs: 1500 });
 await visit("/", { width: 1440, height: 900 }, "map-loading-1440", { waitMs: 100, scrollMap: true, throttleMapStyle: true });
 await visit("/du-an", { width: 1440, height: 900 }, "du-an-1440");
-await visit("/du-an/hong-hac-city", { width: 1440, height: 900 }, "detail-hh-1440", { waitMs: 1800 });
-await visit("/du-an/hong-hac-city", { width: 375, height: 812 }, "detail-hh-375", { waitMs: 1800 });
-await visitFlipbookOpen("/du-an/hong-hac-city", { width: 1440, height: 900 }, "flipbook-open-1440", { waitMs: 1800 });
+await visit("/login", { width: 1440, height: 900 }, "login-1440");
+await visit("/cms", { width: 1440, height: 900 }, "cms-redirect-1440");
 await visit("/so-sanh", { width: 1440, height: 900 }, "so-sanh-1440");
 await visit("/so-sanh", { width: 375, height: 812 }, "so-sanh-375");
 await visit("/phap-ly", { width: 1440, height: 900 }, "phap-ly-1440");

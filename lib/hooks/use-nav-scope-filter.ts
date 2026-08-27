@@ -30,9 +30,22 @@ export function parseNavScope(rawZone: string | null, rawNhom: string | null): N
  * Pure — no React/DOM dependency. Filters `items` down to those whose `slug` falls
  * within the given nav scope (zone, optionally group). An unset zone is "no filter".
  */
-export function filterBySlugInScope<T extends { slug: string }>(items: T[], scope: NavScope): T[] {
+export function filterBySlugInScope<T extends { slug: string; navZone?: string | null; namGroup?: string | null }>(
+  items: T[],
+  scope: NavScope,
+): T[] {
   if (!scope.zone) return items;
+  const scoped = items.filter((item) => {
+    if (!item.navZone) return false;
+    if (item.navZone !== scope.zone) return false;
+    if (scope.zone === "nam" && scope.nhom) {
+      return (item.namGroup ?? "site-a") === scope.nhom;
+    }
+    return true;
+  });
+  if (scoped.length > 0) return scoped;
   const allowed = new Set(getBranchSlugs(scope.zone, scope.nhom));
+  if (allowed.size === 0) return [];
   return items.filter((item) => allowed.has(item.slug));
 }
 

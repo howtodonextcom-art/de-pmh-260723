@@ -7,6 +7,8 @@ import { getCatalogFromLibrary, getCompareProjects } from "@/lib/library-bridge"
 import { t } from "@/lib/i18n/t";
 import { buildTitle } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: buildTitle("Hồ sơ pháp lý"),
   description:
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
 
 /** F5 — scoped legal dossiers (Variant A MVP): zone filter + per-document lines + viewer. */
 export default async function LegalPage() {
-  const [{ headerProjects, thumbBySlug }, { projects, source }] = await Promise.all([
+  const [{ headerProjects, thumbBySlug }, { projects }] = await Promise.all([
     getCatalogFromLibrary(),
     getCompareProjects(),
   ]);
@@ -24,7 +26,7 @@ export default async function LegalPage() {
     <CatalogPageShell
       headerProjects={headerProjects}
       thumbBySlug={thumbBySlug}
-      showMockBanner={source === "mock"}
+      showMockBanner={false}
       mainClassName="max-w-5xl px-4"
     >
       <div className="mb-2 flex items-center justify-between">

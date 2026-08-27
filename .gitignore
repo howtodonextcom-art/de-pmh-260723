@@ -16,8 +16,26 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
+# env files (keep the committed template)
 .env*
+!.env.example
+
+# Firebase / GCP service-account keys (never commit)
+service.json
+credentials/*.json
+
+# Runtime catalog written by CMS (Firestore fallback / local uploads)
+/data/runtime/
+/public/cms-uploads/
+
+# Seed backups produced by `npm run backup:seed`
+/backups/seed-*/
+
+# View-model snapshots produced by `npm run backup:views`
+/backups/view-snapshot-*/
+
+# Full catalog exports (vendor + home-content + site-nav + mock-data)
+/backups/full-catalog-*/
 
 # vercel
 .vercel

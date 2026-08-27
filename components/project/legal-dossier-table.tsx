@@ -17,9 +17,7 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import {
   LEGAL_TABLE_ROW_LABELS,
   LEGAL_TABLE_ROW_ORDER,
-  getDossierRaw,
-  isLegalDossierKey,
-  splitLegalContent,
+  resolveLegalGroupLines,
   type LegalDocLine,
   type LegalTableRowId,
 } from "@/lib/legal-documents";
@@ -134,19 +132,8 @@ function useViewportModalBox(enabled: boolean): {
   return { style, viewportHeight };
 }
 
-function resolveDesignUnitLines(project: LegalTableProject): LegalDocLine[] {
-  const ca = project.conceptArchitect;
-  if (!ca?.value?.trim() || ca.status !== "da-co-du-lieu") return [];
-  // Same honesty rule as compare/fact-grid for Hồng Hạc.
-  if (project.slug === "hong-hac-city" && ca.publicNameApproved !== true) return [];
-  return [{ id: "design-unit", text: ca.value.trim(), scanAssetId: null }];
-}
-
 function resolveGroupLines(project: LegalTableProject, rowId: LegalTableRowId): LegalDocLine[] {
-  if (rowId === "designUnit") return resolveDesignUnitLines(project);
-  if (rowId === "constructionPermitsNote") return [];
-  if (!isLegalDossierKey(rowId)) return [];
-  return splitLegalContent(getDossierRaw(project.legalDossier, rowId));
+  return resolveLegalGroupLines(project, rowId);
 }
 
 export function LegalDossierTable({

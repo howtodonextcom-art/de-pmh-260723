@@ -14,6 +14,9 @@ export type V0HeaderProject = {
   region: string;
   status: string;
   alternateNames?: string[] | null;
+  navZone?: "bac" | "nam" | null;
+  namGroup?: "site-a" | "outsite" | null;
+  navLabel?: string | null;
 };
 
 export type V0Project = {
@@ -46,12 +49,15 @@ const STATUS_LABEL: Record<string, string> = {
   "sap-mo-ban": "Sắp mở bán",
 };
 
-const NAME_TO_SLUG: Record<string, string> = {
-  "Hồng Hạc City": "hong-hac-city",
-  "The Regency": "the-regency",
-  "The Sculptura": "the-sculptura",
-  Harmonie: "harmonie",
-};
+function slugFromProjectName(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 /**
  * Vendored copy of the source data (see `v0/vendor/data/`) — this app is
@@ -132,23 +138,13 @@ export function loadProjectsForV0(repoRoot = resolveRepoRoot()): V0Project[] {
 }
 
 export function loadHeaderProjectsForV0(projects: V0Project[]): V0HeaderProject[] {
-  return projects.map((p) => {
-    if (p.slug === "harmonie") {
-      return {
-        slug: p.slug,
-        displayNameVi: p.displayNameVi,
-        region: p.region,
-        status: p.status,
-      };
-    }
-    return {
-      slug: p.slug,
-      displayNameVi: p.displayNameVi,
-      region: p.region,
-      status: p.status,
-      alternateNames: p.alternateNames ?? [],
-    };
-  });
+  return projects.map((p) => ({
+    slug: p.slug,
+    displayNameVi: p.displayNameVi,
+    region: p.region,
+    status: p.status,
+    alternateNames: p.alternateNames ?? [],
+  }));
 }
 
 interface ImageVerifyResult {
@@ -194,7 +190,7 @@ export function loadImagesForV0(repoRoot = resolveRepoRoot()): V0ImageAsset[] {
     const resolvedUrl = mirrorMap.get(assetId) ?? check?.resolvedUrl;
     return {
       assetId,
-      projectSlug: NAME_TO_SLUG[r["Dự án"] ?? ""] ?? (r["Dự án"] ?? ""),
+      projectSlug: slugFromProjectName(r["Dự án"] ?? ""),
       category: r["Danh mục"] ?? "",
       description: r["Mô tả"] ?? "",
       alt: r["Alt text đề xuất"] ?? "",

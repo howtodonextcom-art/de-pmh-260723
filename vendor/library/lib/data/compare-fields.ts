@@ -26,16 +26,9 @@ const PROJECT_TYPE_LABEL: Record<string, string> = {
   "cao-tang": "Cao tầng",
 };
 
-/** Plot codes known from portfolio IA / addresses (honest fallbacks only). */
-const PLOT_CODE_BY_SLUG: Record<string, string> = {
-  "the-regency": "CR5-1B",
-  "the-sculptura": "H14-3",
-};
-
 function plotCell(p: Project): CompareCell {
-  const mapped = PLOT_CODE_BY_SLUG[p.slug];
-  if (mapped) {
-    return { display: mapped, status: "da-co-du-lieu" };
+  if (p.plotCode?.trim()) {
+    return { display: p.plotCode.trim(), status: "da-co-du-lieu" };
   }
   const lo = p.address?.match(/Lô\s+([A-Za-z0-9][A-Za-z0-9/-]*)/i)?.[1];
   if (lo) {
@@ -53,15 +46,15 @@ function plotCell(p: Project): CompareCell {
 }
 
 function unitsCell(p: Project): CompareCell {
-  if (p.slug === "hong-hac-city" && p.unitsByPhase?.length) {
+  if (p.totalUnits) {
+    return { display: `${p.totalUnits.toLocaleString("vi-VN")} căn`, status: p.totalUnitsStatus };
+  }
+  if (p.unitsByPhase?.length) {
     return {
       display: p.unitsByPhase.map((u) => `${u.units} căn ${u.phase.split(" ")[0]}`).join(" · "),
       status: p.unitsByPhaseStatus ?? "da-co-du-lieu",
       tooltip: "Chưa công bố tổng toàn khu — số liệu theo từng giai đoạn.",
     };
-  }
-  if (p.totalUnits) {
-    return { display: `${p.totalUnits.toLocaleString("vi-VN")} căn`, status: p.totalUnitsStatus };
   }
   return { display: "Chưa có", status: p.totalUnitsStatus };
 }

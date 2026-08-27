@@ -7,14 +7,16 @@ import { buildHeroAssetsBySlug, getCatalogFromLibrary, getFullCatalog } from "@/
 import { t } from "@/lib/i18n/t";
 import { buildTitle } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: buildTitle("Danh mục dự án"),
-  description: "Tra cứu, lọc và so sánh nhanh 4 dự án Phú Mỹ Hưng theo khu vực, loại hình và trạng thái dữ liệu.",
+  description: "Tra cứu, lọc và so sánh nhanh các dự án theo khu vực, loại hình và trạng thái dữ liệu.",
 };
 
 /** §3.3 — H1 + live count, toolbar (search/filter/sort + link to /so-sanh), 4 project cards. */
 export default async function ProjectListPage() {
-  const [{ headerProjects, thumbBySlug }, { projects, assets, source }] = await Promise.all([
+  const [{ headerProjects, thumbBySlug }, { projects, assets }] = await Promise.all([
     getCatalogFromLibrary(),
     getFullCatalog(),
   ]);
@@ -25,7 +27,7 @@ export default async function ProjectListPage() {
     <CatalogPageShell
       headerProjects={headerProjects}
       thumbBySlug={thumbBySlug}
-      showMockBanner={source === "mock"}
+      showMockBanner={false}
       mainClassName="max-w-7xl px-4 sm:px-6"
     >
       <div className="mb-8 flex items-baseline gap-3">

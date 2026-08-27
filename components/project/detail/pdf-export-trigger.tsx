@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
+import { publicEnv } from "@/lib/config/env";
 import { t } from "@/lib/i18n/t";
 
 /**
@@ -21,7 +22,7 @@ import { t } from "@/lib/i18n/t";
  * didn't have.
  */
 export async function exportFactSheetPdf(slug?: string) {
-  const functionUrl = process.env.NEXT_PUBLIC_PDF_FUNCTION_URL;
+  const functionUrl = publicEnv.pdfFunctionUrl || undefined;
 
   if (!functionUrl) {
     toast.message(t("pdf.printToast"), { duration: 4000 });

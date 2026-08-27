@@ -89,8 +89,13 @@ function HeroBand({ slug, assets }: HeroBandProps) {
 // ─── DemoShell ────────────────────────────────────────────────────────────────
 
 export function DemoShell({ headerProjects, projects, assets, thumbBySlug }: DemoShellProps) {
-  // P0-1: default slug = hong-hac-city (first in array)
-  const [selectedSlug, setSelectedSlug] = React.useState<string>("hong-hac-city");
+  const [selectedSlug, setSelectedSlug] = React.useState<string>(headerProjects[0]?.slug ?? "");
+
+  React.useEffect(() => {
+    if (!selectedSlug && headerProjects[0]?.slug) {
+      setSelectedSlug(headerProjects[0].slug);
+    }
+  }, [headerProjects, selectedSlug]);
 
   const selectedProject = React.useMemo(
     () => projects.find((p) => p.slug === selectedSlug) ?? null,

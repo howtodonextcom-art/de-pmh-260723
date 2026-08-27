@@ -11,7 +11,7 @@ import type { HeaderProject } from "@/lib/types";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 import {
   PROJECT_NAV_ZONES,
-  getZoneProjects,
+  catalogLeavesForZone,
   resolveNavLeaves,
   type ProjectNavZoneId,
   type ResolvedNavLeaf,
@@ -91,7 +91,7 @@ export function MobileNav({
               onToggle={() => setExpandedZone((z) => (z === "bac" ? null : "bac"))}
             >
               <MobileNavLeafList
-                leaves={resolveNavLeaves(getZoneProjects(bacZone, "site-a"), projects)}
+                leaves={resolveNavLeaves(catalogLeavesForZone(projects, "bac"), projects)}
                 comingSoonLabel={t("nav.comingSoon")}
                 onNavigate={() => setOpen(false)}
               />
@@ -111,7 +111,7 @@ export function MobileNav({
                       {group.id === "site-a" ? t("nav.siteA") : t("nav.outsite")}
                     </p>
                     <MobileNavLeafList
-                      leaves={resolveNavLeaves(getZoneProjects(namZone, group.id), projects)}
+                      leaves={resolveNavLeaves(catalogLeavesForZone(projects, "nam", group.id), projects)}
                       comingSoonLabel={t("nav.comingSoon")}
                       onNavigate={() => setOpen(false)}
                     />

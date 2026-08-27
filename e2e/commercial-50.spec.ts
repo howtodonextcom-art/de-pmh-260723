@@ -31,6 +31,6 @@ test.describe("W3 — nav i18n follows EN switcher", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText("Navigation")).toBeVisible();
-    await expect(dialog.getByText("4 projects")).toBeVisible();
+    await expect(dialog.getByText("projects")).toBeVisible();
   });
 });

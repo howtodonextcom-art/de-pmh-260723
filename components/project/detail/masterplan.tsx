@@ -4,7 +4,7 @@ import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 
-/** D5 — Hồng Hạc City only, gated on subdivisions.length > 0 (SPEC §3.4 D5). */
+/** D5 — gated on subdivisions.length > 0; unit-mix stats when present. */
 export function DetailMasterplan({
   project,
   masterplanAsset,
@@ -14,8 +14,8 @@ export function DetailMasterplan({
 }) {
   if (!project.subdivisions || project.subdivisions.length === 0) return null;
 
-  const detailed = project.subdivisions.find((s) => s.startsWith("Hồng Phát"));
   const imageUrl = masterplanAsset ? (masterplanAsset.resolvedUrl ?? masterplanAsset.sourceFileUrl) : null;
+  const mix = project.unitMix ?? [];
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
@@ -46,12 +46,11 @@ export function DetailMasterplan({
         </div>
         {project.subdivisions.map((s) => (
           <TabsContent key={s} value={s} className="pt-4">
-            {s === detailed ? (
+            {mix.length > 0 ? (
               <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
-                <Stat label="Sản phẩm" value="397" />
-                <Stat label="Shophouse" value="78" />
-                <Stat label="Nhà phố liền kề" value="169" />
-                <Stat label="Song lập / đơn lập" value="110 / 40" />
+                {mix.map((row) => (
+                  <Stat key={`${row.type}-${row.count}`} label={row.type} value={String(row.count)} />
+                ))}
               </div>
             ) : (
               <span className="inline-block rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">

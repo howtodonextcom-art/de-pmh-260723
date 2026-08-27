@@ -11,6 +11,15 @@ export function FeaturedCards({
   projects: FullProject[];
   heroAssetsBySlug: Record<string, V0ImageAsset | null>;
 }) {
+  if (projects.length === 0) {
+    return (
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+        <h2 className="mb-4 font-display text-2xl font-semibold">{t("home.featuredHeading")}</h2>
+        <p className="text-sm text-muted-foreground">{t("home.emptyCatalog")}</p>
+      </section>
+    );
+  }
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <h2 className="mb-8 font-display text-2xl font-semibold">{t("home.featuredHeading")}</h2>

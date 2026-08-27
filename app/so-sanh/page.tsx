@@ -8,6 +8,8 @@ import { getCatalogFromLibrary, getCompareProjects } from "@/lib/library-bridge"
 import { t } from "@/lib/i18n/t";
 import { buildTitle } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: buildTitle("So sánh dự án"),
   description:
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ComparePage() {
-  const [{ headerProjects, thumbBySlug }, { projects, source }] = await Promise.all([
+  const [{ headerProjects, thumbBySlug }, { projects }] = await Promise.all([
     getCatalogFromLibrary(),
     getCompareProjects(),
   ]);
@@ -24,7 +26,7 @@ export default async function ComparePage() {
     <CatalogPageShell
       headerProjects={headerProjects}
       thumbBySlug={thumbBySlug}
-      showMockBanner={source === "mock"}
+      showMockBanner={false}
       mainClassName="max-w-5xl px-4"
     >
       <h1 className="mb-1 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">

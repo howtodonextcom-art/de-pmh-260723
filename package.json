@@ -14,7 +14,11 @@
     "luxury:capture": "node scripts/luxury/capture.mjs",
     "luxury:diff": "node scripts/luxury/diff.mjs",
     "luxury:score": "node scripts/luxury/score.mjs",
-    "luxury:qa:auto": "node scripts/luxury/capture.mjs && node scripts/luxury/diff.mjs && node scripts/luxury/score.mjs"
+    "luxury:qa:auto": "node scripts/luxury/capture.mjs && node scripts/luxury/diff.mjs && node scripts/luxury/score.mjs",
+    "backup:seed": "node scripts/backup-seed.mjs",
+    "backup:views": "node scripts/export-view-snapshot.mjs",
+    "backup:full": "node scripts/backup-full-catalog.mjs",
+    "cms:seed": "node scripts/seed-firestore-from-backup.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -22,6 +26,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "firebase": "^12.18.0",
+    "firebase-admin": "^13.10.0",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.16.0",
     "maplibre-gl": "^5.24.0",

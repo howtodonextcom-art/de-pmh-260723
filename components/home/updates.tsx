@@ -8,7 +8,6 @@ import type { UpdateEntry } from "@/lib/home-content";
 import type { Project as FullProject } from "@library/types/project";
 
 export function Updates({ updates, projects }: { updates: UpdateEntry[]; projects: FullProject[] }) {
-  if (updates.length === 0) return null;
   const nameBySlug = new Map(projects.map((p) => [p.slug, p.displayNameVi]));
 
   return (
@@ -16,6 +15,9 @@ export function Updates({ updates, projects }: { updates: UpdateEntry[]; project
       <Reveal className="grid gap-8 md:grid-cols-2">
         <div>
           <h2 className="mb-6 font-display text-2xl font-semibold">{t("home.updatesHeading")}</h2>
+          {updates.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t("home.emptyCatalog")}</p>
+          ) : (
           <ul className="space-y-4">
             {updates.map((u) => (
               <li key={u.id} className="flex gap-4 border-b border-border pb-3 text-sm">
@@ -29,6 +31,7 @@ export function Updates({ updates, projects }: { updates: UpdateEntry[]; project
               </li>
             ))}
           </ul>
+          )}
         </div>
 
         <div className="flex flex-col items-start justify-center gap-4 rounded-2xl bg-muted/40 p-8">

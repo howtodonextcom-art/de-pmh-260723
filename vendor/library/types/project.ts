@@ -119,6 +119,11 @@ export interface Project {
   dataConfidence: "high" | "medium-high" | "medium" | "low";
   lastVerifiedAt: string;
   featured?: boolean;
+  plotCode?: string | null;
+  navZone?: "bac" | "nam" | null;
+  namGroup?: "site-a" | "outsite" | null;
+  navLabel?: string | null;
+  saBanUrl?: string | null;
 }
 
 export interface ImageAsset {

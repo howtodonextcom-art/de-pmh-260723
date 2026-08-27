@@ -1,5 +1,5 @@
 /**
- * F04 — beforeInteractive theme flash prevention.
+ * F04 — blocking theme flash prevention (inline <script> in layout head).
  *
  * Mirrors next-themes' own resolution logic (see `ThemeProvider` in
  * `app/layout.tsx`: `attribute="class"`, no custom `storageKey` → default

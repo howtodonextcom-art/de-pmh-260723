@@ -12,48 +12,91 @@ import {
 } from "@library/library/seed-adapter";
 import type { Project as FullProject } from "@library/types/project";
 
+import { loadCatalog } from "@/lib/catalog";
+import type { CatalogSource, CmsAsset, CmsProjectDoc } from "@/lib/cms/types";
+
 export type { V0HeaderProject, V0ImageAsset, V0Project, FullProject };
+export type PublicCatalogSource = CatalogSource;
+
+const STATUS_LABEL: Record<string, string> = {
+  "dang-trien-khai": "Đang triển khai",
+  "dang-ban": "Đang mở bán",
+  "da-ban-giao": "Đã bàn giao",
+  "sap-mo-ban": "Sắp mở bán",
+};
+
+function statusLabel(status: string): string {
+  return STATUS_LABEL[status] ?? status;
+}
+
+function toAsset(asset: CmsAsset): V0ImageAsset {
+  return {
+    assetId: asset.assetId,
+    projectSlug: asset.projectSlug,
+    category: asset.category,
+    description: asset.description,
+    alt: asset.alt,
+    sourcePageUrl: asset.sourcePageUrl,
+    sourceFileUrl: asset.sourceFileUrl,
+    isRender: asset.isRender,
+    verified: asset.verified,
+    resolvedUrl: asset.resolvedUrl ?? asset.sourceFileUrl,
+  };
+}
+
+function toHeader(project: CmsProjectDoc): V0HeaderProject {
+  return {
+    slug: project.slug,
+    displayNameVi: project.displayNameVi,
+    region: project.region,
+    status: statusLabel(project.status),
+    alternateNames: project.alternateNames?.length ? project.alternateNames : undefined,
+    navZone: project.navZone ?? null,
+    namGroup: project.namGroup ?? null,
+    navLabel: project.navLabel ?? null,
+  };
+}
+
+function toSlimProject(project: CmsProjectDoc): V0Project {
+  return {
+    id: project.id || project.slug,
+    slug: project.slug,
+    displayNameVi: project.displayNameVi,
+    region: project.region,
+    status: statusLabel(project.status),
+    alternateNames: project.alternateNames?.length ? project.alternateNames : undefined,
+    legalDossier: project.legalDossier ?? null,
+  };
+}
+
+function collectAssets(projects: CmsProjectDoc[]): V0ImageAsset[] {
+  return projects.flatMap((project) => (project.assets ?? []).map(toAsset));
+}
 
 /**
- * Loads catalog from parent-repo library seeds (JSON + CSV).
- * Falls back to v0 mock-data if library files are missing.
+ * Public catalog: Firestore first, then local runtime JSON.
+ * Empty catalog is valid — never throw, never fall back to named mock projects.
  */
 export async function getCatalogFromLibrary(): Promise<{
-  source: "library" | "mock";
+  source: PublicCatalogSource;
   headerProjects: V0HeaderProject[];
   projects: V0Project[];
   assets: V0ImageAsset[];
   thumbBySlug: Record<string, V0ImageAsset | null>;
 }> {
-  try {
-    const { headerProjects, projects, assets } = loadLibraryCatalog();
-    if (projects.length === 0) {
-      throw new Error("library returned zero projects");
-    }
-    return { source: "library", headerProjects, projects, assets, thumbBySlug: buildThumbBySlug(headerProjects, assets) };
-  } catch (err) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "Library catalog unavailable in production: " + (err instanceof Error ? err.message : String(err)),
-      );
-    }
-    const mock = await import("@/lib/mock-data");
-    return {
-      source: "mock",
-      headerProjects: mock.MOCK_HEADER_PROJECTS,
-      projects: mock.MOCK_PROJECTS,
-      assets: mock.MOCK_ASSETS,
-      thumbBySlug: buildThumbBySlug(mock.MOCK_HEADER_PROJECTS, mock.MOCK_ASSETS),
-    };
-  }
+  const catalog = await loadCatalog();
+  const headerProjects = catalog.projects.map(toHeader);
+  const projects = catalog.projects.map(toSlimProject);
+  const assets = collectAssets(catalog.projects);
+  return {
+    source: catalog.source,
+    headerProjects,
+    projects,
+    assets,
+    thumbBySlug: buildThumbBySlug(headerProjects, assets),
+  };
 }
 
-/**
- * Maps each project's slug to its designated hero image asset — prefers the
- * project's `heroAssetId` when set, falling back to the first photo tagged
- * with that project's slug. Shared by `/`, `/du-an`, and `/du-an/[slug]` to
- * feed ProjectCard / DetailHero / DetailRelated.
- */
 export function buildHeroAssetsBySlug(
   projects: Pick<FullProject, "slug" | "heroAssetId">[],
   assets: V0ImageAsset[],
@@ -68,7 +111,6 @@ export function buildHeroAssetsBySlug(
   );
 }
 
-/** Nav dropdown (R04) doesn't need the exact `heroAssetId` — any verified photo works for a 96×64 thumb. */
 function buildThumbBySlug(
   headerProjects: { slug: string }[],
   assets: V0ImageAsset[],
@@ -76,62 +118,49 @@ function buildThumbBySlug(
   return Object.fromEntries(
     headerProjects.map((p) => [
       p.slug,
-      assets.find((a) => a.projectSlug === p.slug && a.verified) ?? assets.find((a) => a.projectSlug === p.slug) ?? null,
+      assets.find((a) => a.projectSlug === p.slug && a.verified) ??
+        assets.find((a) => a.projectSlug === p.slug) ??
+        null,
     ]),
   );
 }
 
-/**
- * Full canonical `Project[]` for /so-sanh — richer than `getCatalogFromLibrary`'s
- * `V0Project` (which the gallery/legal demo shell intentionally keeps slim).
- * Falls back to a compare-shaped mock (honest "chưa có dữ liệu" defaults, not
- * invented copy) if the parent repo's schema JSON isn't reachable.
- */
 export async function getCompareProjects(): Promise<{
-  source: "library" | "mock";
+  source: PublicCatalogSource;
   projects: FullProject[];
 }> {
-  try {
-    const projects = loadFullProjectsForV0();
-    if (projects.length === 0) {
-      throw new Error("library returned zero projects");
-    }
-    return { source: "library", projects };
-  } catch (err) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "Library catalog unavailable in production: " + (err instanceof Error ? err.message : String(err)),
-      );
-    }
-    const mock = await import("@/lib/mock-data");
-    return { source: "mock", projects: mock.MOCK_COMPARE_PROJECTS };
-  }
+  const catalog = await loadCatalog();
+  return { source: catalog.source, projects: catalog.projects };
 }
 
-/**
- * Full canonical `Project[]` + gallery assets — for /du-an (list + detail),
- * which need both the compare-grade project fields and per-project photos.
- */
 export async function getFullCatalog(): Promise<{
-  source: "library" | "mock";
+  source: PublicCatalogSource;
   projects: FullProject[];
   assets: V0ImageAsset[];
 }> {
+  const catalog = await loadCatalog();
+  return {
+    source: catalog.source,
+    projects: catalog.projects,
+    assets: collectAssets(catalog.projects),
+  };
+}
+
+export async function getSiteCatalogSettings() {
+  const catalog = await loadCatalog();
+  return catalog.settings;
+}
+
+/** Vendor JSON leftover — used only by backup:views / tests, not the public site. */
+export function loadVendorSeedIfPresent() {
   try {
     const root = resolveRepoRoot();
-    const projects = loadFullProjectsForV0(root);
-    if (projects.length === 0) {
-      throw new Error("library returned zero projects");
-    }
-    const assets = ensureGalleryFloor(loadImagesForV0(root), 4);
-    return { source: "library", projects, assets };
-  } catch (err) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "Library catalog unavailable in production: " + (err instanceof Error ? err.message : String(err)),
-      );
-    }
-    const mock = await import("@/lib/mock-data");
-    return { source: "mock", projects: mock.MOCK_COMPARE_PROJECTS, assets: mock.MOCK_ASSETS };
+    return {
+      projects: loadFullProjectsForV0(root),
+      assets: ensureGalleryFloor(loadImagesForV0(root), 4),
+      catalog: loadLibraryCatalog(),
+    };
+  } catch {
+    return { projects: [], assets: [], catalog: null };
   }
 }

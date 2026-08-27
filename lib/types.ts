@@ -5,7 +5,10 @@ export interface HeaderProject {
   displayNameVi: string;
   region: string;
   status: string;
-  alternateNames?: string[] | null; // MAY be missing from Firestore
+  alternateNames?: string[] | null;
+  navZone?: "bac" | "nam" | null;
+  namGroup?: "site-a" | "outsite" | null;
+  navLabel?: string | null;
 }
 
 export interface LegalDossier {
@@ -87,4 +90,5 @@ export const CATEGORY_LABELS: Record<string, string> = {
   interior: "Nội thất",
   floorplans: "Mặt bằng",
   logos: "Logo",
+  product: "Sản phẩm",
 };

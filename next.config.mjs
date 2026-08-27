@@ -19,6 +19,9 @@ const nextConfig = {
       { protocol: "https", hostname: "honghacphumyhung.vn" },
       { protocol: "https", hostname: "**.honghacphumyhung.vn" },
       { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "firebasestorage.googleapis.com" },
+      { protocol: "https", hostname: "*.firebasestorage.app" },
+      { protocol: "https", hostname: "storage.googleapis.com" },
     ],
   },
   // `@library` used to point at the parent monorepo's `../src` (cross-repo

@@ -9,8 +9,8 @@ export interface FactCell {
 }
 
 function scaleDescriptor(p: Project): string {
-  if (p.slug === "hong-hac-city") {
-    return `${p.subdivisions?.length ?? 0} phân khu`;
+  if (p.subdivisions?.length) {
+    return `${p.subdivisions.length} phân khu`;
   }
   const parts: string[] = [];
   if (p.blocks) parts.push(`${p.blocks} block${p.blocks > 1 ? "s" : ""}`);
@@ -18,14 +18,15 @@ function scaleDescriptor(p: Project): string {
   return parts.join(" · ") || "Chưa có";
 }
 
-function unitsDisplay(p: Project): { value: string; status: FieldStatus } {
-  if (p.slug === "hong-hac-city" && p.unitsByPhase?.length) {
+function unitsDisplay(p: Project): { value: string; status: FieldStatus; tooltip?: string } {
+  if (p.totalUnits) return { value: `${p.totalUnits.toLocaleString("vi-VN")} căn`, status: p.totalUnitsStatus };
+  if (p.unitsByPhase?.length) {
     return {
       value: p.unitsByPhase.map((u) => `${u.units} căn ${u.phase.split(" ")[0]}`).join(" · "),
       status: p.unitsByPhaseStatus ?? "da-co-du-lieu",
+      tooltip: "Chưa công bố tổng toàn khu",
     };
   }
-  if (p.totalUnits) return { value: `${p.totalUnits.toLocaleString("vi-VN")} căn`, status: p.totalUnitsStatus };
   return { value: "Chưa có", status: p.totalUnitsStatus };
 }
 
@@ -44,7 +45,7 @@ export function buildFactGrid(p: Project): FactCell[] {
       label: "Số căn",
       value: units.value,
       status: units.status,
-      tooltip: p.slug === "hong-hac-city" ? "Chưa công bố tổng toàn khu" : undefined,
+      tooltip: units.tooltip,
     },
     {
       label: "Diện tích đất",

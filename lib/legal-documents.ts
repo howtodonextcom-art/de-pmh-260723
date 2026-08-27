@@ -1,4 +1,4 @@
-import type { LegalDossier, LegalDossierKey } from "@/lib/types";
+import type { LegalDossier, LegalDossierKey } from "./types";
 
 /** Table/timeline row ids — dossier keys plus design unit (from conceptArchitect). */
 export type LegalTableRowId = LegalDossierKey | "designUnit";
@@ -88,6 +88,35 @@ export function getDossierRaw(
   if (!dossier) return null;
   const value = dossier[key];
   return typeof value === "string" && value.trim() ? value : null;
+}
+
+/** Minimal project shape shared by the legal table UI and view-snapshot export. */
+export type LegalGroupProject = {
+  slug: string;
+  legalDossier?: LegalDossier | null;
+  conceptArchitect?: {
+    value?: string | null;
+    status?: string | null;
+    publicNameApproved?: boolean;
+  } | null;
+};
+
+function resolveDesignUnitLines(project: LegalGroupProject): LegalDocLine[] {
+  const ca = project.conceptArchitect;
+  if (!ca?.value?.trim() || ca.status !== "da-co-du-lieu") return [];
+  if (ca.publicNameApproved === false) return [];
+  return [{ id: "design-unit", text: ca.value.trim(), scanAssetId: null }];
+}
+
+/** Same grouping the `/phap-ly` table renders (order + design-unit honesty). */
+export function resolveLegalGroupLines(
+  project: LegalGroupProject,
+  rowId: LegalTableRowId
+): LegalDocLine[] {
+  if (rowId === "designUnit") return resolveDesignUnitLines(project);
+  if (rowId === "constructionPermitsNote") return [];
+  if (!isLegalDossierKey(rowId)) return [];
+  return splitLegalContent(getDossierRaw(project.legalDossier, rowId));
 }
 
 /** Proposed Phase-2 registry shape (not persisted yet). */

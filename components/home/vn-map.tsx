@@ -7,11 +7,6 @@ import { Reveal } from "@/components/shared/reveal";
 import { t } from "@/lib/i18n/t";
 import type { RegionPin } from "@/components/home/region-map-canvas";
 
-const SA_BAN_HH_URL =
-  "https://www.bacninhhonghaccity.vn/sa-ban?utm_source=ded-pmh&utm_medium=home-map&utm_campaign=map-cta";
-
-// Lazy: maplibre-gl is a sizable client-only dependency — load it only when
-// the home route actually renders this section, not on every route's bundle.
 const RegionMapCanvas = dynamic(
   () => import("@/components/home/region-map-canvas").then((m) => m.RegionMapCanvas),
   {
@@ -30,11 +25,9 @@ const RegionMapCanvas = dynamic(
   },
 );
 
-function isBacNinh(region: string) {
-  return region === "Bắc Ninh" || region.toLowerCase().includes("bắc ninh");
-}
+export type HomeRegionPin = RegionPin & { saBanUrl?: string | null };
 
-export function VnMap({ regionCounts }: { regionCounts: RegionPin[] }) {
+export function VnMap({ regionCounts }: { regionCounts: HomeRegionPin[] }) {
   const router = useRouter();
 
   return (
@@ -48,13 +41,27 @@ export function VnMap({ regionCounts }: { regionCounts: RegionPin[] }) {
       </h2>
       <Reveal className="grid items-stretch gap-6 md:grid-cols-12 md:gap-8">
         <div className="md:col-span-8 lg:col-span-9">
-          <RegionMapCanvas
-            regions={regionCounts}
-            onSelectRegion={(query) => router.push(`/du-an?${query}`)}
-          />
+          {regionCounts.length > 0 ? (
+            <RegionMapCanvas
+              regions={regionCounts}
+              onSelectRegion={(query) => router.push(`/du-an?${query}`)}
+            />
+          ) : (
+            <div
+              data-testid="region-map-stage"
+              className="relative flex min-h-[40vh] items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-muted/30 md:min-h-[65vh]"
+            >
+              <p className="px-6 text-center text-sm text-muted-foreground">{t("home.emptyCatalog")}</p>
+            </div>
+          )}
         </div>
         <div className="flex flex-col gap-3 md:col-span-4 md:justify-start md:pt-2 lg:col-span-3">
           <p className="text-sm text-muted-foreground">{t("home.mapListIntro")}</p>
+          {regionCounts.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-border px-4 py-6 text-sm text-muted-foreground">
+              {t("home.emptyCatalog")}
+            </p>
+          ) : null}
           {regionCounts.map((r) => (
             <div
               key={r.region}
@@ -74,12 +81,12 @@ export function VnMap({ regionCounts }: { regionCounts: RegionPin[] }) {
                   {r.count} {t("home.mapUnit")}
                 </span>
               </button>
-              {isBacNinh(r.region) ? (
+              {r.saBanUrl ? (
                 <a
-                  href={SA_BAN_HH_URL}
+                  href={r.saBanUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  data-testid="sa-ban-hh-cta"
+                  data-testid="sa-ban-cta"
                   className="focus-visible:ring-ring mt-3 inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:outline-none"
                 >
                   {t("home.mapSaBanCta")}

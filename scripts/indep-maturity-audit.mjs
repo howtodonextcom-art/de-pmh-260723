@@ -103,7 +103,7 @@ await visit("/", { width: 1440, height: 900 }, "home-desktop-1440", {
 });
 
 await visit("/du-an", { width: 1440, height: 900 }, "du-an-desktop-1440");
-await visit("/du-an/hong-hac-city", { width: 1440, height: 900 }, "detail-hh-desktop-1440", { waitMs: 1800 });
+await visit("/login", { width: 1440, height: 900 }, "login-desktop-1440");
 await visit("/so-sanh", { width: 1440, height: 900 }, "so-sanh-desktop-1440");
 await visit("/phap-ly", { width: 1440, height: 900 }, "phap-ly-desktop-1440");
 await visit("/lab", { width: 1440, height: 900 }, "lab-desktop-1440");
@@ -112,7 +112,6 @@ await visit("/lab", { width: 1440, height: 900 }, "lab-desktop-1440");
 await visit("/", { width: 375, height: 812 }, "home-mobile-375", { waitMs: 1500 });
 await visit("/du-an", { width: 375, height: 812 }, "du-an-mobile-375");
 await visit("/so-sanh", { width: 375, height: 812 }, "so-sanh-mobile-375");
-await visit("/du-an/hong-hac-city", { width: 375, height: 812 }, "detail-hh-mobile-375", { waitMs: 1800 });
 
 // Dark home
 await visit("/", { width: 1440, height: 900 }, "home-dark-1440", { dark: true, waitMs: 1500 });

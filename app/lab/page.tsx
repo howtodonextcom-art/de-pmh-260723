@@ -4,6 +4,8 @@ import { DemoShell } from "@/components/demo-shell";
 import { getCatalogFromLibrary } from "@/lib/library-bridge";
 import { buildTitle } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: buildTitle("Lab", "DED-PMH v0"),
   description: "Track A component lab: legal dossier + gallery demo shell (moved off the home route).",
@@ -11,17 +13,16 @@ export const metadata: Metadata = {
 };
 
 export default async function LabPage() {
-  const { headerProjects, projects, assets, source, thumbBySlug } = await getCatalogFromLibrary();
+  const { headerProjects, projects, assets, thumbBySlug } = await getCatalogFromLibrary();
 
   return (
     <>
       <p className="bg-muted px-4 py-2 text-center text-xs text-muted-foreground">
         Khu vực thử nghiệm nội bộ — không phải trang sản phẩm chính, không lập chỉ mục tìm kiếm.
       </p>
-      {source === "mock" ? (
-        <p className="bg-amber-500/15 px-4 py-2 text-center text-xs text-amber-800 dark:text-amber-200">
-          Library seed unavailable — using v0 mock-data fallback. Run from repo with{" "}
-          <code>13_PROJECT_DATA_SCHEMA.json</code>.
+      {projects.length === 0 ? (
+        <p className="bg-muted px-4 py-2 text-center text-xs text-muted-foreground">
+          Chưa có dự án trong danh mục.
         </p>
       ) : null}
       <DemoShell

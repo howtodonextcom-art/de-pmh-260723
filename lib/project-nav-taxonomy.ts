@@ -81,6 +81,25 @@ export function getZoneProjects(
   return zone.groups.find((g) => g.id === namGroupId)?.projects ?? [];
 }
 
+export function catalogLeavesForZone(
+  projects: HeaderProject[],
+  zoneId: ProjectNavZoneId,
+  namGroupId: ProjectNamGroupId = "site-a",
+): ProjectNavLeaf[] {
+  return projects
+    .filter((project) => {
+      if (project.navZone !== zoneId) return false;
+      if (zoneId === "nam") return (project.namGroup ?? "site-a") === namGroupId;
+      return true;
+    })
+    .map((project) => ({
+      id: project.slug,
+      label: project.navLabel?.trim() || project.displayNameVi,
+      location: project.region,
+      slug: project.slug,
+    }));
+}
+
 /** Max thumb rows in the desktop mega-menu — full browse belongs on `/du-an`. */
 export const NAV_MENU_PREVIEW_LIMIT = 6;
 

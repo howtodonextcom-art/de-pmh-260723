@@ -21,9 +21,10 @@ import { DetailSources } from "@/components/project/detail/sources";
 import { buildHeroAssetsBySlug, getCatalogFromLibrary, getFullCatalog } from "@/lib/library-bridge";
 import { buildTitle } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
-  const { projects } = await getFullCatalog();
-  return projects.map((p) => ({ slug: p.slug }));
+  return [];
 }
 
 export async function generateMetadata({

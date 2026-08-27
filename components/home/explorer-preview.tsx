@@ -16,6 +16,20 @@ export function ExplorerPreview({
   projects: FullProject[];
   heroAssetsBySlug: Record<string, V0ImageAsset | null>;
 }) {
+  if (projects.length === 0) {
+    return (
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+        <div className="mb-4 flex items-end justify-between">
+          <h2 className="font-display text-2xl font-semibold">{t("home.explorerHeading")}</h2>
+          <Link href="/du-an" className={cn(buttonVariants({ variant: "ghost" }))}>
+            {t("home.explorerCta")} <ArrowRightIcon className="size-4" />
+          </Link>
+        </div>
+        <p className="text-sm text-muted-foreground">{t("home.emptyCatalog")}</p>
+      </section>
+    );
+  }
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <div className="mb-8 flex items-end justify-between">

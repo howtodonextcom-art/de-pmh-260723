@@ -54,21 +54,41 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
   }
 
   async function onUpload(file: File, category: string) {
-    const body = new FormData();
-    body.set("file", file);
-    body.set("slug", doc.slug);
-    body.set("category", category);
-    body.set("alt", `${doc.displayNameVi} — ${category}`);
-    const res = await fetch("/api/cms/upload", { method: "POST", body });
-    const data = (await res.json()) as { asset?: CmsAsset };
-    if (!data.asset) return;
-    const assets = [...(doc.assets ?? []), data.asset];
-    const next: Partial<CmsProjectDoc> = { assets };
-    if (category === "hero" && !doc.heroAssetId) next.heroAssetId = data.asset.assetId;
-    if (category !== "hero") {
-      next.galleryAssetIds = [...(doc.galleryAssetIds ?? []), data.asset.assetId];
+    try {
+      const body = new FormData();
+      body.set("file", file);
+      body.set("slug", doc.slug);
+      body.set("category", category);
+      body.set("alt", `${doc.displayNameVi} — ${category}`);
+      const res = await fetch("/api/cms/upload", { method: "POST", body });
+      const raw = await res.text();
+      let data: { asset?: CmsAsset; error?: string } = {};
+      try {
+        data = raw ? (JSON.parse(raw) as { asset?: CmsAsset; error?: string }) : {};
+      } catch {
+        data = {};
+      }
+      if (!res.ok || !data.asset) {
+        setStatus(
+          data.error === "unauthorized"
+            ? "Phiên đăng nhập hết hạn. Đăng nhập lại."
+            : data.error === "storage-unconfigured"
+              ? "CMS chưa kết nối Firebase Storage."
+              : "Không tải được ảnh.",
+        );
+        return;
+      }
+      const assets = [...(doc.assets ?? []), data.asset];
+      const next: Partial<CmsProjectDoc> = { assets };
+      if (category === "hero" && !doc.heroAssetId) next.heroAssetId = data.asset.assetId;
+      if (category !== "hero") {
+        next.galleryAssetIds = [...(doc.galleryAssetIds ?? []), data.asset.assetId];
+      }
+      patch(next);
+      setStatus("Đã thêm ảnh. Nhớ Lưu dự án.");
+    } catch {
+      setStatus("Không tải được ảnh.");
     }
-    patch(next);
   }
 
   async function onSave(event: React.FormEvent) {

@@ -24,13 +24,31 @@ export function NewProjectForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ displayNameVi: name, slug: slug || slugifyName(name) }),
       });
-      const data = (await res.json()) as { project?: { slug: string }; error?: string };
+      const raw = await res.text();
+      let data: { project?: { slug: string }; error?: string } = {};
+      try {
+        data = raw ? (JSON.parse(raw) as { project?: { slug: string }; error?: string }) : {};
+      } catch {
+        data = {};
+      }
       if (!res.ok || !data.project) {
-        setError(data.error === "slug-taken" ? "Slug đã tồn tại." : "Không tạo được dự án.");
+        const message =
+          data.error === "slug-taken"
+            ? "Slug đã tồn tại."
+            : data.error === "unauthorized"
+              ? "Phiên đăng nhập hết hạn. Đăng nhập lại."
+              : data.error === "firestore-unconfigured"
+                ? "CMS chưa kết nối Firestore."
+                : data.error === "persist-failed"
+                  ? "Không lưu được dự án lên Firestore."
+                  : "Không tạo được dự án.";
+        setError(message);
         return;
       }
       router.push(`/cms/projects/${data.project.slug}`);
       router.refresh();
+    } catch {
+      setError("Không tạo được dự án.");
     } finally {
       setPending(false);
     }

@@ -16,8 +16,20 @@ export type CmsSessionUser = {
   email: string | null;
 };
 
+export async function readCmsSessionCookieValue(): Promise<string | null> {
+  return (await cookies()).get(CMS_SESSION_COOKIE)?.value ?? null;
+}
+
+/** Raw Firebase ID token when the CMS cookie is the idt.* fallback. */
+export async function readCmsIdToken(): Promise<string | null> {
+  const token = await readCmsSessionCookieValue();
+  if (!token) return null;
+  if (isIdTokenSessionCookie(token)) return token.slice(CMS_ID_TOKEN_COOKIE_PREFIX.length);
+  return null;
+}
+
 export async function readCmsSession(): Promise<CmsSessionUser | null> {
-  const token = (await cookies()).get(CMS_SESSION_COOKIE)?.value;
+  const token = await readCmsSessionCookieValue();
   if (!token) return null;
   if (isIdTokenSessionCookie(token)) {
     return lookupFirebaseIdToken(token.slice(CMS_ID_TOKEN_COOKIE_PREFIX.length));

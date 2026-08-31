@@ -38,8 +38,13 @@ export function readRuntimeCatalog(): RuntimeFile {
 }
 
 export function writeRuntimeCatalog(next: RuntimeFile): void {
-  mkdirSync(RUNTIME_DIR, { recursive: true });
-  writeFileSync(CATALOG_FILE, JSON.stringify(next, null, 2) + "\n", "utf8");
+  try {
+    mkdirSync(RUNTIME_DIR, { recursive: true });
+    writeFileSync(CATALOG_FILE, JSON.stringify(next, null, 2) + "\n", "utf8");
+  } catch (err) {
+    if (process.env.VERCEL) return;
+    throw err;
+  }
 }
 
 export function upsertRuntimeProject(doc: CmsProjectDoc): void {

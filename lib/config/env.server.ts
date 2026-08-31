@@ -1,8 +1,10 @@
 import "server-only";
 
+import { isFirebaseAdminReady, resolveFirebaseAdminProjectId } from "@/lib/config/admin-project-id";
+
 /**
  * Server-only env (Firebase Admin credentials, credential file path).
- * Unused until Phase 4. Do not import from Client Components.
+ * Do not import from Client Components.
  */
 
 function optional(key: string): string {
@@ -20,18 +22,19 @@ export type FirebaseAdminEnv = {
 
 export function getFirebaseAdminEnv(): FirebaseAdminEnv {
   return {
-    projectId: optional("FIREBASE_PROJECT_ID"),
+    projectId: resolveFirebaseAdminProjectId(
+      optional("FIREBASE_PROJECT_ID"),
+      optional("NEXT_PUBLIC_FIREBASE_PROJECT_ID"),
+    ),
     clientEmail: optional("FIREBASE_CLIENT_EMAIL"),
     privateKey: optional("FIREBASE_PRIVATE_KEY"),
     credentialsPath: optional("GOOGLE_APPLICATION_CREDENTIALS"),
   };
 }
 
-/** True when enough Admin config exists to initialize a future Firebase Admin SDK. */
+/** True when Admin SDK can init: projectId + (PEM env pair OR local key file). */
 export function isFirebaseAdminConfigured(): boolean {
-  const env = getFirebaseAdminEnv();
-  if (!env.projectId) return false;
-  return Boolean(env.credentialsPath || (env.clientEmail && env.privateKey));
+  return isFirebaseAdminReady(getFirebaseAdminEnv());
 }
 
 export type FirebaseClientEnv = {

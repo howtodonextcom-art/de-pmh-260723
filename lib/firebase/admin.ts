@@ -27,7 +27,9 @@ function loadServiceAccount(): Record<string, string> | null {
   if (!env.credentialsPath) return null;
   const abs = path.resolve(process.cwd(), env.credentialsPath);
   if (!existsSync(abs)) return null;
-  return JSON.parse(readFileSync(abs, "utf8")) as Record<string, string>;
+  const parsed = JSON.parse(readFileSync(abs, "utf8")) as Record<string, string>;
+  if (!parsed.project_id && env.projectId) parsed.project_id = env.projectId;
+  return parsed;
 }
 
 export function getFirebaseAdminApp(): App | null {
@@ -43,7 +45,7 @@ export function getFirebaseAdminApp(): App | null {
       return null;
     }
     const client = getFirebaseClientEnv();
-    const projectId = account.project_id || getFirebaseAdminEnv().projectId;
+    const projectId = account.project_id || getFirebaseAdminEnv().projectId || client.projectId;
     const app = initializeApp({
       credential: cert({
         projectId,

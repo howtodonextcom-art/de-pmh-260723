@@ -104,51 +104,6 @@ async function visit(route, viewport, name, opts = {}) {
   await context.close();
 }
 
-// F27 — bespoke capture for the flipbook gallery viewer. Unlike visit(),
-// this needs an interaction step (click a gallery tile to open the
-// fullscreen ProjectFlipbookViewer — see components/project/detail/gallery.tsx
-// GalleryTile) before the screenshot, so it can't reuse the generic
-// load-then-shoot flow.
-async function visitFlipbookOpen(route, viewport, name, opts = {}) {
-  const context = await browser.newContext({
-    viewport,
-    colorScheme: opts.dark ? "dark" : "light",
-  });
-  const page = await context.newPage();
-  const errs = [];
-  page.on("console", (m) => m.type() === "error" && errs.push(m.text()));
-  page.on("pageerror", (e) => errs.push("PAGEERROR: " + e.message));
-
-  const res = await page.goto(`${BASE}${route}`, { waitUntil: "domcontentloaded", timeout: 90000 });
-  await page.waitForTimeout(opts.waitMs ?? 1800);
-
-  const tile = page.locator('#gallery button[aria-label^="Mở ảnh"]').first();
-  let dialogOpened = false;
-  if (await tile.count()) {
-    await tile.scrollIntoViewIfNeeded().catch(() => {});
-    await tile.click();
-    dialogOpened = await page
-      .getByRole("dialog")
-      .waitFor({ state: "visible", timeout: 5000 })
-      .then(() => true)
-      .catch(() => false);
-    // Let the flipbook engine finish its open animation / page render.
-    await page.waitForTimeout(opts.flipbookSettleMs ?? 1200);
-  }
-
-  const file = await shot(page, name, !!opts.fullPage);
-  findings.routes[name] = {
-    route,
-    viewport,
-    dark: !!opts.dark,
-    status: res?.status() ?? null,
-    screenshot: file,
-    dialogOpened,
-    consoleErrors: errs.filter((t) => !t.includes("Invalid or unexpected token")),
-  };
-  await context.close();
-}
-
 await visit("/", { width: 1440, height: 900 }, "home-1440", { waitMs: 1600, scrollMap: true });
 await visit("/", { width: 1440, height: 900 }, "home-dark-1440", { dark: true, waitMs: 1500 });
 await visit("/", { width: 375, height: 812 }, "home-375", { waitMs: 1500 });
@@ -162,6 +117,7 @@ await visit("/phap-ly", { width: 1440, height: 900 }, "phap-ly-1440");
 await visit("/phap-ly", { width: 1440, height: 900 }, "phap-ly-dark-1440", { dark: true });
 await visit("/phap-ly", { width: 375, height: 812 }, "phap-ly-375");
 await visit("/lab", { width: 1440, height: 900 }, "lab-1440", { waitMs: 1600 });
+
 
 {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });

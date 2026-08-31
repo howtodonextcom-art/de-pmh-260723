@@ -256,8 +256,8 @@
 
 .flipbook-container .stf__block {
   box-shadow:
-    0 0 20px rgba(0, 0, 0, 0.15),
-    0 0 60px rgba(0, 0, 0, 0.08);
+    0 8px 32px rgba(0, 0, 0, 0.28),
+    0 0 80px rgba(0, 0, 0, 0.16);
 }
 
 .flipbook-container .stf__item {

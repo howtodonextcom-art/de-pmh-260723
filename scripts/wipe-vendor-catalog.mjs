@@ -3,7 +3,7 @@
  * Strip every hardcoded catalog record from vendor seed + mirrored images.
  * Does not touch backups/. Run only after backup:seed / backup:views / backup:full.
  */
-import { existsSync, mkdirSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 

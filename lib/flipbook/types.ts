@@ -4,6 +4,7 @@ export interface FlipbookAsset {
   label: string;
   fitMode?: "contain" | "cover";
   letterboxColor?: string;
+  naturalWidth?: number;
+  naturalHeight?: number;
+  category?: string;
 }
-
-export const PAGE_ASPECT_RATIO = 923 / 1176;

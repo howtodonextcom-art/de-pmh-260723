@@ -1,11 +1,6 @@
 import "server-only";
 
 import {
-  loadLibraryCatalog,
-  loadFullProjectsForV0,
-  loadImagesForV0,
-  ensureGalleryFloor,
-  resolveRepoRoot,
   type V0HeaderProject,
   type V0ImageAsset,
   type V0Project,
@@ -149,18 +144,4 @@ export async function getFullCatalog(): Promise<{
 export async function getSiteCatalogSettings() {
   const catalog = await loadCatalog();
   return catalog.settings;
-}
-
-/** Vendor JSON leftover — used only by backup:views / tests, not the public site. */
-export function loadVendorSeedIfPresent() {
-  try {
-    const root = resolveRepoRoot();
-    return {
-      projects: loadFullProjectsForV0(root),
-      assets: ensureGalleryFloor(loadImagesForV0(root), 4),
-      catalog: loadLibraryCatalog(),
-    };
-  } catch {
-    return { projects: [], assets: [], catalog: null };
-  }
 }

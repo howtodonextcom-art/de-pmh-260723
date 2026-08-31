@@ -1,11 +1,23 @@
 "use client";
 
 import { useReducedMotion } from "framer-motion";
-import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { FlipbookToolbar } from "./FlipbookToolbar";
 import { ThumbnailGrid } from "./ThumbnailGrid";
-import { PAGE_ASPECT_RATIO, type FlipbookAsset } from "@/lib/flipbook/types";
+import { probeAssetDimensions } from "@/lib/flipbook/image-asset-adapter";
+import type { FlipbookAsset } from "@/lib/flipbook/types";
+import {
+  LANDSCAPE_PAGE_ASPECT,
+  MOBILE_BREAKPOINT,
+  STAGE_PAD_PX,
+  TOOLBAR_RESERVE_PX,
+  chevronWidth,
+  computePageSize,
+  computeStageFromViewer,
+  pageAspectFromAssets,
+  resolveFitMode,
+} from "@/lib/flipbook/page-size";
 import { t } from "@/lib/i18n/t";
 
 const STABLE_STYLE = {};
@@ -110,38 +122,61 @@ export function FlipbookEngine({
   const [currentPage, setCurrentPage] = useState(safeInitial);
   const [showGrid, setShowGrid] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [dimensions, setDimensions] = useState({ width: 550, height: 700 });
+  const [dimensions, setDimensions] = useState({ width: 720, height: 480 });
+  const [stageSize, setStageSize] = useState({ stageW: 1440, stageH: 800 });
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [pageAspect, setPageAspect] = useState(LANDSCAPE_PAGE_ASPECT);
+  const [probedAssets, setProbedAssets] = useState(assets);
 
-  const SIDE_ZONE = isMobile ? 40 : 72;
+  const SIDE_ZONE = chevronWidth(isMobile);
+  const pageMaxWidth = Math.max(dimensions.width, Math.floor(stageSize.stageW / (isMobile ? 1 : 2)));
+  const pageMaxHeight = Math.max(dimensions.height, Math.floor(stageSize.stageH));
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => setIsMounted(true));
+    let cancelled = false;
+    setProbedAssets(assets);
+    setPageAspect(pageAspectFromAssets(assets));
+    void probeAssetDimensions(assets).then((next) => {
+      if (cancelled) return;
+      setProbedAssets(next);
+      setPageAspect(pageAspectFromAssets(next));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [assets]);
+
+  useLayoutEffect(() => {
+    const viewer = viewerRef.current;
     const calc = () => {
       if (!viewerRef.current) return;
       const rect = viewerRef.current.getBoundingClientRect();
-      const mobile = rect.width < 768;
+      if (rect.width < 32 || rect.height < 32) return;
+      const mobile = rect.width < MOBILE_BREAKPOINT;
+      const stage = computeStageFromViewer(rect.width, rect.height, mobile);
+      const page = computePageSize({ ...stage, isMobile: mobile, aspect: pageAspect });
       setIsMobile(mobile);
-
-      const sideZone = mobile ? 40 : 72;
-      const stageW = rect.width - sideZone * 2;
-      const stageH = rect.height - 64 - 40;
-
-      const pageH = Math.min(stageH, stageW / (mobile ? 1 : 2) / PAGE_ASPECT_RATIO);
-      const pageW = Math.round(pageH * PAGE_ASPECT_RATIO);
-      const finalH = Math.round(pageH);
-
-      setDimensions({ width: Math.max(pageW, 200), height: Math.max(finalH, 300) });
+      setStageSize((prev) =>
+        prev.stageW === stage.stageW && prev.stageH === stage.stageH ? prev : stage,
+      );
+      setDimensions((prev) =>
+        prev.width === page.width && prev.height === page.height
+          ? prev
+          : { width: page.width, height: page.height },
+      );
     };
 
     calc();
+    setIsMounted(true);
     window.addEventListener("resize", calc);
+    const ro = typeof ResizeObserver !== "undefined" && viewer ? new ResizeObserver(calc) : null;
+    if (viewer && ro) ro.observe(viewer);
     return () => {
-      cancelAnimationFrame(frame);
       window.removeEventListener("resize", calc);
+      ro?.disconnect();
     };
-  }, []);
+  }, [pageAspect]);
 
   const touchStartRef = useRef<{ dist: number; zoom: number } | null>(null);
 
@@ -222,10 +257,25 @@ export function FlipbookEngine({
 
   const bookPages = useMemo(
     () =>
-      assets.map((asset, i) => (
-        <SinglePage key={asset.id} asset={asset} number={i + 1} />
-      )),
-    [assets],
+      probedAssets.map((asset, i) => {
+        const imageAspect =
+          asset.naturalWidth && asset.naturalHeight
+            ? asset.naturalWidth / asset.naturalHeight
+            : undefined;
+        const fitMode = resolveFitMode({
+          pageAspect,
+          imageAspect,
+          category: asset.category,
+        });
+        return (
+          <SinglePage
+            key={asset.id}
+            asset={{ ...asset, fitMode }}
+            number={i + 1}
+          />
+        );
+      }),
+    [probedAssets, pageAspect],
   );
 
   if (totalPages === 0) return null;
@@ -236,13 +286,21 @@ export function FlipbookEngine({
       className={`relative h-full w-full overflow-hidden bg-[#1a1a1a] select-none ${className ?? ""}`}
       data-flipbook-viewer
     >
-      <div className="absolute inset-x-0 top-0" style={{ bottom: "64px" }}>
+      <div className="absolute inset-x-0 top-0" style={{ bottom: `${TOOLBAR_RESERVE_PX}px` }}>
         <div
           className="absolute flex items-center justify-center"
-          style={{ top: "20px", bottom: "20px", left: `${SIDE_ZONE}px`, right: `${SIDE_ZONE}px` }}
+          style={{
+            top: `${STAGE_PAD_PX / 2}px`,
+            bottom: `${STAGE_PAD_PX / 2}px`,
+            left: `${SIDE_ZONE}px`,
+            right: `${SIDE_ZONE}px`,
+          }}
         >
           <div
             className="flipbook-scaler"
+            data-flipbook-page-width={dimensions.width}
+            data-flipbook-page-height={dimensions.height}
+            data-flipbook-spread-width={dimensions.width * (isMobile ? 1 : 2)}
             style={{
               transform: `scale(${zoomLevel})`,
               transition: "transform 400ms cubic-bezier(0.23, 1, 0.32, 1)",
@@ -252,21 +310,21 @@ export function FlipbookEngine({
           >
             {isMounted && (
               <HTMLFlipBook
-                key={isMobile ? "mobile" : "desktop"}
+                key={`${isMobile ? "mobile" : "desktop"}-${dimensions.width}x${dimensions.height}`}
                 ref={bookRef}
                 width={dimensions.width}
                 height={dimensions.height}
                 size="fixed"
-                minWidth={200}
-                maxWidth={800}
-                minHeight={300}
-                maxHeight={1000}
+                minWidth={Math.min(200, dimensions.width)}
+                maxWidth={pageMaxWidth}
+                minHeight={Math.min(200, dimensions.height)}
+                maxHeight={pageMaxHeight}
                 showCover={false}
                 mobileScrollSupport
                 onFlip={onFlip}
                 className="flipbook-container"
                 style={STABLE_STYLE}
-                startPage={safeInitial}
+                startPage={currentPage}
                 drawShadow
                 flippingTime={flippingTime}
                 usePortrait={isMobile}

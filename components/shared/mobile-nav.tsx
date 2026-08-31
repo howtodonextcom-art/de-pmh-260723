@@ -23,11 +23,11 @@ import {
  *  leaves show directly, Phía Nam expands into Site A / Outsite sub-groups. */
 export function MobileNav({
   projects,
-  thumbBySlug,
   activeKey,
 }: {
   projects: HeaderProject[];
-  thumbBySlug: Record<string, V0ImageAsset | null>;
+  /** Accepted for SiteHeader API parity; desktop dropdown consumes thumbs. */
+  thumbBySlug?: Record<string, V0ImageAsset | null>;
   activeKey: string | null;
 }) {
   const [open, setOpen] = React.useState(false);

@@ -1,7 +1,11 @@
 import "server-only";
 
 import { getFirebaseClientEnv } from "@/lib/config/env.server";
-import { firebaseStorageDownloadUrl, firebaseStorageUploadUrl } from "@/lib/firebase/storage-urls";
+import {
+  firebaseStorageDownloadUrl,
+  firebaseStorageObjectUrl,
+  firebaseStorageUploadUrl,
+} from "@/lib/firebase/storage-urls";
 
 export function isFirebaseStorageRestConfigured(): boolean {
   return Boolean(getFirebaseClientEnv().storageBucket);
@@ -31,4 +35,21 @@ export async function restUploadObject(
     status: res.status,
     url: firebaseStorageDownloadUrl(bucket, objectPath, token),
   };
+}
+
+/** 404 is treated as success (object already gone). */
+export async function restDeleteObject(
+  objectPath: string,
+  idToken: string,
+): Promise<{ ok: boolean; status: number }> {
+  const bucket = getFirebaseClientEnv().storageBucket;
+  if (!bucket || !idToken.trim()) return { ok: false, status: 0 };
+  const res = await fetch(firebaseStorageObjectUrl(bucket, objectPath), {
+    method: "DELETE",
+    headers: {
+      Authorization: `Firebase ${idToken}`,
+    },
+  });
+  if (res.status === 404) return { ok: true, status: 404 };
+  return { ok: res.ok, status: res.status };
 }

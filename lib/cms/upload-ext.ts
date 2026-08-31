@@ -11,3 +11,13 @@ export function extOf(name: string, type: string): string {
 export function cmsStorageObjectPath(slug: string, assetId: string, ext: string): string {
   return `projects/${slug}/${assetId}.${ext}`;
 }
+
+/** Relative path under `public/` for a local CMS upload URL, or null if unsafe / not local. */
+export function localCmsUploadRelPath(url: string): string | null {
+  if (!url.startsWith("/cms-uploads/")) return null;
+  const rel = url.replace(/^\/+/, "").replace(/\\/g, "/");
+  if (!rel.startsWith("cms-uploads/") || rel.includes("..") || rel.includes("\0")) return null;
+  const parts = rel.split("/").filter(Boolean);
+  if (parts.length < 3 || parts.some((p) => p === "." || p === "..")) return null;
+  return parts.join("/");
+}

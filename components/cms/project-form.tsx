@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CMS_IMAGE_CATEGORIES } from "@/lib/cms/constants";
 import { emptyLegalDossier } from "@/lib/cms/empty-project";
+import { appendCmsAsset } from "@/lib/cms/project-assets";
 import type { CmsAsset, CmsProjectDoc } from "@/lib/cms/types";
 import { LEGAL_TABLE_ROW_LABELS, LEGAL_TABLE_ROW_ORDER, isLegalDossierKey } from "@/lib/legal-documents";
 
@@ -26,6 +27,47 @@ function splitLines(value: string): string[] {
     .filter(Boolean);
 }
 
+function readJsonSafe<T>(raw: string): T | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function uploadErrorMessage(code?: string): string {
+  if (code === "unauthorized") return "Phiên đăng nhập hết hạn. Đăng nhập lại.";
+  if (code === "storage-unconfigured") return "CMS chưa kết nối Firebase Storage.";
+  if (code === "firestore-unconfigured") return "CMS chưa kết nối Firestore.";
+  if (code === "persist-failed") return "Không lưu được link.";
+  return "Không tải được ảnh.";
+}
+
+function persistErrorMessage(code?: string): string {
+  if (code === "unauthorized") return "Phiên đăng nhập hết hạn. Đăng nhập lại.";
+  if (code === "firestore-unconfigured") return "CMS chưa kết nối Firestore.";
+  return "Không lưu được link.";
+}
+
+function debugMedia(message: string, data: Record<string, boolean | number | string | null>) {
+  fetch("http://127.0.0.1:7413/ingest/850fced0-1d5d-4a0b-bc03-5e39fd9be8bf", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "87c57b" },
+    body: JSON.stringify({
+      sessionId: "87c57b",
+      runId: "cms-media",
+      hypothesisId: "A",
+      location: "components/cms/project-form.tsx",
+      message,
+      data,
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+}
+
+type FileOpError = { category: string; file: string; message: string };
+
 function Field({
   label,
   children,
@@ -44,8 +86,17 @@ function Field({
 export function ProjectForm({ project }: { project: CmsProjectDoc }) {
   const router = useRouter();
   const [doc, setDoc] = useState<CmsProjectDoc>(project);
+  const docRef = useRef(doc);
+  docRef.current = doc;
   const [status, setStatus] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [mediaBusy, setMediaBusy] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{
+    category: string;
+    current: number;
+    total: number;
+  } | null>(null);
+  const [fileErrors, setFileErrors] = useState<FileOpError[]>([]);
 
   const legal = doc.legalDossier ?? emptyLegalDossier();
 
@@ -53,41 +104,121 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
     setDoc((prev) => ({ ...prev, ...partial }));
   }
 
-  async function onUpload(file: File, category: string) {
+  function commitDoc(next: CmsProjectDoc) {
+    docRef.current = next;
+    setDoc(next);
+  }
+
+  async function persistProject(next: CmsProjectDoc): Promise<{
+    ok: boolean;
+    project: CmsProjectDoc;
+    error?: string;
+  }> {
+    const res = await fetch(`/api/cms/projects/${next.slug}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(next),
+    });
+    const data = readJsonSafe<{ project?: CmsProjectDoc; error?: string }>(await res.text());
+    if (!res.ok) {
+      return { ok: false, project: next, error: data?.error };
+    }
+    return { ok: true, project: data?.project ?? next };
+  }
+
+  async function onUploadFiles(files: File[], category: string) {
+    const list = files.filter((file) => file.size > 0);
+    if (!list.length || mediaBusy) return;
+    setMediaBusy(true);
+    setFileErrors((prev) => prev.filter((err) => err.category !== category));
+    setStatus(null);
+    let uploaded = 0;
+    let persisted = 0;
+    const errors: FileOpError[] = [];
+    debugMedia("cms-upload-start", { fileCount: list.length, uploaded: false, persisted: false });
     try {
-      const body = new FormData();
-      body.set("file", file);
-      body.set("slug", doc.slug);
-      body.set("category", category);
-      body.set("alt", `${doc.displayNameVi} — ${category}`);
-      const res = await fetch("/api/cms/upload", { method: "POST", body });
-      const raw = await res.text();
-      let data: { asset?: CmsAsset; error?: string } = {};
-      try {
-        data = raw ? (JSON.parse(raw) as { asset?: CmsAsset; error?: string }) : {};
-      } catch {
-        data = {};
+      for (let i = 0; i < list.length; i += 1) {
+        const file = list[i]!;
+        setUploadProgress({ category, current: i + 1, total: list.length });
+        setStatus(`Đang tải ${i + 1}/${list.length}…`);
+        try {
+          const body = new FormData();
+          body.set("file", file);
+          body.set("slug", docRef.current.slug);
+          body.set("category", category);
+          body.set("alt", `${docRef.current.displayNameVi} — ${category}`);
+          const res = await fetch("/api/cms/upload", { method: "POST", body });
+          const data = readJsonSafe<{ asset?: CmsAsset; error?: string }>(await res.text());
+          if (!res.ok || !data?.asset) {
+            errors.push({
+              category,
+              file: file.name,
+              message: uploadErrorMessage(data?.error),
+            });
+            continue;
+          }
+          uploaded += 1;
+          const next = appendCmsAsset(docRef.current, data.asset, category);
+          const saved = await persistProject(next);
+          commitDoc(saved.project);
+          if (!saved.ok) {
+            errors.push({
+              category,
+              file: file.name,
+              message: persistErrorMessage(saved.error),
+            });
+            continue;
+          }
+          persisted += 1;
+        } catch {
+          errors.push({ category, file: file.name, message: "Không tải được ảnh." });
+        }
       }
-      if (!res.ok || !data.asset) {
+      if (errors.length) setFileErrors((prev) => [...prev, ...errors]);
+      if (persisted === list.length) setStatus("Đã lưu link");
+      else if (persisted > 0) setStatus(`Đã lưu ${persisted}/${list.length} link. Một số file lỗi.`);
+      else setStatus(errors[0]?.message ?? "Không tải được ảnh.");
+      debugMedia("cms-upload-done", {
+        fileCount: list.length,
+        uploaded,
+        persisted,
+        failed: errors.length,
+      });
+    } finally {
+      setUploadProgress(null);
+      setMediaBusy(false);
+    }
+  }
+
+  async function onDeleteAsset(asset: CmsAsset) {
+    if (mediaBusy) return;
+    if (!confirm("Xóa ảnh và file gốc?")) return;
+    setMediaBusy(true);
+    setStatus(null);
+    try {
+      const res = await fetch(
+        `/api/cms/assets?slug=${encodeURIComponent(doc.slug)}&assetId=${encodeURIComponent(asset.assetId)}`,
+        { method: "DELETE" },
+      );
+      const data = readJsonSafe<{ project?: CmsProjectDoc; error?: string }>(await res.text());
+      if (!res.ok || !data?.project) {
         setStatus(
-          data.error === "unauthorized"
+          data?.error === "unauthorized"
             ? "Phiên đăng nhập hết hạn. Đăng nhập lại."
-            : data.error === "storage-unconfigured"
+            : data?.error === "storage-unconfigured"
               ? "CMS chưa kết nối Firebase Storage."
-              : "Không tải được ảnh.",
+              : "Không xóa được ảnh.",
         );
+        debugMedia("cms-delete-fail", { deleted: false, persisted: false });
         return;
       }
-      const assets = [...(doc.assets ?? []), data.asset];
-      const next: Partial<CmsProjectDoc> = { assets };
-      if (category === "hero" && !doc.heroAssetId) next.heroAssetId = data.asset.assetId;
-      if (category !== "hero") {
-        next.galleryAssetIds = [...(doc.galleryAssetIds ?? []), data.asset.assetId];
-      }
-      patch(next);
-      setStatus("Đã thêm ảnh. Nhớ Lưu dự án.");
+      commitDoc(data.project);
+      setStatus("Đã xóa ảnh và file gốc.");
+      debugMedia("cms-delete-ok", { deleted: true, persisted: true });
     } catch {
-      setStatus("Không tải được ảnh.");
+      setStatus("Không xóa được ảnh.");
+    } finally {
+      setMediaBusy(false);
     }
   }
 
@@ -96,13 +227,12 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
     setPending(true);
     setStatus(null);
     try {
-      const res = await fetch(`/api/cms/projects/${doc.slug}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(doc),
-      });
-      setStatus(res.ok ? "Đã lưu. Mở trang công khai để kiểm tra." : "Lưu thất bại.");
-      if (res.ok) router.refresh();
+      const saved = await persistProject(docRef.current);
+      setStatus(saved.ok ? "Đã lưu. Mở trang công khai để kiểm tra." : persistErrorMessage(saved.error));
+      if (saved.ok) {
+        commitDoc(saved.project);
+        router.refresh();
+      }
     } finally {
       setPending(false);
     }
@@ -404,38 +534,89 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
       <section className="space-y-4">
         <h2 className="font-display text-lg">Ảnh theo hạng mục trang chi tiết</h2>
         <p className="text-sm text-muted-foreground">
-          Tải ảnh cho từng mục: hero, masterplan, vị trí, tiện ích, kiến trúc, thực tế, logo, sản phẩm.
+          Chọn nhiều ảnh cùng lúc cho từng mục (hero, masterplan, vị trí, tiện ích, kiến trúc, thực tế, logo, sản phẩm).
+          Link được lưu ngay sau mỗi file thành công, không cần bấm Lưu dự án.
         </p>
-        {CMS_IMAGE_CATEGORIES.map((category) => (
-          <div key={category} className="rounded-xl border border-border p-3">
-            <div className="mb-2 flex items-center justify-between gap-3">
-              <p className="text-sm font-medium">{category}</p>
-              <Input
-                type="file"
-                accept="image/*"
-                className="max-w-xs"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) void onUpload(file, category);
-                  e.target.value = "";
-                }}
-              />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {(assetsByCategory.get(category) ?? []).map((asset) => (
-                <div key={asset.assetId} className="w-24">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={asset.resolvedUrl ?? asset.sourceFileUrl} alt={asset.alt} className="h-16 w-24 rounded object-cover" />
-                  <p className="truncate text-[10px] text-muted-foreground">{asset.assetId}</p>
+        {CMS_IMAGE_CATEGORIES.map((category) => {
+          const progress = uploadProgress?.category === category ? uploadProgress : null;
+          const errors = fileErrors.filter((err) => err.category === category);
+          return (
+            <div
+              key={category}
+              className="rounded-xl border border-border p-3"
+              onDragOver={(event) => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = "copy";
+              }}
+              onDrop={(event) => {
+                event.preventDefault();
+                if (mediaBusy) return;
+                const dropped = [...event.dataTransfer.files].filter((file) => file.type.startsWith("image/"));
+                if (dropped.length) void onUploadFiles(dropped, category);
+              }}
+            >
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">{category}</p>
+                  <p className="text-xs text-muted-foreground">Có thể chọn nhiều file</p>
                 </div>
-              ))}
+                <Input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  disabled={mediaBusy}
+                  className="max-w-xs"
+                  aria-label={`Tải nhiều ảnh ${category}`}
+                  onChange={(e) => {
+                    const selected = e.target.files ? [...e.target.files] : [];
+                    if (selected.length) void onUploadFiles(selected, category);
+                    e.target.value = "";
+                  }}
+                />
+              </div>
+              {progress ? (
+                <p className="mb-2 text-xs text-muted-foreground">
+                  Đang tải {progress.current}/{progress.total}…
+                </p>
+              ) : null}
+              {errors.length ? (
+                <ul className="mb-2 space-y-0.5 text-xs text-destructive">
+                  {errors.map((err) => (
+                    <li key={`${err.file}-${err.message}`}>{err.file}: {err.message}</li>
+                  ))}
+                </ul>
+              ) : null}
+              <div className="flex flex-wrap gap-2">
+                {(assetsByCategory.get(category) ?? []).map((asset) => (
+                  <div key={asset.assetId} className="w-28 space-y-1">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={asset.resolvedUrl ?? asset.sourceFileUrl}
+                      alt={asset.alt}
+                      className="h-16 w-28 rounded object-cover"
+                    />
+                    <p className="truncate text-[10px] text-muted-foreground" title={asset.alt || asset.assetId}>
+                      {asset.alt || asset.assetId}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="xs"
+                      disabled={mediaBusy}
+                      onClick={() => void onDeleteAsset(asset)}
+                    >
+                      Xóa
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </section>
 
       <section className="flex flex-wrap items-center gap-3">
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" disabled={pending || mediaBusy}>
           {pending ? "Đang lưu…" : "Lưu dự án"}
         </Button>
         <Button type="button" variant="destructive" onClick={() => void onDelete()}>

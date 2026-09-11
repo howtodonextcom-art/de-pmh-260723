@@ -122,3 +122,16 @@ Test: hong-hac (có ảnh) + sen-viet (empty-state, không ảnh) ở dark, khô
 3. Chính xác qua DevTools (F12 → Application/Storage → Cookies): xóa đúng `site_locked`, `site_attempts`, `site_access`
 4. Không làm gì: khóa tự hết hạn sau 24h
 5. Dùng trình duyệt/thiết bị khác — không bị ảnh hưởng vì khóa chỉ theo trình duyệt đó
+
+## Round 6 (2026-09-11, cùng ngày) — Xử lý mục 1-4 trong audit hoàn thiện dự án
+
+Theo báo cáo audit "Mức độ hoàn thiện dự án" (điểm tổng 60/100), đã xử lý 4/5 mục "Phải làm trước khi launch thật":
+
+1. **Sửa hardcode badge sai trong `fact-grid.ts`** — thực tế là **3 field** (Vị trí, Loại hình, Quy mô), không phải 2 như liệt kê ban đầu trong audit (Quy mô có cùng lỗi, bằng chứng: Sen Việt trước đó hiện "Quy mô | Chưa có | Đã có dữ liệu"). Đã đổi `status` từ hardcode `"da-co-du-lieu"` sang tính theo giá trị thật (`p.address`, `p.projectType[0]`, kết quả `scaleDescriptor()`). "Trạng thái"/"Cập nhật" giữ hardcode vì field nguồn (`status`, `lastVerifiedAt`) không-nullable theo type — không phải bug.
+2. **Sửa hiển thị "Trạng thái"** — dùng `projectStatusLabel()` (helper có sẵn ở `project-status-label.ts`, tự fallback về raw string nếu không map được) thay vì in thẳng `p.status` — hết hiện slug thô `dang-trien-khai`.
+3. **Dọn 11 chỗ debug code** (`127.0.0.1:7413`, session id `87c57b`) ở 7 file: `app/api/auth/{bootstrap,session}/route.ts`, `app/api/cms/{assets,projects,upload}/route.ts`, `app/login/login-form.tsx`, `components/cms/project-form.tsx`. Xoá cả biến/helper chỉ tồn tại để phục vụ debug (`agentAdminSnapshot()`, `debugLog()`, `debugMedia()`, biến `uploaded`/`sourceGone`/`branch`(assets)/`bootstrapPayload`) — không chỉ xoá lời gọi fetch mà để sót dead code xung quanh.
+4. **Xoá 2 script probe** (`scripts/prod-cms-*-probe.mjs`, ghi thẳng Firestore production) + `.cursor/debug-87c57b.log` liên quan cùng phiên debug đó.
+
+**Verify:** `tsc --noEmit` sạch, `npm run lint` không phát sinh lỗi mới (vẫn 6 lỗi cũ `react-hooks/set-state-in-effect`, không liên quan phạm vi này), `vitest run` 57/57 pass, `npm run build` production thành công. Test MCP trực tiếp trên Aristo (trước: "Vị trí | Đã có dữ liệu" dù rỗng → sau: "Vị trí | Chưa có | Chưa có dữ liệu") và Sen Việt (cả Vị trí/Loại hình/Quy mô đều đổi đúng badge), `/login` render sạch sau khi dọn debug code.
+
+**Mục 5 (điền địa chỉ cho các dự án) — KHÔNG nằm trong yêu cầu lần này, cần nhập liệu qua CMS, ngoài khả năng tự làm.**

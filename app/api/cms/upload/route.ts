@@ -7,7 +7,6 @@ import { CMS_IMAGE_CATEGORIES } from "@/lib/cms/constants";
 import type { CmsAsset } from "@/lib/cms/types";
 import { cmsStorageObjectPath, extOf } from "@/lib/cms/upload-ext";
 import { getAdminStorage } from "@/lib/firebase/admin";
-import { isFirebaseAdminConfigured } from "@/lib/config/env.server";
 import { readCmsIdToken, readCmsSession } from "@/lib/firebase/session";
 import { restUploadObject } from "@/lib/firebase/storage-rest";
 
@@ -40,7 +39,6 @@ export async function POST(request: Request) {
     const storagePath = cmsStorageObjectPath(slug, assetId, ext);
     const contentType = file.type || `image/${ext}`;
     const idToken = await readCmsIdToken();
-    const adminConfigured = isFirebaseAdminConfigured();
     const isVercel = Boolean(process.env.VERCEL);
 
     let url = "";
@@ -82,31 +80,6 @@ export async function POST(request: Request) {
       branch = "disk";
     }
 
-    // #region agent log
-    fetch("http://127.0.0.1:7413/ingest/850fced0-1d5d-4a0b-bc03-5e39fd9be8bf", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "87c57b" },
-      body: JSON.stringify({
-        sessionId: "87c57b",
-        runId: "post-fix",
-        hypothesisId: url ? "B" : "A",
-        location: "app/api/cms/upload/route.ts:POST",
-        message: "cms-upload",
-        data: {
-          adminConfigured,
-          hasAdminStorage: Boolean(storage),
-          hasIdToken: Boolean(idToken),
-          isVercel,
-          branch,
-          hasUrl: Boolean(url),
-          uploaded: Boolean(url),
-          fileCount: 1,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-
     if (!url) {
       return jsonError(idToken ? "persist-failed" : "storage-unconfigured", idToken ? 500 : 503);
     }
@@ -126,21 +99,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ asset, branch });
   } catch {
-    // #region agent log
-    fetch("http://127.0.0.1:7413/ingest/850fced0-1d5d-4a0b-bc03-5e39fd9be8bf", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "87c57b" },
-      body: JSON.stringify({
-        sessionId: "87c57b",
-        runId: "post-fix",
-        hypothesisId: "A",
-        location: "app/api/cms/upload/route.ts:catch",
-        message: "cms-upload-throw",
-        data: { isVercel: Boolean(process.env.VERCEL) },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
     return jsonError("persist-failed", 500);
   }
 }

@@ -14,22 +14,6 @@ function jsonError(error: string, status: number) {
   return NextResponse.json({ error }, { status });
 }
 
-function debugLog(message: string, data: Record<string, boolean | number | string | null>) {
-  fetch("http://127.0.0.1:7413/ingest/850fced0-1d5d-4a0b-bc03-5e39fd9be8bf", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "87c57b" },
-    body: JSON.stringify({
-      sessionId: "87c57b",
-      runId: "cms-assets",
-      hypothesisId: "A",
-      location: "app/api/cms/assets/route.ts:DELETE",
-      message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-}
-
 async function readBody(request: Request): Promise<{ slug: string; assetId: string }> {
   const url = new URL(request.url);
   let slug = (url.searchParams.get("slug") ?? "").trim();
@@ -100,49 +84,23 @@ export async function DELETE(request: Request) {
     const objectPath = storageObjectPathFromAsset(asset);
     const sourceUrl = asset.resolvedUrl || asset.sourceFileUrl || "";
     const idToken = await readCmsIdToken();
-    let sourceGone = true;
-    let branch = "catalog-only";
 
     if (objectPath) {
       const result = await deleteStorageObject(objectPath, idToken);
-      sourceGone = result.ok;
-      branch = result.branch;
       if (!result.ok) {
-        debugLog("cms-asset-delete", {
-          deleted: false,
-          persisted: false,
-          hasObjectPath: true,
-          localDisk: false,
-          branch,
-        });
         if (result.branch === "unconfigured") return jsonError("storage-unconfigured", 503);
         return jsonError("storage-delete-failed", 500);
       }
     }
 
     const localRel = localCmsUploadRelPath(sourceUrl);
-    let localDisk = false;
     if (localRel) {
-      localDisk = await unlinkLocalUpload(sourceUrl);
-      branch = localDisk ? "disk" : "disk-miss";
+      await unlinkLocalUpload(sourceUrl);
     }
 
     const saved = await saveCmsProject(stripCmsAsset(project, assetId), session.email, { idToken });
-    debugLog("cms-asset-delete", {
-      deleted: true,
-      persisted: true,
-      hasObjectPath: Boolean(objectPath),
-      localDisk,
-      sourceGone,
-      branch,
-    });
     return NextResponse.json({ project: saved, deleted: true });
   } catch (err) {
-    debugLog("cms-asset-delete-throw", {
-      deleted: false,
-      persisted: false,
-      catalog: err instanceof CatalogPersistError,
-    });
     const code = err instanceof CatalogPersistError ? err.code : "persist-failed";
     return jsonError(code, code === "firestore-unconfigured" ? 503 : 500);
   }

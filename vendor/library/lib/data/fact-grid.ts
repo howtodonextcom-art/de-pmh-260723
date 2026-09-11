@@ -1,4 +1,5 @@
 import { canShowConceptArchitect } from "./architect-visibility";
+import { projectStatusLabel } from "../../components/layout/project-status-label";
 import type { FieldStatus, Project } from "../../types/project";
 
 export interface FactCell {
@@ -30,17 +31,32 @@ function unitsDisplay(p: Project): { value: string; status: FieldStatus; tooltip
   return { value: "Chưa có", status: p.totalUnitsStatus };
 }
 
-/** D2 fact grid — 8 cells, GFA intentionally excluded (SPEC §3.4 D2). */
+/** D2 fact grid — 8 cells, GFA intentionally excluded (SPEC §3.4 D2).
+ *  Vị trí/Loại hình/Quy mô derive `status` from the value itself — `address`,
+ *  `projectType[0]`, and the blocks/floors/subdivisions behind
+ *  `scaleDescriptor()` are all optional-in-practice even though `address`
+ *  and `projectType` are non-nullable in the type, so a hardcoded
+ *  "da-co-du-lieu" here previously claimed "has data" for every project
+ *  regardless of whether the field was actually empty. */
 export function buildFactGrid(p: Project): FactCell[] {
   const units = unitsDisplay(p);
+  const scale = scaleDescriptor(p);
   return [
-    { label: "Vị trí", value: p.address, status: "da-co-du-lieu" },
+    {
+      label: "Vị trí",
+      value: p.address || "Chưa có",
+      status: p.address ? "da-co-du-lieu" : "chua-co-du-lieu",
+    },
     {
       label: "Loại hình",
       value: p.projectType[0]?.replace(/-/g, " ") ?? "Chưa có",
-      status: "da-co-du-lieu",
+      status: p.projectType[0] ? "da-co-du-lieu" : "chua-co-du-lieu",
     },
-    { label: "Quy mô", value: scaleDescriptor(p), status: "da-co-du-lieu" },
+    {
+      label: "Quy mô",
+      value: scale,
+      status: scale === "Chưa có" ? "chua-co-du-lieu" : "da-co-du-lieu",
+    },
     {
       label: "Số căn",
       value: units.value,
@@ -58,7 +74,7 @@ export function buildFactGrid(p: Project): FactCell[] {
       value: canShowConceptArchitect(p) && p.conceptArchitect?.value ? p.conceptArchitect.value : "Chưa có",
       status: canShowConceptArchitect(p) ? p.conceptArchitect.status : "chua-xac-thuc",
     },
-    { label: "Trạng thái", value: p.statusNote ?? p.status ?? "Chưa có", status: "da-co-du-lieu" },
+    { label: "Trạng thái", value: p.statusNote ?? projectStatusLabel(p.status), status: "da-co-du-lieu" },
     { label: "Cập nhật", value: p.lastVerifiedAt, status: "da-co-du-lieu" },
   ];
 }

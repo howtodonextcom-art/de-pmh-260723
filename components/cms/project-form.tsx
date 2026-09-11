@@ -50,22 +50,6 @@ function persistErrorMessage(code?: string): string {
   return "Không lưu được link.";
 }
 
-function debugMedia(message: string, data: Record<string, boolean | number | string | null>) {
-  fetch("http://127.0.0.1:7413/ingest/850fced0-1d5d-4a0b-bc03-5e39fd9be8bf", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "87c57b" },
-    body: JSON.stringify({
-      sessionId: "87c57b",
-      runId: "cms-media",
-      hypothesisId: "A",
-      location: "components/cms/project-form.tsx",
-      message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-}
-
 type FileOpError = { category: string; file: string; message: string };
 
 function Field({
@@ -132,10 +116,8 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
     setMediaBusy(true);
     setFileErrors((prev) => prev.filter((err) => err.category !== category));
     setStatus(null);
-    let uploaded = 0;
     let persisted = 0;
     const errors: FileOpError[] = [];
-    debugMedia("cms-upload-start", { fileCount: list.length, uploaded: false, persisted: false });
     try {
       for (let i = 0; i < list.length; i += 1) {
         const file = list[i]!;
@@ -157,7 +139,6 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
             });
             continue;
           }
-          uploaded += 1;
           const next = appendCmsAsset(docRef.current, data.asset, category);
           const saved = await persistProject(next);
           commitDoc(saved.project);
@@ -178,12 +159,6 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
       if (persisted === list.length) setStatus("Đã lưu link");
       else if (persisted > 0) setStatus(`Đã lưu ${persisted}/${list.length} link. Một số file lỗi.`);
       else setStatus(errors[0]?.message ?? "Không tải được ảnh.");
-      debugMedia("cms-upload-done", {
-        fileCount: list.length,
-        uploaded,
-        persisted,
-        failed: errors.length,
-      });
     } finally {
       setUploadProgress(null);
       setMediaBusy(false);
@@ -209,12 +184,10 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
               ? "CMS chưa kết nối Firebase Storage."
               : "Không xóa được ảnh.",
         );
-        debugMedia("cms-delete-fail", { deleted: false, persisted: false });
         return;
       }
       commitDoc(data.project);
       setStatus("Đã xóa ảnh và file gốc.");
-      debugMedia("cms-delete-ok", { deleted: true, persisted: true });
     } catch {
       setStatus("Không xóa được ảnh.");
     } finally {

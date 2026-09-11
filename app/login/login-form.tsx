@@ -22,8 +22,7 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
         setError("Firebase client chưa được cấu hình.");
         return;
       }
-      const bootstrap = await fetch("/api/auth/bootstrap", { method: "POST" });
-      const bootstrapPayload = (await bootstrap.json().catch(() => ({}))) as { result?: string };
+      await fetch("/api/auth/bootstrap", { method: "POST" });
       const cred = await signInWithEmailAndPassword(getFirebaseClientAuth(), email.trim(), password);
       const idToken = await cred.user.getIdToken();
       const session = await fetch("/api/auth/session", {
@@ -33,33 +32,8 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
       });
       const sessionPayload = (await session.json().catch(() => ({}))) as {
         error?: string;
-        debug?: Record<string, unknown>;
         mode?: string;
       };
-      // #region agent log
-      fetch("http://127.0.0.1:7413/ingest/850fced0-1d5d-4a0b-bc03-5e39fd9be8bf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "87c57b" },
-        body: JSON.stringify({
-          sessionId: "87c57b",
-          runId: "post-fix",
-          hypothesisId: session.status === 503 ? "A" : session.ok ? "D" : "C",
-          location: "app/login/login-form.tsx:onSubmit",
-          message: "session-response",
-          data: {
-            sessionStatus: session.status,
-            sessionError: sessionPayload.error ?? null,
-            sessionMode: "mode" in sessionPayload ? sessionPayload.mode : null,
-            sessionDebug: sessionPayload.debug ?? null,
-            bootstrapOk: bootstrap.ok,
-            bootstrapResult: bootstrapPayload.result ?? null,
-            clientConfigured: isBrowserFirebaseConfigured(),
-            hasIdToken: Boolean(idToken),
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       if (!session.ok) {
         if (sessionPayload.error === "admin-unconfigured" || session.status === 503) {
           setError(

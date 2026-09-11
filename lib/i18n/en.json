@@ -42,10 +42,12 @@
     "mapListIntro": "Select a region to filter the project catalog.",
     "mapSaBanCta": "Sa bàn",
     "emptyCatalog": "No projects in the catalog yet.",
+    "emptyUpdates": "No recent updates yet.",
     "updatesHeading": "Recent updates",
     "quickLookup": "Quick lookup",
     "ctaCompare": "View comparison table",
-    "ctaOfficialSites": "Official project websites"
+    "ctaOfficialSites": "Official project websites",
+    "opensInNewTab": "opens in a new tab"
   },
   "footer": {
     "brandStatementFallback": "Internal portal for looking up Phú Mỹ Hưng project data.",

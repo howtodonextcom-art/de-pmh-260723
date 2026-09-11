@@ -102,3 +102,23 @@ Test: hong-hac (có ảnh) + sen-viet (empty-state, không ảnh) ở dark, khô
 **PHÁT HIỆN QUAN TRỌNG (ngoài phạm vi sửa UI):** Sau khi thêm guard và test cả 12/12 dự án, section "Vị trí & kết nối" **biến mất hoàn toàn ở tất cả 12 dự án** — nghĩa là `project.address` (và facts/saBanUrl/locationAsset liên quan) **chưa được nhập cho bất kỳ dự án nào trong catalog**, không riêng Sculptura. Đây là lỗ hổng dữ liệu (data completeness), không phải lỗi UI — trước đây bị che giấu vì component luôn hiện ra dù rỗng, khiến vấn đề trông như "1 section xấu" thay vì "dữ liệu địa chỉ toàn site chưa nhập". Cần đội nội dung bổ sung `address` (và lý tưởng là `highlights` chứa từ khóa vị trí, `saBanUrl`, ảnh location) cho ít nhất 1 dự án để verify nhánh "có dữ liệu" của component còn hoạt động đúng (nhánh này type-check sạch nhưng CHƯA được test bằng dữ liệu thật, vì không có project nào hiện đủ điều kiện).
 
 **Test:** 12/12 dự án — mobile 375 không overflow, 0 console error, `tsc --noEmit` sạch, xác nhận hero.tsx refactor (dùng BlueprintFallback) không đổi visual output.
+
+## Round 5 (2026-09-11, cùng ngày) — Tính năng Passcode gate toàn site
+
+**Kiến trúc:**
+- `SITE_PASSCODE` (env var, server-only, KHÔNG prefix `NEXT_PUBLIC_`) — **cần set thủ công** tại Vercel → Project `de-division-pmh` → Settings → Environment Variables (không set được qua Vercel MCP trong phiên non-interactive, xem mục Vercel MCP ở trên). Không set = gate tắt (mặc định an toàn cho dev local).
+- Chặn ở `proxy.ts` (Next.js 16 đổi tên `middleware.ts` → `proxy.ts` — **đã xoá `middleware.ts`** vì 2 file cùng tồn tại làm crash dev server: "Both middleware file and proxy file are detected"). Gate chạy TRƯỚC gate `/cms` hiện có — vào `/cms` cũng cần passcode trước.
+- Cookie `site_access` (httpOnly, ký HMAC-SHA256 từ chính `SITE_PASSCODE` qua Web Crypto `crypto.subtle` — không cần thêm env var thứ 2, không forge được qua DevTools Storage editor), 30 ngày.
+- Cookie `site_attempts` (httpOnly, đếm số lần sai, hết hạn 24h) + `site_locked` (httpOnly, set khi ≥5 lần sai, hết hạn 24h — khóa tự mở sau 24h theo quyết định của người dùng, không phải vĩnh viễn).
+- Route `/passcode` (form nhập mã + màn hình khóa) và `/api/passcode` (xử lý verify + đếm lần sai).
+
+**Test đã chạy (MCP thật, không đoán mò):** chưa cookie → redirect `/passcode`; sai 4 lần → "Còn N lần thử" giảm đúng; sai lần 5 → khóa, form biến mất; khóa persist qua `/`, `/du-an/hong-hac`, `/cms`; cookie giả mạo qua DevTools (`site_access=forged-value`) bị từ chối đúng thiết kế; đúng mã → unlock, redirect về trang đích, persist qua reload; `/passcode` tự redirect đi khi đã unlock; `tsc --noEmit` sạch.
+
+**Giới hạn đã nêu rõ (không giấu):** đây là chặn theo cookie per-browser, KHÔNG phải chống brute-force cấp server — mở cửa sổ ẩn danh mới sẽ reset được số lần thử. Đủ để "ngăn người không có mã xem nhầm", KHÔNG đủ để chống người cố tình dò mã có chủ đích (muốn vậy cần rate-limit theo IP ở tầng server + KV store, ngoài phạm vi hiện tại).
+
+**Khôi phục khi bị khóa (nhập sai 5 lần)** — khóa là cookie httpOnly per-browser, không phải khóa tài khoản:
+1. Nhanh nhất, không cần đợi: mở cửa sổ ẩn danh/riêng tư (Incognito/Private) — không bị ảnh hưởng
+2. Xóa cookie của riêng domain này qua trình duyệt: click ổ khóa 🔒 cạnh thanh địa chỉ → Cookie và dữ liệu trang web → Xóa (Chrome/Edge/Firefox đều có)
+3. Chính xác qua DevTools (F12 → Application/Storage → Cookies): xóa đúng `site_locked`, `site_attempts`, `site_access`
+4. Không làm gì: khóa tự hết hạn sau 24h
+5. Dùng trình duyệt/thiết bị khác — không bị ảnh hưởng vì khóa chỉ theo trình duyệt đó

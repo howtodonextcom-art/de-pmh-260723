@@ -20,8 +20,9 @@ test.describe("home H5 — explorer preview", () => {
 test.describe("home H10 — updates", () => {
   test("shows a compare CTA", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("heading", { name: "Cập nhật gần đây" }).scrollIntoViewIfNeeded();
-    await expect(page.getByRole("link", { name: "Xem bảng so sánh" })).toHaveAttribute("href", "/so-sanh");
+    const compare = page.getByRole("link", { name: "Xem bảng so sánh" });
+    await compare.scrollIntoViewIfNeeded();
+    await expect(compare).toHaveAttribute("href", "/so-sanh");
   });
 });
 

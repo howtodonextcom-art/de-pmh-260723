@@ -42,10 +42,12 @@
     "mapListIntro": "Chọn khu vực để lọc danh mục dự án.",
     "mapSaBanCta": "Sa bàn",
     "emptyCatalog": "Chưa có dự án trong danh mục.",
+    "emptyUpdates": "Chưa có cập nhật gần đây.",
     "updatesHeading": "Cập nhật gần đây",
     "quickLookup": "Tra cứu nhanh",
     "ctaCompare": "Xem bảng so sánh",
-    "ctaOfficialSites": "Website chính thức các dự án"
+    "ctaOfficialSites": "Website chính thức các dự án",
+    "opensInNewTab": "mở tab mới"
   },
   "footer": {
     "brandStatementFallback": "Cổng thông tin nội bộ tra cứu dữ liệu dự án Phú Mỹ Hưng.",

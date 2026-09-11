@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { CMS_SESSION_COOKIE } from "@/lib/cms/constants";
+import { SITE_ACCESS_COOKIE } from "@/lib/passcode/constants";
+import { computeAccessToken } from "@/lib/passcode/sign";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 type Locale = "vi" | "en";
@@ -20,9 +22,24 @@ function applyLocaleCookie(request: NextRequest, response: NextResponse) {
 
 /**
  * F18 — locale cookie + CMS gate (`/cms/**` requires session cookie).
+ * Site passcode gate (SITE_PASSCODE env) runs first — everything else,
+ * `/cms` included, requires it before that route's own auth is reached.
  */
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const passcode = process.env.SITE_PASSCODE;
+  if (passcode) {
+    const accessCookie = request.cookies.get(SITE_ACCESS_COOKIE)?.value;
+    const expected = await computeAccessToken(passcode);
+    if (accessCookie !== expected) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/passcode";
+      url.search = "";
+      url.searchParams.set("next", pathname);
+      return applyLocaleCookie(request, NextResponse.redirect(url));
+    }
+  }
 
   if (pathname.startsWith("/cms")) {
     const session = request.cookies.get(CMS_SESSION_COOKIE)?.value;
@@ -51,5 +68,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|passcode|api/passcode).*)"],
 };

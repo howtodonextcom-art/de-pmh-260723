@@ -15,9 +15,9 @@ import { cn } from "@/lib/utils";
  * (detail hero + gallery).
  */
 export function ImageWithFallback({ className, alt, fill, width, height, ...props }: ImageProps) {
-  const [failed, setFailed] = React.useState(false);
+  const [status, setStatus] = React.useState<"loading" | "loaded" | "failed">("loading");
 
-  if (failed) {
+  if (status === "failed") {
     return (
       <div
         role="img"
@@ -35,14 +35,24 @@ export function ImageWithFallback({ className, alt, fill, width, height, ...prop
   }
 
   return (
-    <Image
-      alt={alt}
-      className={className}
-      fill={fill}
-      width={width}
-      height={height}
-      onError={() => setFailed(true)}
-      {...props}
-    />
+    <>
+      {status === "loading" && (
+        <div
+          aria-hidden
+          style={!fill && width && height ? { aspectRatio: `${width} / ${height}` } : undefined}
+          className={cn("animate-skeleton", fill ? "absolute inset-0" : "block w-full", className)}
+        />
+      )}
+      <Image
+        alt={alt}
+        className={cn(className, "transition-opacity duration-300", status === "loaded" ? "opacity-100" : "opacity-0")}
+        fill={fill}
+        width={width}
+        height={height}
+        onLoad={() => setStatus("loaded")}
+        onError={() => setStatus("failed")}
+        {...props}
+      />
+    </>
   );
 }

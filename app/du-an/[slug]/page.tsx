@@ -66,7 +66,6 @@ export default async function ProjectDetailPage({
   const masterplanAsset = projectAssets.find((a) => a.category === "masterplan") ?? null;
   const locationAsset = projectAssets.find((a) => a.category === "location") ?? null;
   const amenityAssets = projectAssets.filter((a) => a.category === "amenities" && a.verified);
-  const hasGallery = projectAssets.filter((a) => a.verified).length >= 4;
 
   const others = projects.filter((p) => p.slug !== slug);
   const related = [...others]
@@ -96,7 +95,7 @@ export default async function ProjectDetailPage({
         <DetailMasterplan project={project} masterplanAsset={masterplanAsset} />
         <DetailArchitecturePartners project={project} />
         <DetailProductLine project={project} />
-        <DetailAmenities project={project} amenityAssets={amenityAssets} hasGallery={hasGallery} />
+        <DetailAmenities project={project} amenityAssets={amenityAssets} />
       </div>
       <SectionDivider />
       <div className="print:hidden">

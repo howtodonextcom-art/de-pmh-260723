@@ -18,7 +18,7 @@ export function DetailMasterplan({
   const mix = project.unitMix ?? [];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.masterplan")}</h2>
       <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl bg-muted">
         {imageUrl ? (
@@ -66,7 +66,7 @@ export function DetailMasterplan({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-border p-3 text-center">
+    <div className="rounded-xl border border-border bg-card p-3 text-center">
       <p className="text-lg font-bold tabular-nums text-foreground">{value}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
     </div>

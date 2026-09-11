@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { ChevronDownIcon } from "lucide-react";
+import { ArrowRightIcon, ChevronDownIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/lib/i18n/locale-context";
@@ -174,11 +174,12 @@ export function ProjectNavDropdown({
                   <MenuPrimitive.LinkItem
                     render={<Link href={catalogHref} />}
                     className={cn(
-                      "flex items-center justify-center rounded-xl bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground outline-none",
+                      "flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground outline-none",
                       "transition-colors hover:bg-primary/90 data-highlighted:bg-primary/90"
                     )}
                   >
                     {viewAllLabel}
+                    <ArrowRightIcon className="size-4" aria-hidden />
                   </MenuPrimitive.LinkItem>
                 </div>
               </div>

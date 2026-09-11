@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 
+import { BlueprintFallback } from "@/components/shared/blueprint-fallback";
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { buttonVariants } from "@/components/ui/button";
 import { heroTextCascade, kenBurns } from "@/lib/motion/presets";
@@ -50,7 +51,7 @@ export function Hero(props: HeroProps) {
       : null;
 
     return (
-      <section className="relative flex h-[60vh] min-h-96 items-end overflow-hidden">
+      <section className="relative flex h-[60vh] min-h-96 items-end overflow-hidden dark:ring-1 dark:ring-border-accent dark:ring-inset">
         {imageUrl ? (
           <ImageWithFallback
             src={imageUrl}
@@ -62,7 +63,7 @@ export function Hero(props: HeroProps) {
             className="absolute inset-0 object-cover"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-background" />
+          <BlueprintFallback />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
         <div className="relative mx-auto w-full max-w-7xl px-4 pb-10 text-white sm:px-6">

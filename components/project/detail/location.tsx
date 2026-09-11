@@ -1,3 +1,4 @@
+import { BlueprintFallback } from "@/components/shared/blueprint-fallback";
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
@@ -8,6 +9,11 @@ import type { V0ImageAsset } from "@/lib/library-bridge";
  * example; the closest verified data is each project's `highlights[]`
  * (distance/location facts already sourced), reused here instead of
  * inventing figures.
+ *
+ * Hides itself when every field is empty (per page.tsx's "each block hides
+ * itself when its data is empty" contract — the one sibling section that
+ * was missing this guard, rendering a bare label + empty gradient box for
+ * projects with no location data at all, e.g. Sculptura).
  */
 export function DetailLocation({
   project,
@@ -16,16 +22,19 @@ export function DetailLocation({
   project: FullProject;
   locationAsset?: V0ImageAsset | null;
 }) {
+  const address = project.address?.trim();
   const locationFacts = (project.highlights ?? []).filter((h) => /phút|km|Hồ|Mall|kết nối|giao lộ/i.test(h));
   const imageUrl = locationAsset ? (locationAsset.resolvedUrl ?? locationAsset.sourceFileUrl) : null;
 
+  if (!address && locationFacts.length === 0 && !project.saBanUrl && !imageUrl) return null;
+
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.location")}</h2>
       <div className="grid gap-8 md:grid-cols-2">
         <div>
           <p className="text-sm font-medium text-foreground">Địa chỉ pháp lý</p>
-          <p className="mt-1 text-muted-foreground">{project.address}</p>
+          <p className="mt-1 text-muted-foreground">{address || "Chưa công bố"}</p>
           {locationFacts.length > 0 && (
             <ul className="mt-6 space-y-2 text-sm text-foreground">
               {locationFacts.map((f) => (
@@ -57,7 +66,7 @@ export function DetailLocation({
               className="object-cover"
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-background" />
+            <BlueprintFallback />
           )}
         </div>
       </div>

@@ -11,7 +11,7 @@ export function DetailFactGrid({ project }: { project: FullProject }) {
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {cells.map((cell) => (
-          <div key={cell.label} className="rounded-xl border border-border p-4">
+          <div key={cell.label} className="rounded-xl border border-border bg-card p-4">
             <p className="text-xs text-muted-foreground">{cell.label}</p>
             <Tooltip>
               <TooltipTrigger render={<p className="mt-1 cursor-help text-sm font-medium text-foreground" />}>

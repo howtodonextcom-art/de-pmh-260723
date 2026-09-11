@@ -21,9 +21,9 @@ import type { Project as FullProject } from "@library/types/project";
  */
 export function DetailLegalTeaser({ project }: { project: FullProject }) {
   return (
-    <section id="phap-ly" className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+    <section id="phap-ly" className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <div className="mb-4 flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold text-foreground">{t("detail.legalDossier")}</h2>
+        <h2 className="text-xl font-semibold text-foreground">{t("detail.legalDossier")}</h2>
         {/* Real navigation link styled as a button — not routed through Base UI's
             interactive Button primitive, which assumes a native <button> tag. */}
         <Link
@@ -36,7 +36,7 @@ export function DetailLegalTeaser({ project }: { project: FullProject }) {
       <Accordion>
         <AccordionItem value="legal-dossier">
           <AccordionTrigger className="text-sm font-medium text-foreground">
-            {t("detail.legalDossier")} — xem hồ sơ pháp lý chi tiết
+            Xem chi tiết từng văn bản
           </AccordionTrigger>
           <AccordionContent>
             <LegalDossierTable project={project} />

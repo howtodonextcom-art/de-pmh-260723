@@ -12,6 +12,7 @@ import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { HIDDEN_NAV_KEYS } from "@/lib/nav-flags";
 import type { HeaderProject } from "@/lib/types";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 
@@ -36,7 +37,7 @@ export function SiteHeader({ headerProjects, thumbBySlug = {} }: SiteHeaderProps
   const navItems = [
     { key: "so-sanh", label: t("nav.soSanh"), href: "/so-sanh" },
     { key: "phap-ly", label: t("nav.phapLy"), href: "/phap-ly" },
-  ] as const;
+  ].filter((item) => !HIDDEN_NAV_KEYS.has(item.key));
 
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -14,10 +15,10 @@ import { ScopeChip } from "@/components/shared/scope-chip";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useLocale } from "@/lib/i18n/locale-context";
 import { useReplaceSearchParams } from "@/lib/hooks/use-replace-search-params";
 import { useNavScopeFilter } from "@/lib/hooks/use-nav-scope-filter";
-import { COMPARE_COLUMN_CAP, COMPARE_FIELDS } from "@library/lib/data/compare-fields";
+import { localizedDisplayName } from "@/lib/i18n/project-copy";
+import { COMPARE_COLUMN_CAP, getCompareFields } from "@library/lib/data/compare-fields";
 import type { Project } from "@library/types/project";
 
 /**
@@ -25,7 +26,9 @@ import type { Project } from "@library/types/project";
  * → attribute×project table. Does not render hundreds of columns by default.
  */
 export function CompareTable({ projects }: { projects: Project[] }) {
-  const { t } = useLocale();
+  const t = useTranslations();
+  const rawLocale = useLocale();
+  const locale = rawLocale === "en" ? "en" : "vi";
   const [hideIdentical, setHideIdentical] = useState(false);
   const { searchParams, replaceParams } = useReplaceSearchParams("/so-sanh");
   const {
@@ -119,16 +122,18 @@ export function CompareTable({ projects }: { projects: Project[] }) {
     });
   }, [slugsParam, candidates, replaceParams]);
 
+  const fields = useMemo(() => getCompareFields(locale), [locale]);
+
   const rows = useMemo(() => {
-    return COMPARE_FIELDS.map((field) => ({
+    return fields.map((field) => ({
       field,
-      cells: selectedProjects.map((p) => field.cell(p)),
+      cells: selectedProjects.map((p) => field.cell(p, locale)),
     })).filter((row) => {
       if (!hideIdentical || selectedProjects.length < 2) return true;
       const values = row.cells.map((c) => c.display);
       return new Set(values).size > 1;
     });
-  }, [selectedProjects, hideIdentical]);
+  }, [selectedProjects, hideIdentical, locale, fields]);
 
   const needsManualPick = candidates.length > COMPARE_COLUMN_CAP && selectedProjects.length === 0;
 
@@ -230,7 +235,7 @@ export function CompareTable({ projects }: { projects: Project[] }) {
                             : "border-border bg-background text-foreground hover:bg-muted"
                       )}
                     >
-                      {p.displayNameVi}
+                      {localizedDisplayName(p, locale)}
                     </button>
                   </li>
                 );
@@ -267,7 +272,7 @@ export function CompareTable({ projects }: { projects: Project[] }) {
                   {selectedProjects.map((p) => (
                     <th key={p.slug} className="min-w-[160px] p-3 text-left font-medium">
                       <Link href={`/du-an/${p.slug}`} className="hover:underline">
-                        {p.displayNameVi}
+                        {localizedDisplayName(p, locale)}
                       </Link>
                     </th>
                   ))}
@@ -287,7 +292,7 @@ export function CompareTable({ projects }: { projects: Project[] }) {
                           </TooltipTrigger>
                           <TooltipContent>
                             {cell.tooltip ??
-                              `Cập nhật ${selectedProjects[i]?.lastVerifiedAt ?? "—"}`}
+                              `${t("common.updated")} ${selectedProjects[i]?.lastVerifiedAt ?? "—"}`}
                           </TooltipContent>
                         </Tooltip>
                         {row.field.id !== "tinh-trang-ban" ? (
@@ -307,11 +312,11 @@ export function CompareTable({ projects }: { projects: Project[] }) {
           <Accordion className="md:hidden">
             {selectedProjects.map((p) => (
               <AccordionItem key={p.slug} value={p.slug}>
-                <AccordionTrigger>{p.displayNameVi}</AccordionTrigger>
+                <AccordionTrigger>{localizedDisplayName(p, locale)}</AccordionTrigger>
                 <AccordionContent>
                   <dl className="space-y-3">
-                    {COMPARE_FIELDS.map((field) => {
-                      const cell = field.cell(p);
+                    {fields.map((field) => {
+                      const cell = field.cell(p, locale);
                       return (
                         <div key={field.id}>
                           <dt className="text-xs text-muted-foreground">{field.label}</dt>

@@ -1,30 +1,35 @@
 "use client";
 
-import { useLocale, type Locale } from "@/lib/i18n/locale-context";
-import { cn } from "@/lib/utils";
+import { useLocale as useNextIntlLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
-const LOCALE_COOKIE = "NEXT_LOCALE";
+import { cn } from "@/lib/utils";
+import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/locale";
 
 /**
- * F18 — client→server half of the locale split-brain fix. `setLocale` only
- * updates React state + `localStorage` (client-reactive components); without
- * also writing the `NEXT_LOCALE` cookie here, a reload or a fresh RSC
- * navigation would fall back to whatever app/layout.tsx last resolved
- * server-side, ignoring the pick the visitor just made. `document.cookie` is
- * enough — no Server Action needed just to persist a preference cookie.
+ * Writes the same cookie `i18n/request.ts` reads server-side, then
+ * `router.refresh()` re-runs the Server Component tree (RootLayout
+ * included) so `NextIntlClientProvider` gets fresh `locale`/`messages`
+ * props — this is now the ONLY source of truth for locale (server and
+ * client both read it from the same per-request resolution), replacing the
+ * old split-brain between a cookie-unaware static `t()` and a client-only
+ * reactive Context. See docs/ADR-002-i18n-strategy.md.
  */
 function persistLocaleCookie(locale: Locale) {
   document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
 }
 
-/** vi ↔ en toggle — only affects components wired to `useLocale()`. See docs/I18N_EN.md. */
+/** vi ↔ en toggle. */
 export function LocaleSwitcher() {
-  const { locale, setLocale, t } = useLocale();
+  const locale = useNextIntlLocale() as Locale;
+  const t = useTranslations();
+  const router = useRouter();
 
-  const handleSetLocale = (next: Locale) => {
-    setLocale(next);
+  function handleSetLocale(next: Locale) {
+    if (next === locale) return;
     persistLocaleCookie(next);
-  };
+    router.refresh();
+  }
 
   return (
     <div

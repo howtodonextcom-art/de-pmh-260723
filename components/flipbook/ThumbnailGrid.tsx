@@ -1,8 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import React, { useEffect } from "react";
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
-import { t } from "@/lib/i18n/t";
 import type { FlipbookAsset } from "@/lib/flipbook/types";
 
 interface ThumbnailGridProps {
@@ -19,6 +19,7 @@ export function ThumbnailGrid({
   onSelectPage,
   onClose,
 }: ThumbnailGridProps) {
+  const t = useTranslations();
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();

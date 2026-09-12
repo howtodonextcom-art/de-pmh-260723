@@ -1,5 +1,15 @@
 import { canShowConceptArchitect } from "./architect-visibility";
-import { projectStatusLabel } from "../../components/layout/project-status-label";
+import { formatNumber, unitsWord, type NumberLocale } from "../i18n-format";
+import {
+  addressTooltip,
+  COMPARE_FIELD_LABELS,
+  EMPTY_VALUE,
+  gfaTooltip,
+  projectStatusLabel,
+  projectTypeLabel,
+  unitsPhaseLine,
+  unitsPhaseTooltip,
+} from "../i18n-copy";
 import type { FieldStatus, Project } from "../../types/project";
 
 export interface CompareCell {
@@ -11,22 +21,13 @@ export interface CompareCell {
 export interface CompareField {
   id: string;
   label: string;
-  cell: (p: Project) => CompareCell;
+  cell: (p: Project, locale?: NumberLocale) => CompareCell;
 }
 
 /** Soft cap for side-by-side project columns (Variant A — Branch matrix). */
 export const COMPARE_COLUMN_CAP = 4;
 
-const PROJECT_TYPE_LABEL: Record<string, string> = {
-  "do-thi-sinh-thai": "Đô thị sinh thái",
-  "can-ho-hang-sang": "Căn hộ hạng sang",
-  "can-ho-premium": "Căn hộ premium",
-  "can-ho": "Căn hộ",
-  "thap-tang": "Thấp tầng",
-  "cao-tang": "Cao tầng",
-};
-
-function plotCell(p: Project): CompareCell {
+function plotCell(p: Project, locale: NumberLocale = "vi"): CompareCell {
   if (p.plotCode?.trim()) {
     return { display: p.plotCode.trim(), status: "da-co-du-lieu" };
   }
@@ -39,32 +40,32 @@ function plotCell(p: Project): CompareCell {
     return { display: thua, status: "da-co-du-lieu", tooltip: p.address };
   }
   return {
-    display: "Chưa có",
+    display: EMPTY_VALUE[locale],
     status: "chua-co-du-lieu",
-    tooltip: p.address ? `Địa chỉ: ${p.address}` : undefined,
+    tooltip: p.address ? addressTooltip(p.address, locale) : undefined,
   };
 }
 
-function unitsCell(p: Project): CompareCell {
+function unitsCell(p: Project, locale: NumberLocale = "vi"): CompareCell {
   if (p.totalUnits) {
-    return { display: `${p.totalUnits.toLocaleString("vi-VN")} căn`, status: p.totalUnitsStatus };
+    return { display: `${formatNumber(p.totalUnits, locale)} ${unitsWord(locale)}`, status: p.totalUnitsStatus };
   }
   if (p.unitsByPhase?.length) {
     return {
-      display: p.unitsByPhase.map((u) => `${u.units} căn ${u.phase.split(" ")[0]}`).join(" · "),
+      display: p.unitsByPhase.map((u) => unitsPhaseLine(u.units, u.phase.split(" ")[0], locale)).join(" · "),
       status: p.unitsByPhaseStatus ?? "da-co-du-lieu",
-      tooltip: "Chưa công bố tổng toàn khu — số liệu theo từng giai đoạn.",
+      tooltip: unitsPhaseTooltip(locale),
     };
   }
-  return { display: "Chưa có", status: p.totalUnitsStatus };
+  return { display: EMPTY_VALUE[locale], status: p.totalUnitsStatus };
 }
 
-function designUnitCell(p: Project): CompareCell {
+function designUnitCell(p: Project, locale: NumberLocale = "vi"): CompareCell {
   if (canShowConceptArchitect(p) && p.conceptArchitect?.value) {
     return { display: p.conceptArchitect.value, status: p.conceptArchitect.status };
   }
   return {
-    display: "Chưa có",
+    display: EMPTY_VALUE[locale],
     status:
       p.conceptArchitect?.status === "da-co-du-lieu"
         ? "chua-xac-thuc"
@@ -72,86 +73,76 @@ function designUnitCell(p: Project): CompareCell {
   };
 }
 
+type CompareFieldId = keyof (typeof COMPARE_FIELD_LABELS)["vi"];
+
+const COMPARE_FIELD_CELLS: Record<CompareFieldId, CompareField["cell"]> = {
+  "lo-dat": plotCell,
+  "khu-vuc": (p, locale = "vi") => ({
+    display: p.region || EMPTY_VALUE[locale],
+    status: p.region ? "da-co-du-lieu" : "chua-co-du-lieu",
+  }),
+  "loai-hinh": (p, locale = "vi") => {
+    const types = p.projectType ?? [];
+    const label = types.map((type) => projectTypeLabel(type, locale)).filter(Boolean).join(", ");
+    return { display: label || EMPTY_VALUE[locale], status: label ? "da-co-du-lieu" : "chua-co-du-lieu" };
+  },
+  "quy-mo-dat": (p, locale = "vi") =>
+    p.siteArea
+      ? {
+          display: `${formatNumber(p.siteArea / 10000, locale, { maximumFractionDigits: 2 })} ha`,
+          status: p.siteAreaStatus,
+          tooltip: p.siteAreaNote,
+        }
+      : { display: EMPTY_VALUE[locale], status: p.siteAreaStatus },
+  gfa: (_p, locale = "vi") => ({
+    display: "—",
+    status: "chua-co-du-lieu",
+    tooltip: gfaTooltip(locale),
+  }),
+  "so-can": unitsCell,
+  "don-vi-thiet-ke": designUnitCell,
+  "tong-thau": (p, locale = "vi") => {
+    const value = p.legalDossier?.mainContractor;
+    return {
+      display: value || EMPTY_VALUE[locale],
+      status: value ? "da-co-du-lieu" : "chua-co-du-lieu",
+    };
+  },
+  "tinh-trang-ban": (p, locale = "vi") => {
+    const label = p.status ? projectStatusLabel(p.status, locale) : null;
+    const eligibility = p.legalDossier?.salesEligibility ?? p.statusNote ?? undefined;
+    return {
+      display: label || EMPTY_VALUE[locale],
+      status: label ? "da-co-du-lieu" : "chua-co-du-lieu",
+      tooltip: eligibility || undefined,
+    };
+  },
+};
+
+const COMPARE_FIELD_ORDER: CompareFieldId[] = [
+  "lo-dat",
+  "khu-vuc",
+  "loai-hinh",
+  "quy-mo-dat",
+  "gfa",
+  "so-can",
+  "don-vi-thiet-ke",
+  "tong-thau",
+  "tinh-trang-ban",
+];
+
 /**
  * Compare matrix rows — Lô đất first; trade name omitted (duplicates column headers).
- * Shared by `/so-sanh` (and any future table view).
+ * Shared by `/so-sanh` (and any future table view). Pass `locale` so row labels
+ * match cell copy; `COMPARE_FIELDS` stays the Vietnamese snapshot used by CLI backups.
  */
-export const COMPARE_FIELDS: CompareField[] = [
-  {
-    id: "lo-dat",
-    label: "Lô đất",
-    cell: plotCell,
-  },
-  {
-    id: "khu-vuc",
-    label: "Khu vực",
-    cell: (p) => ({
-      display: p.region ?? "Chưa có",
-      status: p.region ? "da-co-du-lieu" : "chua-co-du-lieu",
-    }),
-  },
-  {
-    id: "loai-hinh",
-    label: "Loại hình",
-    cell: (p) => {
-      const types = p.projectType ?? [];
-      const label = types.map((t) => PROJECT_TYPE_LABEL[t] ?? t).filter(Boolean).join(", ") || types[0];
-      return { display: label || "Chưa có", status: label ? "da-co-du-lieu" : "chua-co-du-lieu" };
-    },
-  },
-  {
-    id: "quy-mo-dat",
-    label: "Diện tích đất",
-    cell: (p) =>
-      p.siteArea
-        ? {
-            display: `${(p.siteArea / 10000).toLocaleString("vi-VN", { maximumFractionDigits: 2 })} ha`,
-            status: p.siteAreaStatus,
-            tooltip: p.siteAreaNote,
-          }
-        : { display: "Chưa có", status: p.siteAreaStatus },
-  },
-  {
-    id: "gfa",
-    label: "GFA",
-    cell: () => ({
-      display: "—",
-      status: "chua-co-du-lieu",
-      tooltip: "Chưa có nguồn công bố cho mọi dự án.",
-    }),
-  },
-  {
-    id: "so-can",
-    label: "Số căn",
-    cell: unitsCell,
-  },
-  {
-    id: "don-vi-thiet-ke",
-    label: "Đơn vị thiết kế",
-    cell: designUnitCell,
-  },
-  {
-    id: "tong-thau",
-    label: "Tổng thầu thi công",
-    cell: (p) => {
-      const value = p.legalDossier?.mainContractor;
-      return {
-        display: value || "Chưa có",
-        status: value ? "da-co-du-lieu" : "chua-co-du-lieu",
-      };
-    },
-  },
-  {
-    id: "tinh-trang-ban",
-    label: "Tình trạng",
-    cell: (p) => {
-      const label = p.status ? projectStatusLabel(p.status) : null;
-      const eligibility = p.legalDossier?.salesEligibility ?? p.statusNote ?? undefined;
-      return {
-        display: label || "Chưa có",
-        status: label ? "da-co-du-lieu" : "chua-co-du-lieu",
-        tooltip: eligibility || undefined,
-      };
-    },
-  },
-];
+export function getCompareFields(locale: NumberLocale = "vi"): CompareField[] {
+  const labels = COMPARE_FIELD_LABELS[locale];
+  return COMPARE_FIELD_ORDER.map((id) => ({
+    id,
+    label: labels[id],
+    cell: COMPARE_FIELD_CELLS[id],
+  }));
+}
+
+export const COMPARE_FIELDS: CompareField[] = getCompareFields("vi");

@@ -24,6 +24,12 @@ describe("firestore codec", () => {
     expect(fromFirestoreFields(fields)).toEqual(input);
   });
 
+  it("round-trips a real project coordinate pair (Aristo, from the verified catalog dump) with no precision loss", () => {
+    const input = { coordinates: { lat: 10.719602, lng: 106.716154 } };
+    const fields = toFirestoreFields(input);
+    expect(fromFirestoreFields(fields)).toEqual(input);
+  });
+
   it("skips undefined keys", () => {
     expect(toFirestoreFields({ a: 1, b: undefined })).toEqual({ a: { integerValue: "1" } });
   });

@@ -1,14 +1,15 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { Suspense, useEffect } from "react";
 
 import { LegalDossierTable } from "@/components/project/legal-dossier-table";
 import { LegalLoadingSkeleton } from "@/components/project/legal-loading-skeleton";
 import { ScopeChip } from "@/components/shared/scope-chip";
 import { cn } from "@/lib/utils";
-import { useLocale } from "@/lib/i18n/locale-context";
 import { useReplaceSearchParams } from "@/lib/hooks/use-replace-search-params";
 import { useNavScopeFilter } from "@/lib/hooks/use-nav-scope-filter";
+import { localizedDisplayName } from "@/lib/i18n/project-copy";
 import { LEGAL_TABLE_ROW_ORDER } from "@/lib/legal-documents";
 import type { Project as FullProject } from "@library/types/project";
 
@@ -17,7 +18,8 @@ import type { Project as FullProject } from "@library/types/project";
  * Only one dossier card is mounted at a time (`?slug=`).
  */
 function LegalScopedBody({ projects }: { projects: FullProject[] }) {
-  const { t } = useLocale();
+  const t = useTranslations();
+  const locale = useLocale();
   const { searchParams, replaceParams } = useReplaceSearchParams("/phap-ly");
   const {
     zone,
@@ -150,7 +152,7 @@ function LegalScopedBody({ projects }: { projects: FullProject[] }) {
                       : "border-border bg-background text-foreground hover:bg-muted"
                   )}
                 >
-                  {p.displayNameVi}
+                  {localizedDisplayName(p, locale)}
                 </button>
               );
             })}
@@ -169,7 +171,7 @@ function LegalScopedBody({ projects }: { projects: FullProject[] }) {
                   id={`legal-project-title-${activeProject.slug}`}
                   className="font-display text-xl font-semibold text-foreground"
                 >
-                  {activeProject.displayNameVi}
+                  {localizedDisplayName(activeProject, locale)}
                 </h2>
                 <p className="mt-0.5 text-sm text-muted-foreground">{activeProject.region}</p>
               </div>

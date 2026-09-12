@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,7 +12,6 @@ import { MobileNav } from "@/components/shared/mobile-nav";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
-import { useLocale } from "@/lib/i18n/locale-context";
 import { HIDDEN_NAV_KEYS } from "@/lib/nav-flags";
 import type { HeaderProject } from "@/lib/types";
 import type { V0ImageAsset } from "@/lib/library-bridge";
@@ -32,7 +32,7 @@ export function SiteHeader({ headerProjects, thumbBySlug = {} }: SiteHeaderProps
   const [cmdkOpen, setCmdkOpen] = React.useState(false);
   const pathname = usePathname() ?? "";
   const activeKey = activeNavKey(pathname);
-  const { t } = useLocale();
+  const t = useTranslations();
 
   const navItems = [
     { key: "so-sanh", label: t("nav.soSanh"), href: "/so-sanh" },
@@ -87,7 +87,7 @@ export function SiteHeader({ headerProjects, thumbBySlug = {} }: SiteHeaderProps
           <button
             type="button"
             onClick={() => setCmdkOpen(true)}
-            aria-label="Mở tìm kiếm (Ctrl+K)"
+            aria-label={t("nav.searchOpen")}
             className={cn(
               "flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5",
               "text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",

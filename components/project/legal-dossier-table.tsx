@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { CheckIcon, CopyIcon, FileTextIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -13,9 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useLocale } from "@/lib/i18n/locale-context";
 import {
-  LEGAL_TABLE_ROW_LABELS,
   LEGAL_TABLE_ROW_ORDER,
   resolveLegalGroupLines,
   type LegalDocLine,
@@ -33,7 +32,7 @@ export type LegalTableProject = {
 };
 
 function CopyButton({ value }: { value: string }) {
-  const { t } = useLocale();
+  const t = useTranslations();
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = React.useCallback(async () => {
@@ -143,7 +142,7 @@ export function LegalDossierTable({
   project: LegalTableProject;
   className?: string;
 }) {
-  const { t } = useLocale();
+  const t = useTranslations();
   const [viewer, setViewer] = React.useState<ViewerState>(null);
   const { style: modalBoxStyle } = useViewportModalBox(viewer !== null);
 
@@ -182,7 +181,7 @@ export function LegalDossierTable({
                 >
                   <td className="px-4 py-3 align-top">
                     <span className="font-medium text-foreground">
-                      {LEGAL_TABLE_ROW_LABELS[rowId]}
+                      {t(`legalGroup.${rowId}` as "legalGroup.investmentApproval")}
                     </span>
                     {isRealDispute ? (
                       <Badge variant="destructive" className="ml-2 text-[10px]">
@@ -259,7 +258,7 @@ export function LegalDossierTable({
           >
             <DialogHeader className="shrink-0 border-b border-border px-5 py-4 pr-12 text-left">
               <DialogTitle className="font-display text-lg sm:text-xl">
-                {LEGAL_TABLE_ROW_LABELS[viewer.groupId]}
+                {t(`legalGroup.${viewer.groupId}` as "legalGroup.investmentApproval")}
               </DialogTitle>
               <DialogDescription className="text-sm">
                 {viewer.line.code ?? t("legal.docDetail")}
@@ -319,7 +318,7 @@ export function LegalTimeline({
   project: LegalTableProject;
   className?: string;
 }) {
-  const { t } = useLocale();
+  const t = useTranslations();
 
   return (
     <ol className={cn("relative border-l border-border pl-6", className)}>
@@ -345,7 +344,7 @@ export function LegalTimeline({
             />
 
             <p className="mb-0.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              {LEGAL_TABLE_ROW_LABELS[rowId]}
+              {t(`legalGroup.${rowId}` as "legalGroup.investmentApproval")}
             </p>
 
             {hasValue ? (

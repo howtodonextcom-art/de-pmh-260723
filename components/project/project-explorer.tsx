@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDownIcon, SlidersHorizontalIcon, TableIcon, XIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -15,26 +16,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { STATUS_LABEL } from "@/components/shared/status-badge";
-import { t } from "@/lib/i18n/t";
 import { cn } from "@/lib/utils";
 import { useReplaceSearchParams } from "@/lib/hooks/use-replace-search-params";
 import { useNavScopeFilter } from "@/lib/hooks/use-nav-scope-filter";
 import { computeFieldStatusSummary } from "@library/lib/data/status-summary";
-import { citySlug } from "@library/lib/data/region-slug";
+import { citySlug, cityOrRegion, groupProjectsByRegion } from "@library/lib/data/region-slug";
 import type { Project as FullProject, FieldStatus } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 
 const SORT_OPTIONS = [
-  { value: "ten", label: "Tên A-Z" },
-  { value: "quy-mo", label: "Quy mô đất giảm dần" },
-  { value: "cap-nhat", label: "Cập nhật mới nhất" },
+  { value: "ten", labelKey: "duAn.sortName" },
+  { value: "quy-mo", labelKey: "duAn.sortArea" },
+  { value: "cap-nhat", labelKey: "duAn.sortUpdated" },
 ] as const;
 
-const TYPE_OPTIONS = [
-  { value: "do-thi-sinh-thai", label: "Đô thị sinh thái" },
-  { value: "cao-tang", label: "Căn hộ cao tầng" },
-];
+const TYPE_OPTIONS = ["do-thi-sinh-thai", "cao-tang"] as const;
 
 const STATUS_FILTER_OPTIONS: FieldStatus[] = [
   "da-co-du-lieu",
@@ -52,6 +48,7 @@ export function ProjectExplorer({
   projects: FullProject[];
   heroAssetsBySlug: Record<string, V0ImageAsset | null>;
 }) {
+  const t = useTranslations();
   const router = useRouter();
   const { searchParams, replaceParams } = useReplaceSearchParams("/du-an");
   const {
@@ -64,6 +61,11 @@ export function ProjectExplorer({
     clearParamsOnScopeChange: ["xem"],
   });
 
+  const regionGroups = useMemo(
+    () => [...groupProjectsByRegion(projects)].sort((a, b) => a.label.localeCompare(b.label, "vi")),
+    [projects],
+  );
+
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [moreOpen, setMoreOpen] = useState(false);
   const khuVuc = searchParams.get("khu-vuc") ?? "all";
@@ -72,16 +74,13 @@ export function ProjectExplorer({
   const sapXep = searchParams.get("sap-xep") ?? "ten";
 
   const secondaryActive = khuVuc !== "all" || loai !== "all" || nhan !== "all";
+  const filtersOpen = moreOpen || secondaryActive;
 
   useEffect(() => {
     if (searchParams.get("xem") === "bang") {
       router.replace("/so-sanh");
     }
   }, [router, searchParams]);
-
-  useEffect(() => {
-    if (secondaryActive) setMoreOpen(true);
-  }, [secondaryActive]);
 
   function updateParam(key: string, value: string) {
     replaceParams((params) => {
@@ -100,12 +99,13 @@ export function ProjectExplorer({
       list = list.filter(
         (p) =>
           p.displayNameVi.toLowerCase().includes(q) ||
+          (p.displayNameEn ?? "").toLowerCase().includes(q) ||
           (p.alternateNames ?? []).some((n) => n.toLowerCase().includes(q)) ||
           (p.region ?? "").toLowerCase().includes(q)
       );
     }
     if (khuVuc !== "all") {
-      list = list.filter((p) => citySlug(p.city ?? p.region ?? "") === khuVuc);
+      list = list.filter((p) => citySlug(cityOrRegion(p)) === khuVuc);
     }
     if (loai !== "all") {
       list = list.filter((p) => (p.projectType ?? []).includes(loai));
@@ -152,21 +152,21 @@ export function ProjectExplorer({
   if (khuVuc !== "all") {
     activeChips.push({
       key: "khu-vuc",
-      label: khuVuc === "bac-ninh" ? "Bắc Ninh" : khuVuc === "tp-hcm" ? "TP.HCM" : khuVuc,
+      label: regionGroups.find((g) => g.slug === khuVuc)?.label ?? khuVuc,
       clear: () => updateParam("khu-vuc", "all"),
     });
   }
   if (loai !== "all") {
     activeChips.push({
       key: "loai",
-      label: TYPE_OPTIONS.find((o) => o.value === loai)?.label ?? loai,
+      label: t(`projectType.${loai}` as "projectType.cao-tang"),
       clear: () => updateParam("loai", "all"),
     });
   }
   if (nhan !== "all") {
     activeChips.push({
       key: "nhan",
-      label: STATUS_LABEL[nhan as FieldStatus] ?? nhan,
+      label: t(`fieldStatus.${nhan}` as "fieldStatus.da-co-du-lieu"),
       clear: () => updateParam("nhan", "all"),
     });
   }
@@ -228,10 +228,10 @@ export function ProjectExplorer({
         <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"
-            variant={moreOpen || secondaryActive ? "secondary" : "outline"}
+            variant={filtersOpen ? "secondary" : "outline"}
             size="sm"
             className="gap-1.5"
-            aria-expanded={moreOpen}
+            aria-expanded={filtersOpen}
             onClick={() => setMoreOpen((o) => !o)}
           >
             <SlidersHorizontalIcon />
@@ -241,17 +241,17 @@ export function ProjectExplorer({
                 {[khuVuc !== "all", loai !== "all", nhan !== "all"].filter(Boolean).length}
               </span>
             ) : null}
-            <ChevronDownIcon className={cn("size-3.5 transition-transform", moreOpen && "rotate-180")} />
+            <ChevronDownIcon className={cn("size-3.5 transition-transform", filtersOpen && "rotate-180")} />
           </Button>
 
           <Select value={sapXep} onValueChange={(v) => v && updateParam("sap-xep", v)}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue>{SORT_OPTIONS.find((s) => s.value === sapXep)?.label}</SelectValue>
+              <SelectValue>{t(SORT_OPTIONS.find((s) => s.value === sapXep)?.labelKey ?? "duAn.sortName")}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {SORT_OPTIONS.map((s) => (
                 <SelectItem key={s.value} value={s.value}>
-                  {s.label}
+                  {t(s.labelKey)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -269,17 +269,24 @@ export function ProjectExplorer({
       </div>
 
       {/* Secondary filters — collapsed by default */}
-      {moreOpen ? (
+      {filtersOpen ? (
         <div className="mb-4 rounded-xl border border-border/80 bg-muted/30 p-3">
           <div className="flex flex-wrap items-center gap-2">
             <Select value={khuVuc} onValueChange={(v) => v && updateParam("khu-vuc", v)}>
               <SelectTrigger className="w-[150px] bg-background">
-                <SelectValue>{khuVuc === "all" ? t("duAn.allRegions") : khuVuc}</SelectValue>
+                <SelectValue>
+                  {khuVuc === "all"
+                    ? t("duAn.allRegions")
+                    : (regionGroups.find((g) => g.slug === khuVuc)?.label ?? khuVuc)}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("duAn.allRegions")}</SelectItem>
-                <SelectItem value="bac-ninh">Bắc Ninh</SelectItem>
-                <SelectItem value="tp-hcm">TP.HCM</SelectItem>
+                {regionGroups.map((g) => (
+                  <SelectItem key={g.slug} value={g.slug}>
+                    {g.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -288,14 +295,14 @@ export function ProjectExplorer({
                 <SelectValue>
                   {loai === "all"
                     ? t("duAn.allTypes")
-                    : (TYPE_OPTIONS.find((opt) => opt.value === loai)?.label ?? loai)}
+                    : t(`projectType.${loai}` as "projectType.cao-tang")}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("duAn.allTypes")}</SelectItem>
                 {TYPE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
+                  <SelectItem key={opt} value={opt}>
+                    {t(`projectType.${opt}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -304,14 +311,14 @@ export function ProjectExplorer({
             <Select value={nhan} onValueChange={(v) => v && updateParam("nhan", v)}>
               <SelectTrigger className="w-[180px] bg-background">
                 <SelectValue>
-                  {nhan === "all" ? t("duAn.allStatus") : STATUS_LABEL[nhan as FieldStatus]}
+                  {nhan === "all" ? t("duAn.allStatus") : t(`fieldStatus.${nhan}` as "fieldStatus.da-co-du-lieu")}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("duAn.allStatus")}</SelectItem>
                 {STATUS_FILTER_OPTIONS.map((s) => (
                   <SelectItem key={s} value={s}>
-                    {STATUS_LABEL[s]}
+                    {t(`fieldStatus.${s}`)}
                   </SelectItem>
                 ))}
               </SelectContent>

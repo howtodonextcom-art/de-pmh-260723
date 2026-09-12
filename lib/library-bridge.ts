@@ -13,17 +13,6 @@ import type { CatalogSource, CmsAsset, CmsProjectDoc } from "@/lib/cms/types";
 export type { V0HeaderProject, V0ImageAsset, V0Project, FullProject };
 export type PublicCatalogSource = CatalogSource;
 
-const STATUS_LABEL: Record<string, string> = {
-  "dang-trien-khai": "Đang triển khai",
-  "dang-ban": "Đang mở bán",
-  "da-ban-giao": "Đã bàn giao",
-  "sap-mo-ban": "Sắp mở bán",
-};
-
-function statusLabel(status: string): string {
-  return STATUS_LABEL[status] ?? status;
-}
-
 function toAsset(asset: CmsAsset): V0ImageAsset {
   return {
     assetId: asset.assetId,
@@ -43,8 +32,9 @@ function toHeader(project: CmsProjectDoc): V0HeaderProject {
   return {
     slug: project.slug,
     displayNameVi: project.displayNameVi,
+    displayNameEn: project.displayNameEn ?? null,
     region: project.region,
-    status: statusLabel(project.status),
+    status: project.status,
     alternateNames: project.alternateNames?.length ? project.alternateNames : undefined,
     navZone: project.navZone ?? null,
     namGroup: project.namGroup ?? null,
@@ -57,8 +47,9 @@ function toSlimProject(project: CmsProjectDoc): V0Project {
     id: project.id || project.slug,
     slug: project.slug,
     displayNameVi: project.displayNameVi,
+    displayNameEn: project.displayNameEn ?? null,
     region: project.region,
-    status: statusLabel(project.status),
+    status: project.status,
     alternateNames: project.alternateNames?.length ? project.alternateNames : undefined,
     legalDossier: project.legalDossier ?? null,
   };

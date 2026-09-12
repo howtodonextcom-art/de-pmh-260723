@@ -6,7 +6,15 @@ overrides:
 
 allowBuilds:
   "@firebase/util": true
+  '@parcel/watcher': true
+  '@swc/core': true
   msw: true
   protobufjs: true
   sharp: true
   unrs-resolver: true
+
+minimumReleaseAgeExclude:
+  - icu-minify@4.14.4
+  - next-intl-swc-plugin-extractor@4.14.4
+  - next-intl@4.14.4
+  - use-intl@4.14.4

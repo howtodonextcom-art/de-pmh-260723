@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
   BuildingIcon,
@@ -24,7 +25,7 @@ import {
   CommandItem,
   CommandSeparator,
 } from "@/components/ui/command";
-import { t } from "@/lib/i18n/t";
+import { localizedDisplayName } from "@/lib/i18n/project-copy";
 import type { HeaderProject } from "@/lib/types";
 
 interface CmdKSearchProps {
@@ -33,24 +34,22 @@ interface CmdKSearchProps {
   projects: HeaderProject[];
 }
 
-const STATIC_PAGES = [
-  {
-    id: "so-sanh",
-    label: t("cmdk.pageCompare"),
-    href: "/so-sanh",
-    icon: GitCompareIcon,
-  },
-  {
-    id: "phap-ly",
-    label: t("cmdk.pageLegal"),
-    href: "/phap-ly",
-    icon: ScaleIcon,
-  },
-];
-
 export function CmdKSearch({ open, onOpenChange, projects }: CmdKSearchProps) {
+  const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const { setTheme } = useTheme();
+
+  // Was a module-level constant reading the old static t() — moved inside
+  // the component since useTranslations() is a hook and can't be called at
+  // module scope.
+  const staticPages = React.useMemo(
+    () => [
+      { id: "so-sanh", label: t("cmdk.pageCompare"), href: "/so-sanh", icon: GitCompareIcon },
+      { id: "phap-ly", label: t("cmdk.pageLegal"), href: "/phap-ly", icon: ScaleIcon },
+    ],
+    [t],
+  );
 
   const handleSelect = React.useCallback(
     (href: string) => {
@@ -73,7 +72,7 @@ export function CmdKSearch({ open, onOpenChange, projects }: CmdKSearchProps) {
       open={open}
       onOpenChange={onOpenChange}
       title={t("nav.search")}
-      description="Tìm dự án, trang hoặc thực hiện hành động"
+      description={t("cmdk.description")}
     >
       <Command>
         <CommandInput placeholder={t("cmdk.placeholder")} />
@@ -84,10 +83,15 @@ export function CmdKSearch({ open, onOpenChange, projects }: CmdKSearchProps) {
           <CommandGroup heading={t("cmdk.groupProjects")}>
             {projects.map((p) => {
               // Safe: alternateNames may be undefined/null (e.g. Harmonie)
+              const name = localizedDisplayName(p, locale);
               const searchValue = [
+                name,
                 p.displayNameVi,
+                p.displayNameEn,
                 ...(p.alternateNames ?? []),
-              ].join(" ");
+              ]
+                .filter(Boolean)
+                .join(" ");
 
               return (
                 <CommandItem
@@ -97,7 +101,7 @@ export function CmdKSearch({ open, onOpenChange, projects }: CmdKSearchProps) {
                   className="flex items-center gap-2"
                 >
                   <BuildingIcon className="size-4 shrink-0 text-muted-foreground" />
-                  <span className="flex-1 truncate">{p.displayNameVi}</span>
+                  <span className="flex-1 truncate">{name}</span>
                   <span className="shrink-0 text-xs text-muted-foreground">
                     {p.region}
                   </span>
@@ -110,7 +114,7 @@ export function CmdKSearch({ open, onOpenChange, projects }: CmdKSearchProps) {
 
           {/* ── Static pages ─────────────────────────────────────────── */}
           <CommandGroup heading={t("cmdk.groupPages")}>
-            {STATIC_PAGES.map((page) => (
+            {staticPages.map((page) => (
               <CommandItem
                 key={page.id}
                 value={page.label}
@@ -157,7 +161,7 @@ export function CmdKSearch({ open, onOpenChange, projects }: CmdKSearchProps) {
             {projects.map((p) => (
               <CommandItem
                 key={`export-${p.slug}`}
-                value={`Xuất PDF ${p.displayNameVi} ${p.slug}`}
+                value={`${t("cmdk.exportPdf")} ${localizedDisplayName(p, locale)} ${p.slug}`}
                 onSelect={() => handleSelect(`/du-an/${p.slug}?export=pdf`)}
                 className="flex items-center gap-2"
               >
@@ -165,7 +169,7 @@ export function CmdKSearch({ open, onOpenChange, projects }: CmdKSearchProps) {
                 <span>{t("cmdk.exportPdf")}</span>
                 <span className="text-muted-foreground">—</span>
                 <span className="truncate text-muted-foreground">
-                  {p.displayNameVi}
+                  {localizedDisplayName(p, locale)}
                 </span>
               </CommandItem>
             ))}

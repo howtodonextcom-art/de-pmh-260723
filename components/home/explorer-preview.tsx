@@ -1,21 +1,23 @@
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 
+import { getTranslations } from "next-intl/server";
+
 import { buttonVariants } from "@/components/ui/button";
 import { ProjectCard } from "@/components/project/project-card";
 import { Reveal } from "@/components/shared/reveal";
-import { t } from "@/lib/i18n/t";
 import { cn } from "@/lib/utils";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 import type { Project as FullProject } from "@library/types/project";
 
-export function ExplorerPreview({
+export async function ExplorerPreview({
   projects,
   heroAssetsBySlug,
 }: {
   projects: FullProject[];
   heroAssetsBySlug: Record<string, V0ImageAsset | null>;
 }) {
+  const t = await getTranslations();
   if (projects.length === 0) {
     return (
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">

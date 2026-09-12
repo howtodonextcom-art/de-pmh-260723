@@ -18,15 +18,15 @@ test.describe("W2 — branded 404", () => {
 test.describe("W3 — nav i18n follows EN switcher", () => {
   test("desktop 'Dự án' dropdown translates to 'Projects'", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.addInitScript(() => window.localStorage.setItem("ded-pmh-locale", "en"));
     await page.goto("/");
+    await page.getByTestId("locale-switch-en").click();
     await expect(page.getByRole("button", { name: "Projects", exact: true })).toBeVisible();
   });
 
   test("mobile drawer translates to EN (Navigation / Projects / N projects)", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.addInitScript(() => window.localStorage.setItem("ded-pmh-locale", "en"));
     await page.goto("/");
+    await page.getByTestId("locale-switch-en").click();
     await page.getByRole("button", { name: "Open navigation menu" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();

@@ -234,6 +234,12 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
         <Field label="Tên hiển thị">
           <Input value={doc.displayNameVi} onChange={(e) => patch({ displayNameVi: e.target.value, navLabel: doc.navLabel || e.target.value })} />
         </Field>
+        <Field label="Tên hiển thị (EN)">
+          <Input
+            value={doc.displayNameEn ?? ""}
+            onChange={(e) => patch({ displayNameEn: e.target.value || null })}
+          />
+        </Field>
         <Field label="Tên canonical">
           <Input value={doc.canonicalName} onChange={(e) => patch({ canonicalName: e.target.value })} />
         </Field>
@@ -243,6 +249,8 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
             <option value="dang-ban">Đang mở bán</option>
             <option value="da-ban-giao">Đã bàn giao</option>
             <option value="sap-mo-ban">Sắp mở bán</option>
+            <option value="da-hoan-thanh">Đã hoàn thành</option>
+            <option value="chuan-bi-mo-ban">Chuẩn bị mở bán</option>
           </select>
         </Field>
         <Field label="Ghi chú trạng thái">
@@ -353,8 +361,14 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
         <Field label="Mô tả ngắn">
           <textarea className={fieldClass} value={doc.shortDescriptionVi ?? ""} onChange={(e) => patch({ shortDescriptionVi: e.target.value || null })} />
         </Field>
+        <Field label="Mô tả ngắn (EN)">
+          <textarea className={fieldClass} value={doc.shortDescriptionEn ?? ""} onChange={(e) => patch({ shortDescriptionEn: e.target.value || null })} />
+        </Field>
         <Field label="Mô tả dài">
           <textarea className={fieldClass} value={doc.longDescriptionVi ?? ""} onChange={(e) => patch({ longDescriptionVi: e.target.value || null })} />
+        </Field>
+        <Field label="Mô tả dài (EN)">
+          <textarea className={fieldClass} value={doc.longDescriptionEn ?? ""} onChange={(e) => patch({ longDescriptionEn: e.target.value || null })} />
         </Field>
         <Field label="Highlights (mỗi dòng)">
           <textarea className={fieldClass} value={lines(doc.highlights)} onChange={(e) => patch({ highlights: splitLines(e.target.value) })} />
@@ -363,7 +377,7 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
 
       <section className="grid gap-4 sm:grid-cols-2">
         <h2 className="sm:col-span-2 font-display text-lg">Vị trí</h2>
-        <Field label="Lat">
+        <Field label="Vĩ độ (Latitude)">
           <Input
             type="number"
             step="any"
@@ -373,7 +387,7 @@ export function ProjectForm({ project }: { project: CmsProjectDoc }) {
             }
           />
         </Field>
-        <Field label="Lng">
+        <Field label="Kinh độ (Longitude)">
           <Input
             type="number"
             step="any"

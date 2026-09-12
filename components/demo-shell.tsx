@@ -6,6 +6,7 @@ import {
   CircleDotIcon,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 
 import { SiteHeader } from "@/components/shared/site-header";
@@ -20,7 +21,6 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { t } from "@/lib/i18n/t";
 
 import type { HeaderProject, Project, ImageAsset } from "@/lib/types";
 import type { V0ImageAsset } from "@/lib/library-bridge";
@@ -89,6 +89,7 @@ function HeroBand({ slug, assets }: HeroBandProps) {
 // ─── DemoShell ────────────────────────────────────────────────────────────────
 
 export function DemoShell({ headerProjects, projects, assets, thumbBySlug }: DemoShellProps) {
+  const t = useTranslations();
   const [selectedSlug, setSelectedSlug] = React.useState<string>(headerProjects[0]?.slug ?? "");
 
   React.useEffect(() => {

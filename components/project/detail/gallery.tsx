@@ -2,20 +2,31 @@
 
 import * as React from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { ProjectFlipbookViewer } from "@/components/project/detail/project-flipbook-viewer";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { getImageUrl } from "@/lib/flipbook/image-asset-adapter";
-import { t } from "@/lib/i18n/t";
 import { cn } from "@/lib/utils";
-import { CATEGORY_LABELS, type ImageAsset } from "@/lib/types";
+import type { ImageAsset } from "@/lib/types";
 
 const SPRING = { type: "spring", stiffness: 260, damping: 26 } as const;
 
-function getCategoryLabel(category: string): string {
-  return CATEGORY_LABELS[category] ?? category;
-}
+const GALLERY_CATEGORY_KEYS = new Set([
+  "all",
+  "hero",
+  "masterplan",
+  "overview",
+  "location",
+  "amenities",
+  "architecture",
+  "completed-project",
+  "interior",
+  "floorplans",
+  "logos",
+  "product",
+]);
 
 interface GalleryTileProps {
   asset: ImageAsset;
@@ -23,6 +34,7 @@ interface GalleryTileProps {
 }
 
 function GalleryTile({ asset, onClick }: GalleryTileProps) {
+  const t = useTranslations();
   const shouldReduceMotion = useReducedMotion();
   const url = getImageUrl(asset);
 
@@ -30,9 +42,9 @@ function GalleryTile({ asset, onClick }: GalleryTileProps) {
     <motion.button
       type="button"
       onClick={onClick}
-      aria-label={`Mở ảnh: ${asset.alt}`}
+      aria-label={t("detail.galleryOpen", { alt: asset.alt })}
       className={cn(
-        "group relative block w-full cursor-pointer overflow-hidden rounded-xl",
+        "group relative block w-full cursor-pointer overflow-hidden rounded-xl dark:ring-1 dark:ring-border-accent dark:ring-inset",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
       )}
       whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
@@ -61,7 +73,7 @@ function GalleryTile({ asset, onClick }: GalleryTileProps) {
       >
         <p className="line-clamp-2 text-xs leading-snug text-white">{asset.alt}</p>
         <p className="mt-0.5 text-[10px] text-white/70">
-          {asset.isRender ? "Phối cảnh minh họa" : "Ảnh thực tế"}
+          {asset.isRender ? t("detail.galleryRender") : t("detail.galleryPhoto")}
         </p>
       </div>
     </motion.button>
@@ -76,6 +88,7 @@ interface DetailGalleryProps {
 const GALLERY_CHUNK = 12;
 
 export function DetailGallery({ assets, className }: DetailGalleryProps) {
+  const t = useTranslations();
   const [viewerIndex, setViewerIndex] = React.useState<number | null>(null);
   const [activeTab, setActiveTab] = React.useState("all");
   const [visibleByTab, setVisibleByTab] = React.useState<Record<string, number>>({});
@@ -119,10 +132,12 @@ export function DetailGallery({ assets, className }: DetailGalleryProps) {
           variant="line"
           className="h-auto max-w-full flex-nowrap gap-1 overflow-x-auto no-scrollbar tabs-scroll-fade sm:flex-wrap sm:overflow-visible"
         >
-          <TabsTrigger value="all">Tất cả</TabsTrigger>
+          <TabsTrigger value="all">{t("galleryCategory.all")}</TabsTrigger>
           {categories.map((cat) => (
             <TabsTrigger key={cat} value={cat}>
-              {getCategoryLabel(cat)}
+              {GALLERY_CATEGORY_KEYS.has(cat)
+                ? t(`galleryCategory.${cat}` as "galleryCategory.hero")
+                : cat}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -148,7 +163,7 @@ export function DetailGallery({ assets, className }: DetailGalleryProps) {
                 }
                 className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               >
-                Xem thêm ({remaining} ảnh)
+                {t("detail.galleryMore", { count: remaining })}
               </button>
             </div>
           )}

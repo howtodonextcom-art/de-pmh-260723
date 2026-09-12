@@ -1,10 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import { t } from "@/lib/i18n/t";
 import { addRegionEmphasisLayers, addRegionMarkers, createMap } from "@/lib/map-shell";
 import type { RegionPin } from "@/lib/map-shell";
 
@@ -19,6 +19,7 @@ export function RegionMapCanvas({
   regions: RegionPin[];
   onSelectRegion: (query: string) => void;
 }) {
+  const t = useTranslations();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");

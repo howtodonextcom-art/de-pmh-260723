@@ -1,12 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import Link from "next/link";
 import { ChevronDownIcon, MenuIcon } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useLocale } from "@/lib/i18n/locale-context";
 import { HIDDEN_NAV_KEYS } from "@/lib/nav-flags";
 import type { HeaderProject } from "@/lib/types";
 import type { V0ImageAsset } from "@/lib/library-bridge";
@@ -33,7 +33,7 @@ export function MobileNav({
 }) {
   const [open, setOpen] = React.useState(false);
   const [expandedZone, setExpandedZone] = React.useState<ProjectNavZoneId | null>(null);
-  const { t } = useLocale();
+  const t = useTranslations();
 
   const bacZone = PROJECT_NAV_ZONES.find((z) => z.id === "bac");
   const namZone = PROJECT_NAV_ZONES.find((z) => z.id === "nam");

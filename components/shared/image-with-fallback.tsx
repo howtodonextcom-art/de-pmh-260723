@@ -45,7 +45,20 @@ export function ImageWithFallback({ className, alt, fill, width, height, ...prop
       )}
       <Image
         alt={alt}
-        className={cn(className, "transition-opacity duration-300", status === "loaded" ? "opacity-100" : "opacity-0")}
+        // Defaults go first so a caller's own transition/duration (e.g. a
+        // slower hover-zoom) wins the tailwind-merge conflict instead of
+        // silently losing to this component's fade-in — `transition-opacity`
+        // and `transition-transform` share one merge group, so whichever
+        // side loses gets NO transition at all, not just a shorter one.
+        // `scale` (not `transform`) is listed because Tailwind v4's
+        // `scale-*`/`group-hover:scale-*` utilities set the standalone CSS
+        // `scale` property (CSS Transforms Level 2), which `transform`
+        // alone does not cover.
+        className={cn(
+          "transition-[opacity,scale] duration-300",
+          className,
+          status === "loaded" ? "opacity-100" : "opacity-0",
+        )}
         fill={fill}
         width={width}
         height={height}

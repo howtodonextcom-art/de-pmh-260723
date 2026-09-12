@@ -1,10 +1,11 @@
+import { getTranslations } from "next-intl/server";
+
 import { ProjectCard } from "@/components/project/project-card";
-import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 
 /** D12 — 3 related-project cards, same-region prioritized by the caller. */
-export function DetailRelated({
+export async function DetailRelated({
   projects,
   heroAssetsBySlug,
 }: {
@@ -12,6 +13,7 @@ export function DetailRelated({
   heroAssetsBySlug: Record<string, V0ImageAsset | null>;
 }) {
   if (projects.length === 0) return null;
+  const t = await getTranslations();
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.related")}</h2>

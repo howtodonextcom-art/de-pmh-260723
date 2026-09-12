@@ -1,10 +1,10 @@
 "use client";
 
-import { useLocale } from "@/lib/i18n/locale-context";
+import { useTranslations } from "next-intl";
 
 /** Minimal site chrome — brand line + honesty disclaimer + copyright. No nav duplication (header already has it). */
 export function SiteFooter() {
-  const { t } = useLocale();
+  const t = useTranslations();
   const year = new Date().getFullYear();
 
   return (

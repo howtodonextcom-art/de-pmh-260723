@@ -1,8 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import React, { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { t } from "@/lib/i18n/t";
 
 interface FlipbookToolbarProps {
   currentPage: number;
@@ -108,6 +108,7 @@ export function FlipbookToolbar({
   onToggleGrid,
   variant = "gallery",
 }: FlipbookToolbarProps) {
+  const t = useTranslations();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {

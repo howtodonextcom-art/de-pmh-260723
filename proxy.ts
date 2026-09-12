@@ -1,11 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { CMS_SESSION_COOKIE } from "@/lib/cms/constants";
+import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/locale";
 import { SITE_ACCESS_COOKIE } from "@/lib/passcode/constants";
 import { computeAccessToken } from "@/lib/passcode/sign";
-
-const LOCALE_COOKIE = "NEXT_LOCALE";
-type Locale = "vi" | "en";
 
 function applyLocaleCookie(request: NextRequest, response: NextResponse) {
   const existing = request.cookies.get(LOCALE_COOKIE)?.value;

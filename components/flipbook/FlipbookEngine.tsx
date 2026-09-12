@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import React, { useState, useCallback, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { FlipbookToolbar } from "./FlipbookToolbar";
@@ -18,7 +19,6 @@ import {
   pageAspectFromAssets,
   resolveFitMode,
 } from "@/lib/flipbook/page-size";
-import { t } from "@/lib/i18n/t";
 
 const STABLE_STYLE = {};
 
@@ -106,6 +106,7 @@ export function FlipbookEngine({
   onClose,
   className,
 }: FlipbookEngineProps) {
+  const t = useTranslations();
   const viewerRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<{ pageFlip: () => { flipNext: () => void; flipPrev: () => void; flip: (page: number) => void } } | null>(null);
 

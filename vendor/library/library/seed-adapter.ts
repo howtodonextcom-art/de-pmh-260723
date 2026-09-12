@@ -11,6 +11,7 @@ import type { LegalDossier, Project } from "../types/project";
 export type V0HeaderProject = {
   slug: string;
   displayNameVi: string;
+  displayNameEn?: string | null;
   region: string;
   status: string;
   alternateNames?: string[] | null;
@@ -23,6 +24,7 @@ export type V0Project = {
   id: string;
   slug: string;
   displayNameVi: string;
+  displayNameEn?: string | null;
   region: string;
   status: string;
   alternateNames?: string[] | null;
@@ -40,13 +42,6 @@ export type V0ImageAsset = {
   isRender: boolean;
   verified?: boolean;
   resolvedUrl?: string;
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  "dang-trien-khai": "Đang triển khai",
-  "dang-ban": "Đang mở bán",
-  "da-ban-giao": "Đã bàn giao",
-  "sap-mo-ban": "Sắp mở bán",
 };
 
 function slugFromProjectName(name: string): string {
@@ -74,10 +69,6 @@ export function resolveRepoRoot(): string {
   throw new Error(
     "Library seed: cannot find vendor/data/13_PROJECT_DATA_SCHEMA.json.",
   );
-}
-
-function statusLabel(status: string): string {
-  return STATUS_LABEL[status] ?? status;
 }
 
 /** Minimal CSV parse for the image manifest (header row required). */
@@ -130,8 +121,9 @@ export function loadProjectsForV0(repoRoot = resolveRepoRoot()): V0Project[] {
     id: p.id,
     slug: p.slug,
     displayNameVi: p.displayNameVi,
+    displayNameEn: p.displayNameEn ?? null,
     region: p.region,
-    status: statusLabel(p.status),
+    status: p.status,
     alternateNames: p.alternateNames?.length ? p.alternateNames : undefined,
     legalDossier: p.legalDossier ?? null,
   }));
@@ -141,6 +133,7 @@ export function loadHeaderProjectsForV0(projects: V0Project[]): V0HeaderProject[
   return projects.map((p) => ({
     slug: p.slug,
     displayNameVi: p.displayNameVi,
+    displayNameEn: p.displayNameEn ?? null,
     region: p.region,
     status: p.status,
     alternateNames: p.alternateNames ?? [],

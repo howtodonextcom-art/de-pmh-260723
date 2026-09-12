@@ -1,9 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import Link from "next/link";
-
-import { useLocale } from "@/lib/i18n/locale-context";
 
 /**
  * W2 — branded error boundary. Next.js requires this file to be a Client
@@ -12,7 +11,7 @@ import { useLocale } from "@/lib/i18n/locale-context";
  * chrome (wordmark only) instead, per the wave's scope lock.
  */
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  const { t } = useLocale();
+  const t = useTranslations();
 
   React.useEffect(() => {
     console.error(error);

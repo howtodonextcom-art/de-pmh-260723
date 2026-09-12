@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLinkIcon, FileDownIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 import {
@@ -12,11 +13,11 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { exportFactSheetPdf } from "@/components/project/detail/pdf-export-trigger";
 import { cn } from "@/lib/utils";
-import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 
 /** D13 — thin "sources" accordion, can stay collapsed by default. */
 export function DetailSources({ project }: { project: FullProject }) {
+  const t = useTranslations();
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <Accordion defaultValue={["sources"]}>
@@ -57,7 +58,18 @@ export function DetailSources({ project }: { project: FullProject }) {
                   {t("sources.viewOfficialSite")} <ExternalLinkIcon className="size-4" />
                 </a>
               )}
-              <Button variant="outline" className="print:hidden" onClick={() => exportFactSheetPdf(project.slug)}>
+              <Button
+                variant="outline"
+                className="print:hidden"
+                onClick={() =>
+                  exportFactSheetPdf(project.slug, {
+                    printToast: t("pdf.printToast"),
+                    functionAttemptToast: t("pdf.functionAttemptToast"),
+                    functionSuccessToast: t("pdf.functionSuccessToast"),
+                    functionErrorToast: t("pdf.functionErrorToast"),
+                  })
+                }
+              >
                 {t("sources.exportPdf")} <FileDownIcon className="size-4" />
               </Button>
             </div>

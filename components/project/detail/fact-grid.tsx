@@ -1,11 +1,15 @@
+import { getLocale, getTranslations } from "next-intl/server";
+
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { buildFactGrid } from "@library/lib/data/fact-grid";
 import type { Project as FullProject } from "@library/types/project";
 
 /** D2 — 8-cell fact grid, GFA intentionally excluded (SPEC §3.4 D2). */
-export function DetailFactGrid({ project }: { project: FullProject }) {
-  const cells = buildFactGrid(project);
+export async function DetailFactGrid({ project }: { project: FullProject }) {
+  const locale = await getLocale();
+  const t = await getTranslations();
+  const cells = buildFactGrid(project, locale === "en" ? "en" : "vi");
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
@@ -17,7 +21,7 @@ export function DetailFactGrid({ project }: { project: FullProject }) {
               <TooltipTrigger render={<p className="mt-1 cursor-help text-sm font-medium text-foreground" />}>
                 {cell.value}
               </TooltipTrigger>
-              <TooltipContent>{cell.tooltip ?? `Cập nhật ${project.lastVerifiedAt}`}</TooltipContent>
+              <TooltipContent>{cell.tooltip ?? t("common.updated") + ` ${project.lastVerifiedAt}`}</TooltipContent>
             </Tooltip>
             <div className="mt-2">
               <StatusBadge status={cell.status} />

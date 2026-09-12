@@ -1,21 +1,25 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { CatalogPageShell } from "@/components/shared/catalog-page-shell";
 import { ProjectExplorer } from "@/components/project/project-explorer";
 import { buildHeroAssetsBySlug, getCatalogFromLibrary, getFullCatalog } from "@/lib/library-bridge";
-import { t } from "@/lib/i18n/t";
 import { buildTitle } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: buildTitle("Danh mục dự án"),
-  description: "Tra cứu, lọc và so sánh nhanh các dự án theo khu vực, loại hình và trạng thái dữ liệu.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return {
+    title: buildTitle(t("catalogTitle")),
+    description: t("catalogDescription"),
+  };
+}
 
 /** §3.3 — H1 + live count, toolbar (search/filter/sort + link to /so-sanh), 4 project cards. */
 export default async function ProjectListPage() {
+  const t = await getTranslations();
   const [{ headerProjects, thumbBySlug }, { projects, assets }] = await Promise.all([
     getCatalogFromLibrary(),
     getFullCatalog(),

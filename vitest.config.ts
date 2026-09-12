@@ -10,6 +10,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
+      "@library": path.resolve(__dirname, "./vendor/library"),
     },
   },
 });

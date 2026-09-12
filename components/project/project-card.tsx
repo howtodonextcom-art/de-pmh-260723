@@ -2,24 +2,15 @@
 
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
-import { StatusDot, STATUS_LABEL } from "@/components/shared/status-badge";
+import { StatusDot } from "@/components/shared/status-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { localizedDisplayName } from "@/lib/i18n/project-copy";
 import { computeFieldStatusSummary, orderedStatusEntries } from "@library/lib/data/status-summary";
-import { PROJECT_STATUS_LABEL } from "@library/components/layout/project-status-label";
-import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
-
-const PROJECT_TYPE_LABEL: Record<string, string> = {
-  "do-thi-sinh-thai": "Đô thị sinh thái",
-  "can-ho-hang-sang": "Căn hộ hạng sang",
-  "can-ho-premium": "Căn hộ premium",
-  "can-ho": "Căn hộ",
-  "thap-tang": "Thấp tầng",
-  "cao-tang": "Cao tầng",
-};
 
 export function ProjectCard({
   project,
@@ -39,6 +30,10 @@ export function ProjectCard({
    */
   layout?: "catalog" | "featured";
 }) {
+  const t = useTranslations();
+  const locale = useLocale();
+  const name = localizedDisplayName(project, locale);
+  const statusLabel = t(`projectStatus.${project.status}` as "projectStatus.dang-trien-khai");
   const imageUrl = heroAsset ? (heroAsset.resolvedUrl ?? heroAsset.sourceFileUrl) : null;
 
   if (layout === "featured") {
@@ -51,20 +46,20 @@ export function ProjectCard({
         {imageUrl ? (
           <ImageWithFallback
             src={imageUrl}
-            alt={heroAsset?.alt ?? project.displayNameVi}
+            alt={heroAsset?.alt ?? name}
             fill
             unoptimized
             priority={priority}
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover transition-transform duration-400 group-hover:scale-[1.04]"
+            className="object-cover duration-700 ease-out group-hover:scale-[1.04]"
           />
         ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <span className="absolute top-3 right-3 rounded-full bg-background/85 px-2 py-0.5 text-[11px] font-medium backdrop-blur-sm">
-          {PROJECT_STATUS_LABEL[project.status] ?? project.status}
+          {statusLabel}
         </span>
         <div className="absolute bottom-0 left-0 p-5 text-white">
-          <h3 className="text-xl font-semibold">{project.displayNameVi}</h3>
+          <h3 className="text-xl font-semibold">{name}</h3>
           {project.highlights?.[0] ? (
             <p className="mt-1 line-clamp-2 max-w-md text-sm text-white/85">{project.highlights[0]}</p>
           ) : null}
@@ -77,7 +72,8 @@ export function ProjectCard({
   }
 
   const summary = orderedStatusEntries(computeFieldStatusSummary(project));
-  const primaryType = (project.projectType ?? []).find((pt) => PROJECT_TYPE_LABEL[pt]);
+  const primaryType = (project.projectType ?? [])[0];
+  const typeLabel = primaryType ? t(`projectType.${primaryType}` as "projectType.can-ho") : null;
 
   return (
     <Link
@@ -91,24 +87,24 @@ export function ProjectCard({
         {imageUrl && (
           <ImageWithFallback
             src={imageUrl}
-            alt={heroAsset?.alt ?? project.displayNameVi}
+            alt={heroAsset?.alt ?? name}
             fill
             unoptimized
             priority={priority}
             sizes="(max-width: 768px) 100vw, 25vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover duration-700 ease-out group-hover:scale-105"
           />
         )}
         <span className="absolute left-2 top-2 rounded-full bg-background/85 px-2 py-0.5 text-[11px] font-medium backdrop-blur-sm">
-          {PROJECT_STATUS_LABEL[project.status] ?? project.status}
+          {statusLabel}
         </span>
       </div>
 
       <div className="space-y-2 p-4">
-        <h3 className="truncate text-base font-semibold text-foreground">{project.displayNameVi}</h3>
+        <h3 className="truncate text-base font-semibold text-foreground">{name}</h3>
         <p className="text-sm text-muted-foreground">
           📍 {project.region}
-          {primaryType && ` · ${PROJECT_TYPE_LABEL[primaryType]}`}
+          {typeLabel ? ` · ${typeLabel}` : null}
         </p>
         {project.highlights?.[0] && (
           <p className="line-clamp-2 text-sm text-foreground/80">{project.highlights[0]}</p>
@@ -121,7 +117,7 @@ export function ProjectCard({
                 <StatusDot status={status} />
               </TooltipTrigger>
               <TooltipContent>
-                {STATUS_LABEL[status]}: {count} trường
+                {t(`fieldStatus.${status}`)}: {t("common.fieldCount", { count })}
               </TooltipContent>
             </Tooltip>
           ))}
@@ -130,7 +126,7 @@ export function ProjectCard({
         <div className="flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <span className="size-1.5 rounded-full bg-amber-500/70 dark:bg-amber-400/70" aria-hidden />
-            Cập nhật {project.lastVerifiedAt}
+            {t("common.updated")} {project.lastVerifiedAt}
           </span>
           <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
         </div>

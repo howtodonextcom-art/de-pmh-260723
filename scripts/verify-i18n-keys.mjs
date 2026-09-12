@@ -33,6 +33,7 @@ const SCAN_EXTENSIONS = [".ts", ".tsx"];
 // leading whitespace/newlines inside the parens, and ignores a second
 // argument (interpolation vars) if present, since we only need the key.
 const T_CALL_RE = /\bt\(\s*["'`]([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)["'`]/g;
+const NS_HOOK_RE = /(?:useTranslations|getTranslations)\(\s*["'`]([a-zA-Z0-9_]+)["'`]/g;
 
 /** Recursively collect files with the given extensions under a directory. */
 function collectFiles(dir) {
@@ -74,8 +75,11 @@ function main() {
     for (const file of files) {
       const relFile = path.relative(ROOT, file);
       const content = readFileSync(file, "utf8");
+      const namespaces = [...content.matchAll(NS_HOOK_RE)].map((m) => m[1]);
       for (const match of content.matchAll(T_CALL_RE)) {
-        const key = match[1];
+        const raw = match[1];
+        const candidates = [raw, ...namespaces.map((ns) => `${ns}.${raw}`)];
+        const key = candidates.find((k) => viKeys.has(k) || enKeys.has(k)) ?? raw;
         if (!usedKeys.has(key)) usedKeys.set(key, new Set());
         usedKeys.get(key).add(relFile);
       }

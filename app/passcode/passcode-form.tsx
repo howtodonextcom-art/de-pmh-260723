@@ -1,11 +1,13 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
 export function PasscodeForm({ nextPath }: { nextPath: string }) {
+  const t = useTranslations("passcode");
   const router = useRouter();
   const [code, setCode] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
@@ -42,9 +44,9 @@ export function PasscodeForm({ nextPath }: { nextPath: string }) {
         return;
       }
       setAttemptsLeft(typeof data.attemptsLeft === "number" ? data.attemptsLeft : null);
-      setError("Mã không đúng.");
+      setError(t("wrong"));
     } catch {
-      setError("Có lỗi xảy ra, vui lòng thử lại.");
+      setError(t("error"));
     } finally {
       setSubmitting(false);
       setCode("");
@@ -59,18 +61,18 @@ export function PasscodeForm({ nextPath }: { nextPath: string }) {
         autoFocus
         value={code}
         onChange={(e) => setCode(e.target.value)}
-        placeholder="Mã truy cập"
+        placeholder={t("placeholder")}
         aria-invalid={Boolean(error)}
         className="w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-invalid:border-destructive"
       />
       {error && (
         <p className="text-sm text-destructive">
           {error}
-          {attemptsLeft !== null ? ` Còn ${attemptsLeft} lần thử.` : ""}
+          {attemptsLeft !== null ? ` ${t("attemptsLeft", { count: attemptsLeft })}` : ""}
         </p>
       )}
       <Button type="submit" size="lg" disabled={submitting || !code} className="w-full">
-        {submitting ? "Đang kiểm tra…" : "Tiếp tục"}
+        {submitting ? t("checking") : t("submit")}
       </Button>
     </form>
   );

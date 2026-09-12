@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { XIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { FlipbookContainer } from "@/components/flipbook/FlipbookContainer";
 import { FlipbookEngine } from "@/components/flipbook/FlipbookEngine";
 import { toFlipbookAssets } from "@/lib/flipbook/image-asset-adapter";
-import { t } from "@/lib/i18n/t";
 import { cn } from "@/lib/utils";
 import type { ImageAsset } from "@/lib/types";
 
@@ -24,6 +24,7 @@ export function ProjectFlipbookViewer({
   onClose,
   className,
 }: ProjectFlipbookViewerProps) {
+  const t = useTranslations();
   const flipbookAssets = React.useMemo(() => toFlipbookAssets(assets), [assets]);
 
   React.useEffect(() => {

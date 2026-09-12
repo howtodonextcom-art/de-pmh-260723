@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { CatalogPageShell } from "@/components/shared/catalog-page-shell";
 import { PrintButton } from "@/components/shared/print-button";
 import { LegalPageClient } from "@/components/project/legal-page-client";
 import { getCatalogFromLibrary, getCompareProjects } from "@/lib/library-bridge";
-import { t } from "@/lib/i18n/t";
 import { buildTitle } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: buildTitle("Hồ sơ pháp lý"),
-  description:
-    "Hồ sơ pháp lý theo vùng / dự án — từng văn bản một dòng, xem nội dung text; bản scan ký số khi có trong kho.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return {
+    title: buildTitle(t("legalTitle")),
+    description: t("legalDescription"),
+  };
+}
 
 /** F5 — scoped legal dossiers (Variant A MVP): zone filter + per-document lines + viewer. */
 export default async function LegalPage() {
+  const t = await getTranslations();
   const [{ headerProjects, thumbBySlug }, { projects }] = await Promise.all([
     getCatalogFromLibrary(),
     getCompareProjects(),

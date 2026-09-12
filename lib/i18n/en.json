@@ -6,6 +6,7 @@
     "soSanh": "Compare",
     "phapLy": "Legal",
     "search": "Search",
+    "searchOpen": "Open search (Ctrl+K)",
     "searchShortcut": "⌘K",
     "langSwitcherLabel": "Switch language",
     "themeSwitcherLabel": "Switch theme",
@@ -26,12 +27,12 @@
     "viewAllSiteA": "View all Site A & filter",
     "viewAllOutsite": "View all Outsite & filter",
     "browseCatalogShort": "Open catalog",
-    "previewMore": "{{count}} more on the catalog page"
+    "previewMore": "{count} more on the catalog page"
   },
   "home": {
-    "kicker": "DED · Phú Mỹ Hưng",
-    "titleWords": ["DED-PMH", "Project", "Information", "Hub"],
-    "ctaExplore": "Explore projects",
+    "headline": "DED-PMH project data hub",
+    "lede": "Look up legal status, progress, and scale for every project — verified, from one source.",
+    "ctaExplore": "View project catalog",
     "featuredHeading": "Featured projects",
     "explorerHeading": "Project catalog",
     "explorerCta": "View all & filters",
@@ -40,7 +41,7 @@
     "mapWebglFallback": "This browser doesn't support the interactive map — use the region list below to filter projects.",
     "mapUnit": "projects",
     "mapListIntro": "Select a region to filter the project catalog.",
-    "mapSaBanCta": "Sa bàn",
+    "mapSaBanCta": "Scale model",
     "emptyCatalog": "No projects in the catalog yet.",
     "emptyUpdates": "No recent updates yet.",
     "updatesHeading": "Recent updates",
@@ -52,13 +53,76 @@
   "footer": {
     "brandStatementFallback": "Internal portal for looking up Phú Mỹ Hưng project data.",
     "disclaimer": "Internal information — figures are based on officially published sources.",
-    "copyright": "© {{year}} DED-PMH"
+    "copyright": "© {year} DED-PMH"
   },
   "projectStatus": {
     "dang-trien-khai": "In development",
     "dang-ban": "Now selling",
     "da-ban-giao": "Handed over",
-    "sap-mo-ban": "Coming soon"
+    "sap-mo-ban": "Coming soon",
+    "da-hoan-thanh": "Completed",
+    "chuan-bi-mo-ban": "Preparing to launch"
+  },
+  "fieldStatus": {
+    "da-co-du-lieu": "Has data",
+    "chua-xac-thuc": "Unverified",
+    "mau-thuan": "Conflict",
+    "chua-co-du-lieu": "No data",
+    "bao-mat": "Restricted"
+  },
+  "projectType": {
+    "do-thi-sinh-thai": "Ecological township",
+    "can-ho-hang-sang": "Luxury apartment",
+    "can-ho-premium": "Premium apartment",
+    "can-ho": "Apartment",
+    "thap-tang": "Low-rise",
+    "cao-tang": "High-rise"
+  },
+  "galleryCategory": {
+    "all": "All",
+    "hero": "Hero",
+    "masterplan": "Masterplan",
+    "overview": "Overview",
+    "location": "Location",
+    "amenities": "Amenities",
+    "architecture": "Architecture",
+    "completed-project": "Built",
+    "interior": "Interior",
+    "floorplans": "Floor plans",
+    "logos": "Logo",
+    "product": "Product"
+  },
+  "legalGroup": {
+    "investmentApproval": "Investment policy approval",
+    "landAllocation": "Land allocation / lease",
+    "detailedPlanning": "1/500 detailed planning",
+    "constructionPermits": "Construction permit",
+    "constructionPermitsNote": "Construction-permit note",
+    "salesEligibility": "Sales eligibility",
+    "designUnit": "Design unit",
+    "mainContractor": "Main contractor",
+    "disputes": "Disputes / warnings"
+  },
+  "factGrid": {
+    "location": "Location",
+    "type": "Type",
+    "scale": "Scale",
+    "units": "Units",
+    "siteArea": "Site area",
+    "conceptArchitect": "Concept architect",
+    "status": "Status",
+    "updated": "Updated"
+  },
+  "compareFields": {
+    "lo-dat": "Plot",
+    "khu-vuc": "Area",
+    "loai-hinh": "Type",
+    "quy-mo-dat": "Site area",
+    "gfa": "GFA",
+    "so-can": "Units",
+    "don-vi-thiet-ke": "Design unit",
+    "tong-thau": "Main contractor",
+    "tinh-trang-ban": "Status"
   },
   "notFound": {
     "kicker": "404",
@@ -74,7 +138,12 @@
     "ctaHome": "Back to homepage"
   },
   "common": {
-    "xemChiTiet": "View details"
+    "xemChiTiet": "View details",
+    "empty": "Not available",
+    "unpublished": "Not yet published",
+    "updated": "Updated",
+    "fieldCount": "{count} fields",
+    "printPage": "Print this page"
   },
   "duAn": {
     "pageTitle": "Project catalog",
@@ -94,7 +163,10 @@
     "noMatch": "No projects match this filter.",
     "emptyCatalog": "No projects in the catalog yet.",
     "clearFilters": "Clear filters",
-    "matchSuffix": "matches"
+    "matchSuffix": "matches",
+    "sortName": "Name A-Z",
+    "sortArea": "Site area, high to low",
+    "sortUpdated": "Recently updated"
   },
   "detail": {
     "architecturePartners": "Architecture & partners",
@@ -109,7 +181,23 @@
     "closeImage": "Close",
     "prevImage": "Previous image",
     "nextImage": "Next image",
-    "lightboxLabel": "View full-size image"
+    "lightboxLabel": "View full-size image",
+    "architectUnit": "Architectural design unit",
+    "deliveryPartner": "Delivery partner",
+    "legalAddress": "Legal address",
+    "locationMapAlt": "Location map",
+    "salesEligibility": "Sales eligibility",
+    "constructionStatus": "Construction status",
+    "viewFull": "View full",
+    "viewDocDetails": "View each document",
+    "masterplanUnpublished": "Details not yet published",
+    "unitType": "Unit type",
+    "unitCount": "Units",
+    "unitArea": "Area",
+    "galleryRender": "Artist's impression",
+    "galleryPhoto": "Photograph",
+    "galleryOpen": "Open image: {alt}",
+    "galleryMore": "Load more ({count} images)"
   },
   "flipbook": {
     "allPages": "All images",
@@ -136,13 +224,13 @@
     "selectedHint": "projects in comparison",
     "inScope": "in scope",
     "selectAllInScope": "Select all in scope",
-    "selectFirstCap": "Select first {{count}}",
+    "selectFirstCap": "Select first {count}",
     "hideIdentical": "Hide identical rows",
     "showAllRows": "Show all rows",
     "emptyScope": "No published projects in this scope.",
     "emptySelection": "Select at least one project to compare.",
     "pickProjects": "This scope exceeds the column cap — pick up to 4 projects above.",
-    "capNote": "Comparison shows at most {{count}} columns for readability. Narrow the zone or deselect projects.",
+    "capNote": "Comparison shows at most {count} columns for readability. Narrow the zone or deselect projects.",
     "fieldCol": "Attribute"
   },
   "legal": {
@@ -175,6 +263,7 @@
     "docDate": "Date"
   },
   "cmdk": {
+    "description": "Find a project, page, or action",
     "placeholder": "Search…",
     "groupProjects": "Projects",
     "groupPages": "Pages",
@@ -210,5 +299,31 @@
     "viewFullLegal": "View full legal dossier",
     "viewOfficialSite": "View official project website",
     "exportPdf": "Export PDF"
+  },
+  "passcode": {
+    "brand": "DED-PMH",
+    "title": "Enter access code",
+    "lockedTitle": "This browser is locked",
+    "lockedBody": "This browser entered the wrong code 5 times. Try again in 24 hours, or contact an administrator.",
+    "placeholder": "Access code",
+    "submit": "Continue",
+    "checking": "Checking…",
+    "wrong": "Incorrect code.",
+    "attemptsLeft": "{count} attempts left.",
+    "error": "Something went wrong. Please try again.",
+    "metaTitle": "Enter access code"
+  },
+  "meta": {
+    "homeTitle": "DED-PMH — Project Information Hub",
+    "homeDescription": "Look up, compare, and verify publicly published project data from a single source.",
+    "layoutTitle": "DED-PMH — Project dossiers",
+    "layoutDescription": "Legal lookup and image library for projects under management",
+    "catalogTitle": "Project catalog",
+    "catalogDescription": "Look up, filter, and quickly compare projects by area, type, and data status.",
+    "compareTitle": "Compare projects",
+    "compareDescription": "Compare Phú Mỹ Hưng projects by zone (North / South) and Site A / Outsite group — up to 4 columns at a time.",
+    "legalTitle": "Legal dossier",
+    "legalDescription": "Legal dossiers by zone / project — one document per line, with signed scans when they are in the vault.",
+    "notFoundTitle": "404 — DED-PMH"
   }
 }

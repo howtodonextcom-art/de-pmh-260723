@@ -1,20 +1,22 @@
 import { Analytics } from "@vercel/analytics/next";
 import { MotionConfig } from "framer-motion";
 import type { Metadata, Viewport } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { ThemeProvider } from "next-themes";
-import { cookies } from "next/headers";
 import { Toaster } from "sonner";
-import { LocaleProvider, type Locale } from "@/lib/i18n/locale-context";
 import { SiteFooter } from "@/components/shared/site-footer";
-import { publicEnv } from "@/lib/config/env";
 import { themeInitScript } from "@/lib/theme-init-script";
 import { fraunces, inter } from "./fonts";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: `${publicEnv.siteName} — Hồ sơ dự án`,
-  description: "Tra cứu pháp lý và thư viện ảnh các dự án đang quản lý",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return {
+    title: t("layoutTitle"),
+    description: t("layoutDescription"),
+  };
+}
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
@@ -29,17 +31,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // F18 — server-side half of the locale split-brain fix. `middleware.ts`
-  // guarantees a NEXT_LOCALE cookie is present (defaulted from
-  // Accept-Language on first visit) before this render runs, so we just
-  // read it here — a Server Component can read cookies but never set them.
-  // `<html lang>` and LocaleProvider's initial client state both derive
-  // from this same value, so first paint (SSR) and hydration (CSR) agree
-  // instead of always defaulting to "vi" regardless of the visitor's
-  // actual selected/detected locale.
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("NEXT_LOCALE")?.value;
-  const locale: Locale = localeCookie === "en" ? "en" : "vi";
+  // next-intl resolves the locale via i18n/request.ts (reads the
+  // NEXT_LOCALE cookie that proxy.ts guarantees is present). Server
+  // Components now get this through getTranslations()/getLocale() directly
+  // — no more split-brain between a static vi-only t() and a client-only
+  // reactive Context (see docs/ADR-002-i18n-strategy.md).
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
     <html lang={locale} suppressHydrationWarning className={`bg-background ${inter.variable} ${fraunces.variable}`}>
@@ -60,7 +58,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <LocaleProvider initialLocale={locale}>
+          <NextIntlClientProvider locale={locale} messages={messages}>
             {/* R10 — sitewide `prefers-reduced-motion` respect: several
                 scroll-triggered sections (ExplorerPreview, map, legal, updates)
                 use Framer Motion variants without an individual
@@ -71,7 +69,7 @@ export default async function RootLayout({
               <SiteFooter />
               <Toaster richColors position="bottom-right" />
             </MotionConfig>
-          </LocaleProvider>
+          </NextIntlClientProvider>
         </ThemeProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>

@@ -1,22 +1,21 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 
 import { BlueprintFallback } from "@/components/shared/blueprint-fallback";
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { buttonVariants } from "@/components/ui/button";
-import { heroTextCascade, kenBurns } from "@/lib/motion/presets";
-import { useLocale } from "@/lib/i18n/locale-context";
+import { kenBurns, revealUp } from "@/lib/motion/presets";
 import { cn } from "@/lib/utils";
 import type { V0ImageAsset } from "@/lib/library-bridge";
-import { PROJECT_STATUS_LABEL } from "@library/components/layout/project-status-label";
+import { localizedDisplayName, localizedShortDescription } from "@/lib/i18n/project-copy";
 import type { Project as FullProject } from "@library/types/project";
 
 type HomeHeroProps = {
   variant?: "home";
   heroAsset?: V0ImageAsset | null;
-  brandStatementVi: string;
 };
 
 type DetailHeroProps = {
@@ -41,21 +40,22 @@ export function Hero(props: HeroProps) {
   const { heroAsset } = props;
   const variant = props.variant ?? "home";
   const reduceMotion = useReducedMotion();
-  const { t, messages } = useLocale();
+  const t = useTranslations();
+  const locale = useLocale();
   const imageUrl = heroAsset ? (heroAsset.resolvedUrl ?? heroAsset.sourceFileUrl) : null;
 
   if (variant === "detail") {
     const { project } = props as DetailHeroProps;
-    const firstSentence = project.shortDescriptionVi?.split(". ")[0]
-      ? `${project.shortDescriptionVi.split(". ")[0]}.`
-      : null;
+    const name = localizedDisplayName(project, locale);
+    const short = localizedShortDescription(project, locale);
+    const firstSentence = short?.split(". ")[0] ? `${short.split(". ")[0]}.` : null;
 
     return (
       <section className="relative flex h-[60vh] min-h-96 items-end overflow-hidden dark:ring-1 dark:ring-border-accent dark:ring-inset">
         {imageUrl ? (
           <ImageWithFallback
             src={imageUrl}
-            alt={heroAsset?.alt ?? project.displayNameVi}
+            alt={heroAsset?.alt ?? name}
             fill
             unoptimized
             priority
@@ -69,13 +69,13 @@ export function Hero(props: HeroProps) {
         <div className="relative mx-auto w-full max-w-7xl px-4 pb-10 text-white sm:px-6">
           <div className="mb-3 flex gap-2">
             <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-medium backdrop-blur-sm">
-              {PROJECT_STATUS_LABEL[project.status] ?? project.status}
+              {t(`projectStatus.${project.status}` as "projectStatus.dang-trien-khai")}
             </span>
             <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-medium backdrop-blur-sm">
               {project.region}
             </span>
           </div>
-          <h1 className="font-display text-3xl font-semibold sm:text-5xl">{project.displayNameVi}</h1>
+          <h1 className="font-display text-3xl font-semibold sm:text-5xl">{name}</h1>
           {firstSentence && (
             <p className="mt-3 max-w-2xl text-sm text-white/85 sm:text-base">{firstSentence}</p>
           )}
@@ -83,9 +83,6 @@ export function Hero(props: HeroProps) {
       </section>
     );
   }
-
-  const { brandStatementVi } = props as HomeHeroProps;
-  const words = messages.home.titleWords;
 
   return (
     <section className="relative flex min-h-[calc(100dvh-60px)] items-end overflow-hidden sm:items-center">
@@ -107,7 +104,9 @@ export function Hero(props: HeroProps) {
               className="object-cover object-center"
             />
           </motion.div>
-        ) : null}
+        ) : (
+          <BlueprintFallback />
+        )}
         {/* Readable scrim — teal-ink wash, not purple glow */}
         <div
           aria-hidden
@@ -120,49 +119,22 @@ export function Hero(props: HeroProps) {
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-20 md:py-24">
-        <div className="max-w-xl space-y-6 md:max-w-2xl">
-          <motion.p
-            initial={reduceMotion ? undefined : "hidden"}
-            animate="show"
-            variants={heroTextCascade}
-            className="text-sm font-semibold tracking-wide text-primary uppercase"
-          >
-            {t("home.kicker")}
-          </motion.p>
-          <h1 className="flex flex-wrap gap-x-3 font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            {words.map((w, i) => (
-              <motion.span
-                key={w + i}
-                custom={i}
-                initial={reduceMotion ? undefined : "hidden"}
-                animate="show"
-                variants={heroTextCascade}
-              >
-                {w}
-              </motion.span>
-            ))}
+        <motion.div
+          initial={reduceMotion ? undefined : "hidden"}
+          animate="show"
+          variants={revealUp}
+          className="max-w-xl space-y-5 md:max-w-2xl"
+        >
+          <h1 className="text-balance font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            {t("home.headline")}
           </h1>
-          <motion.p
-            initial={reduceMotion ? undefined : "hidden"}
-            animate="show"
-            custom={words.length + 1}
-            variants={heroTextCascade}
-            className="max-w-lg text-base text-muted-foreground sm:text-lg"
-          >
-            {brandStatementVi}
-          </motion.p>
-          <motion.div
-            initial={reduceMotion ? undefined : "hidden"}
-            animate="show"
-            custom={words.length + 2}
-            variants={heroTextCascade}
-            className="flex flex-wrap gap-3"
-          >
+          <p className="max-w-lg text-base text-muted-foreground sm:text-lg">{t("home.lede")}</p>
+          <div className="flex flex-wrap gap-3 pt-1">
             <Link href="/du-an" className={cn(buttonVariants({ size: "lg" }))}>
               {t("home.ctaExplore")}
             </Link>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

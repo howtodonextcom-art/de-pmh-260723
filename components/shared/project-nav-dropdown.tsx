@@ -1,13 +1,14 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import Link from "next/link";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { ArrowRightIcon, ChevronDownIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useLocale } from "@/lib/i18n/locale-context";
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
+import { localizedDisplayName } from "@/lib/i18n/project-copy";
 import type { HeaderProject } from "@/lib/types";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 import {
@@ -35,7 +36,7 @@ export function ProjectNavDropdown({
   thumbBySlug: Record<string, V0ImageAsset | null>;
   active: boolean;
 }) {
-  const { t } = useLocale();
+  const t = useTranslations();
   const [zoneId, setZoneId] = React.useState<ProjectNavZoneId>("bac");
   const [namGroupId, setNamGroupId] = React.useState<ProjectNamGroupId>("site-a");
 
@@ -248,9 +249,11 @@ function ProjectNavLeafRow({
 }) {
   const thumb = leaf.slug ? thumbBySlug[leaf.slug] : null;
   const url = thumb ? (thumb.resolvedUrl ?? thumb.sourceFileUrl) : null;
+  const locale = useLocale();
+  const projectName = leaf.project ? localizedDisplayName(leaf.project, locale) : null;
   const subtitle = leaf.project
-    ? leaf.project.displayNameVi !== leaf.label
-      ? `${leaf.project.displayNameVi} · ${leaf.location}`
+    ? projectName !== leaf.label
+      ? `${projectName} · ${leaf.location}`
       : leaf.location
     : leaf.location;
 

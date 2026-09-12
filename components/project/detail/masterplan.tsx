@@ -1,11 +1,12 @@
+import { getTranslations } from "next-intl/server";
+
 import { ImageWithFallback } from "@/components/shared/image-with-fallback";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 
 /** D5 — gated on subdivisions.length > 0; unit-mix stats when present. */
-export function DetailMasterplan({
+export async function DetailMasterplan({
   project,
   masterplanAsset,
 }: {
@@ -14,13 +15,14 @@ export function DetailMasterplan({
 }) {
   if (!project.subdivisions || project.subdivisions.length === 0) return null;
 
+  const t = await getTranslations();
   const imageUrl = masterplanAsset ? (masterplanAsset.resolvedUrl ?? masterplanAsset.sourceFileUrl) : null;
   const mix = project.unitMix ?? [];
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.masterplan")}</h2>
-      <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl bg-muted">
+      <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl bg-muted dark:ring-1 dark:ring-border-accent dark:ring-inset">
         {imageUrl ? (
           <ImageWithFallback
             src={imageUrl}
@@ -54,7 +56,7 @@ export function DetailMasterplan({
               </div>
             ) : (
               <span className="inline-block rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                Chưa công bố chi tiết
+                {t("detail.masterplanUnpublished")}
               </span>
             )}
           </TabsContent>

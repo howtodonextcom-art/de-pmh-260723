@@ -1,14 +1,15 @@
 import { ArrowRightIcon, ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 
+import { localizedDisplayName } from "@/lib/i18n/project-copy";
 import { buttonVariants } from "@/components/ui/button";
 import { Reveal } from "@/components/shared/reveal";
-import { t } from "@/lib/i18n/t";
 import { cn } from "@/lib/utils";
 import type { UpdateEntry } from "@/lib/home-content";
 import type { Project as FullProject } from "@library/types/project";
 
-function OfficialSitesList({
+async function OfficialSitesList({
   projects,
   columns,
 }: {
@@ -16,6 +17,8 @@ function OfficialSitesList({
   columns: "sidebar" | "band";
 }) {
   if (projects.length === 0) return null;
+  const t = await getTranslations();
+  const locale = await getLocale();
 
   return (
     <div className="w-full min-w-0">
@@ -34,7 +37,7 @@ function OfficialSitesList({
               rel="noreferrer"
               className="inline-flex max-w-full items-center gap-1.5 text-sm font-medium text-primary hover:underline"
             >
-              <span className="truncate">{p.displayNameVi}</span>
+              <span className="truncate">{localizedDisplayName(p, locale)}</span>
               <ExternalLinkIcon className="size-3.5 shrink-0 opacity-70" aria-hidden />
               <span className="sr-only">{t("home.opensInNewTab")}</span>
             </a>
@@ -45,7 +48,7 @@ function OfficialSitesList({
   );
 }
 
-function LookupPanel({
+async function LookupPanel({
   projects,
   asPrimary,
   showEmptyNote,
@@ -55,6 +58,7 @@ function LookupPanel({
   showEmptyNote: boolean;
 }) {
   const HeadingTag = asPrimary ? "h2" : "h3";
+  const t = await getTranslations();
 
   return (
     <div className="flex min-w-0 flex-col gap-5 rounded-xl border border-border bg-card p-6 sm:p-8">
@@ -92,8 +96,10 @@ function LookupPanel({
   );
 }
 
-export function Updates({ updates, projects }: { updates: UpdateEntry[]; projects: FullProject[] }) {
-  const nameBySlug = new Map(projects.map((p) => [p.slug, p.displayNameVi]));
+export async function Updates({ updates, projects }: { updates: UpdateEntry[]; projects: FullProject[] }) {
+  const t = await getTranslations();
+  const locale = await getLocale();
+  const nameBySlug = new Map(projects.map((p) => [p.slug, localizedDisplayName(p, locale)]));
   const officialProjects = projects.filter((p) => Boolean(p.officialUrl?.trim()));
   const hasUpdates = updates.length > 0;
 

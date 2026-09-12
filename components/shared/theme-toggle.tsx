@@ -3,10 +3,10 @@
 import * as React from "react";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { SunIcon, MoonIcon, MonitorIcon, CheckIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 
 import { cn } from "@/lib/utils";
-import { useLocale } from "@/lib/i18n/locale-context";
 
 /**
  * Header theme control — Variant B (icon trigger + radio-group popup menu).
@@ -15,7 +15,7 @@ import { useLocale } from "@/lib/i18n/locale-context";
  */
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme();
-  const { t } = useLocale();
+  const t = useTranslations();
 
   // next-themes only knows the real theme after mount (resolvedTheme is
   // `undefined` on the server-rendered HTML) — render a neutral icon until

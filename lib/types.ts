@@ -3,6 +3,7 @@
 export interface HeaderProject {
   slug: string;
   displayNameVi: string;
+  displayNameEn?: string | null;
   region: string;
   status: string;
   alternateNames?: string[] | null;

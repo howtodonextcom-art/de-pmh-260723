@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import {
   Accordion,
@@ -9,7 +10,6 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { LegalDossierTable } from "@/components/project/legal-dossier-table";
 import { cn } from "@/lib/utils";
-import { t } from "@/lib/i18n/t";
 import type { Project as FullProject } from "@library/types/project";
 
 /**
@@ -19,7 +19,8 @@ import type { Project as FullProject } from "@library/types/project";
  * default — the reader sees the chapter heading + CTA first, and opts into
  * the dense table instead of it dumping into the initial scroll.
  */
-export function DetailLegalTeaser({ project }: { project: FullProject }) {
+export async function DetailLegalTeaser({ project }: { project: FullProject }) {
+  const t = await getTranslations();
   return (
     <section id="phap-ly" className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <div className="mb-4 flex items-center justify-between gap-4">
@@ -30,13 +31,13 @@ export function DetailLegalTeaser({ project }: { project: FullProject }) {
           href={`/phap-ly#${project.slug}`}
           className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
         >
-          Xem đầy đủ
+          {t("detail.viewFull")}
         </Link>
       </div>
       <Accordion>
         <AccordionItem value="legal-dossier">
           <AccordionTrigger className="text-sm font-medium text-foreground">
-            Xem chi tiết từng văn bản
+            {t("detail.viewDocDetails")}
           </AccordionTrigger>
           <AccordionContent>
             <LegalDossierTable project={project} />

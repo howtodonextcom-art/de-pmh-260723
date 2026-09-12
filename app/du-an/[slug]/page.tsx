@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
@@ -18,6 +19,7 @@ import { DetailLegalTeaser } from "@/components/project/detail/legal-teaser";
 import { DetailSalesStatus } from "@/components/project/detail/sales-status";
 import { DetailRelated } from "@/components/project/detail/related";
 import { DetailSources } from "@/components/project/detail/sources";
+import { localizedDisplayName, localizedShortDescription } from "@/lib/i18n/project-copy";
 import { buildHeroAssetsBySlug, getCatalogFromLibrary, getFullCatalog } from "@/lib/library-bridge";
 import { buildTitle } from "@/lib/seo";
 
@@ -33,12 +35,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const locale = await getLocale();
   const { projects } = await getFullCatalog();
   const project = projects.find((p) => p.slug === slug);
   if (!project) return { title: buildTitle("404") };
   return {
-    title: buildTitle(project.displayNameVi),
-    description: project.shortDescriptionVi ?? undefined,
+    title: buildTitle(localizedDisplayName(project, locale)),
+    description: localizedShortDescription(project, locale) ?? undefined,
   };
 }
 

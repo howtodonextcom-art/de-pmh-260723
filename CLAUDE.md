@@ -134,4 +134,142 @@ Theo báo cáo audit "Mức độ hoàn thiện dự án" (điểm tổng 60/100
 
 **Verify:** `tsc --noEmit` sạch, `npm run lint` không phát sinh lỗi mới (vẫn 6 lỗi cũ `react-hooks/set-state-in-effect`, không liên quan phạm vi này), `vitest run` 57/57 pass, `npm run build` production thành công. Test MCP trực tiếp trên Aristo (trước: "Vị trí | Đã có dữ liệu" dù rỗng → sau: "Vị trí | Chưa có | Chưa có dữ liệu") và Sen Việt (cả Vị trí/Loại hình/Quy mô đều đổi đúng badge), `/login` render sạch sau khi dọn debug code.
 
+## Round 7 (2026-09-11, cùng ngày) — Migrate i18n tự viết sang next-intl (đảo ngược khuyến nghị ADR-002)
+
+Người dùng chọn **Phương án C** (đổi thư viện chuẩn) thay vì khuyến nghị D→A ban đầu của ADR-002. Kiểm chứng khi triển khai xác nhận lựa chọn này đúng đắn hơn dự tính: next-intl giải quyết ĐÚNG root cause bằng `getTranslations()` (đọc locale qua request/cookie ở tầng server, không cần React Context) — sạch hơn hẳn phương án "thread props thủ công" ban đầu đề xuất.
+
+**Kiến trúc mới:**
+- `i18n/request.ts` — `getRequestConfig()` đọc cookie `NEXT_LOCALE` (dùng lại đúng cookie `proxy.ts` đã quản lý từ Round 5/trước — không đổi hành vi ghi cookie), merge sâu `en` lên trên `vi` làm fallback (thiếu key EN → tự động hiện tiếng Việt, giữ đúng hành vi cũ, không throw/hiện key thô)
+- `lib/i18n/locale.ts` — tách `LOCALE_COOKIE`/`type Locale` ra file trung lập riêng, vì `i18n/request.ts` import `next/headers` (server-only) — gộp chung sẽ crash khi Client Component (`locale-switcher.tsx`) import
+- `next.config.mjs` wrap bằng `createNextIntlPlugin()`
+- `app/layout.tsx` dùng `NextIntlClientProvider` (từ `getLocale()`/`getMessages()`) thay `LocaleProvider` tự viết
+- **Đã xoá hoàn toàn** `lib/i18n/t.ts` (static, luôn đọc vi.json — đây là nguyên nhân gốc bug) và `lib/i18n/locale-context.tsx` (Context tự viết)
+- Cú pháp interpolation đổi `{{var}}` → `{var}` (ICU MessageFormat, 4 key × 2 file)
+- `pdf-export-trigger.tsx`: `exportFactSheetPdf()` là hàm async thuần (không phải component) nhưng cần string đã dịch — đổi sang nhận `messages` qua tham số thay vì gọi hook trực tiếp (hook không gọi được ngoài component)
+
+**Quy mô migrate:** 28 file dùng `t()` tĩnh + 12 file dùng `useLocale()` = 40 điểm gọi, tất cả đã chuyển sang `getTranslations()` (Server Component, 15 file) / `useTranslations()` (Client Component, 25 file).
+
+**2 bug tự phát hiện và tự sửa trong lúc migrate (không có trong kế hoạch gốc):**
+1. `deepMerge()` ban đầu dùng `{...array}` để merge — làm mất tính mảng của `home.titleWords` (biến thành `{0: ..., 1: ...}`), vỡ `.map()` ở hero.tsx. Sửa: coi mảng là giá trị atomic, không đệ quy vào bên trong.
+2. `i18n/request.ts` (import `next/headers`) bị import trực tiếp bởi `locale-switcher.tsx` (Client Component) → Next.js từ chối build ("You're importing next/headers... in the Pages Router" — thực ra do gộp chung server+client code trong 1 module). Sửa: tách hằng số client-safe ra `lib/i18n/locale.ts`.
+
+**Ngoài phạm vi (cố tình không đụng, đã giải thích rõ):** sửa 3 chỗ hardcode `toLocaleString("vi-VN")` (fact-grid.ts×2, compare-fields.ts×1) — vì các nhãn xung quanh ("căn", "phân khu", "m²") cũng đang hardcode tiếng Việt hoàn toàn ngoài hệ i18n; sửa riêng phần số mà không dịch cụm từ sẽ tạo kết quả nửa vời. Đây thuộc Phase 1 (UI chrome) đã defer riêng trong ADR-002, không phải phạm vi "đổi thư viện".
+
+**Test MCP (bằng chứng thành công cốt lõi):** so sánh trực tiếp `/du-an/hong-hac` ở chế độ EN trước/sau — TRƯỚC: toàn bộ trang 100% tiếng Việt trừ header/footer (bug gốc đã ghi nhận từ đầu conversation). SAU: "Masterplan & zoning", "Architecture & partners", "Legal dossier", "Sales progress & conditions", "Related projects", "Data sources for this page", "Last verified", "View full legal dossier" — toàn bộ heading Server Component đã dịch đúng. Chuyển VI↔EN 2 chiều xác nhận hoạt động, mobile 375 không overflow, 0 console error, `tsc --noEmit` sạch, `vitest run` 57/57 pass, `npm run build` production thành công.
+
+**Còn tiếng Việt sau migrate (đúng như dự đoán, KHÔNG phải bug của lần này):** field label trong fact-grid ("Vị trí", "Loại hình"...), `STATUS_LABEL`/`PROJECT_STATUS_LABEL`/`CATEGORY_LABELS` (map hardcode riêng, chưa từng qua hệ i18n), text hardcode trong JSX (`"Xem đầy đủ"`, `"Ảnh thực tế"`, `"Đơn vị thiết kế kiến trúc"`...) — tất cả thuộc Phase 1 UI chrome đã biết từ trước, không phải phạm vi migrate thư viện lần này.
+
 **Mục 5 (điền địa chỉ cho các dự án) — KHÔNG nằm trong yêu cầu lần này, cần nhập liệu qua CMS, ngoài khả năng tự làm.**
+
+## Round 8 (2026-09-11/12, cùng đợt) — Đóng dứt điểm 2 nợ còn lại từ Round 7 (pnpm lockfile + locale-format hardcode)
+
+Sau Round 7, có 2 rủi ro đã nêu rõ nhưng chưa xử lý: (A) `pnpm-lock.yaml` chưa sync với `next-intl` mới thêm → rủi ro Vercel build fail vì CI dùng `--frozen-lockfile`; (B) 4 chỗ hardcode `toLocaleString("vi-VN")` (không phải 3 như Round 7 ghi nhận — xem bên dưới). Người dùng yêu cầu xử lý triệt để cả hai, đảm bảo Vercel build được sau khi push.
+
+**Phần A — Sync pnpm lockfile, verify bằng `--frozen-lockfile` thật (không đoán mò):**
+- `npx pnpm@latest install` để regenerate `pnpm-lock.yaml` với `next-intl` + deps liên quan.
+- Phát hiện thêm 1 lớp chặn sâu hơn: pnpm 10's `ERR_PNPM_IGNORED_BUILDS` — chặn postinstall script của native deps (`@parcel/watcher`, `@swc/core`, `sharp`, `msw`, `protobufjs`, `unrs-resolver`, `@firebase/util`) trừ khi approve tường minh. Xử lý bằng `npx pnpm@latest approve-builds --all` — lệnh này ghi kết quả vào `pnpm-workspace.yaml` (field `allowBuilds`), **không phải** cache cục bộ hay `package.json` — nghĩa là commit được và Vercel CI sẽ đọc đúng cấu hình đã approve, không bị treo hỏi tương tác.
+- **Verify thật** (không suy đoán): `rm -rf node_modules && npx pnpm@latest install --frozen-lockfile` chạy sạch trong 24.6s, 0 prompt — đây là chính xác lệnh Vercel/CI chạy khi build, nên coi là bằng chứng đủ mạnh thay vì chỉ "lockfile trông hợp lệ".
+- `corepack enable` không dùng được trên máy này (EPERM ghi vào `C:\Program Files\nodejs\pnpx`, không có quyền admin) — dùng `npx pnpm@latest <cmd>` thay thế xuyên suốt, không cần cài global.
+
+**Phần B — Sửa hardcode locale-number-format triệt để (không nửa vời):**
+- Round 7 ghi nhận nhầm "3 chỗ" — grep ban đầu `toLocaleString\("vi-VN"\)` (có ngoặc đóng ngay sau) bỏ sót 1 chỗ ở `compare-fields.ts:108` có tham số thứ 2 (`{ maximumFractionDigits: 2 }`). Grep đúng `toLocaleString\("vi-VN"` (bỏ ngoặc đóng) tìm ra đủ **4 chỗ**: `fact-grid.ts` ×2 (Số căn, Diện tích đất), `compare-fields.ts` ×2 (Số căn, Diện tích đất/ha).
+- Phân biệt rõ 2 loại để tránh dịch nửa vời: 2 chỗ "Diện tích đất" (m²/ha) chỉ cần đổi format số (dấu phẩy/chấm) — ký hiệu m²/ha là quốc tế, không cần dịch từ. 2 chỗ "Số căn" cần dịch cả từ đơn vị ("căn" → "units"), không chỉ số.
+- Tạo `vendor/library/lib/i18n-format.ts` (helper `formatNumber()`/`unitsWord()`) — đặt **bên trong** `vendor/library`, không phải ở `lib/i18n/` cấp app, vì đã grep toàn bộ `vendor/library` xác nhận thư mục này **chưa từng** import ngược từ `/lib` cấp app (ranh giới vendoring tự phát hiện, tự sửa trước khi commit — ban đầu định đặt ở `lib/i18n/format.ts` rồi import ngược 4 cấp, đã revert).
+- Threading locale: `buildFactGrid(p, locale)`/`CompareField.cell(p, locale)` nhận thêm tham số `NumberLocale` ("vi" | "en", mặc định "vi" cho caller không-UI như `lib/view-snapshot.ts` — cố tình giữ nguyên, không đổi).
+- 2 call site UI thực tế: `components/project/detail/fact-grid.tsx` (Server Component, `await getLocale()` từ `next-intl/server`) và `components/project/compare-table.tsx` (Client Component, `useLocale()` từ `next-intl`, thread vào `useMemo` deps).
+
+**Test đã chạy (MCP thật + unit test, không đoán mò):**
+- MCP `/du-an/hong-hac`: VI hiện `"1.977.615,71 m²"`, chuyển EN hiện `"1,977,615.71 m²"` — đúng định dạng theo locale.
+- MCP `/so-sanh` (chọn Hồng Hạc): field "Diện tích đất" VI `"197,76 ha"` ↔ EN `"197.76 ha"` — đúng.
+- **Giới hạn nêu rõ:** không có dự án nào trong catalog hiện có `totalUnits` (cùng dạng lỗ hổng dữ liệu với `address` ở Round 4) nên nhánh "Số căn"/`unitsWord()` ("căn"→"units") **không quan sát được qua MCP với dữ liệu thật**. Đã bù bằng test tự động thật (`lib/i18n-number-format.test.ts`, project giả `totalUnits=1234`) verify đúng: VI `"1.234 căn"`, EN `"1,234 units"` — chạy pass thật (`vitest run`), không phải suy luận từ đọc code.
+- `tsc --noEmit` sạch, `npm run lint` không phát sinh lỗi mới (vẫn 6 lỗi cũ `react-hooks/set-state-in-effect`), `vitest run` 59/59 pass (57 cũ + 2 mới), `npm run build` production thành công, route list không đổi.
+
+**Chưa commit/push** — chờ yêu cầu tường minh của người dùng theo đúng quy tắc ở trên.
+
+## Round 9 (2026-09-12) — Launch Completeness Program (chrome i18n + honesty + passcode locale)
+
+Đóng nợ Phase 0 + Phase 1 UI chrome sau audit 66/100. Không bịa `address` / `totalUnits`. Không thêm KV/rate-limit IP (TRACK_P=residual).
+
+**Đã làm:**
+- Một hệ `projectStatus` (đủ 6 slug) + một hệ `fieldStatus` qua next-intl; `library-bridge` / `seed-adapter` thôi pre-localize status sang tiếng Việt.
+- Nhãn fact-grid / compare / legal group / project type / empty state theo locale (`vendor/library/lib/i18n-copy.ts`, test lockstep với JSON).
+- ADR-002 Phase 0: CMS nhập `*En`; hero / story / card / metadata / CMDK / compare / legal tabs đọc `displayNameEn` + mô tả, fallback VI.
+- `/passcode` có LocaleSwitcher + copy i18n; API thêm `Retry-After` khi khóa.
+- `generateMetadata()` theo locale cho Home, catalog, compare, legal, passcode, 404, layout; `<html lang>` đã đúng từ Round 7.
+- Foil `dark:ring-border-accent` mở sang gallery / masterplan / location.
+- Tests: 68 vitest; `e2e/locale-switch.spec.ts` + `commercial-50` chuyển sang cookie `NEXT_LOCALE`; `verify-i18n-keys` hiểu namespace next-intl.
+
+**Trần còn lại (không tự chấm 100):**
+- Data completeness: `address` 0/12, `totalUnits` 0/12, chưa có bản EN nội dung — cần content pack / CMS.
+- Security: không chống brute-force cấp IP (không có Upstash/KV).
+- CMS/login/lab cố ý giữ tiếng Việt. ALL-CAPS taxonomy nav giữ (wayfinding).
+
+## Round 10 (2026-09-12) — Ẩn section Home “Tra cứu nhanh”
+
+Home không còn render `<Updates />` (`app/page.tsx`). Component, CMS site-form, `buildUpdates`, i18n keys giữ nguyên — chỉ ẩn surface công khai. Featured / map / explorer / footer không đụng.
+
+## Round 11 (2026-09-12) — Fix map Home: pin theo tọa độ CMS thật, không còn city-cluster fallback sai
+
+**Bối cảnh:** Người dùng báo “The Harmonie” hiện ngoài lãnh thổ VN trên bản đồ Home; bấm pin/thẻ vùng không dẫn tới được dự án. Thực thi qua prompt orchestration 4-agent (`prompts/26-09-12-10-35-cms-lat-lng-project-pins.md`: A1 Evidence Scout → A2 Implementation Engineer → A3 Browser QA → A4 Adversarial Reviewer, mỗi bước gate độc lập) — rút kinh nghiệm từ 1 lần thử trước đó chỉ mở rộng bảng tra cứu tên-thành-phố mà bỏ qua field tọa độ đã có sẵn trong CMS.
+
+**Nguyên nhân gốc (A1 xác nhận bằng dữ liệu Firestore thật, không suy đoán):**
+1. Home chưa từng đọc field `project.coordinates.{lat,lng}` — field này ĐÃ có sẵn trong CMS (`project-form.tsx` “Lat”/”Lng”, persist qua `saveCmsProject` → Firestore, round-trip lossless đã có test). Home tự tính vị trí theo `REGION_LNG_LAT` (bảng tra cứu tên thành phố, chỉ 2 key khớp chính xác: `”TP.HCM”`, `”Bắc Ninh”`) — dữ liệu thật là `”Tp. HCM”`, `”Tp. HCM (Bình Dương cũ)”`, `”Đồng Nai”` đều lệch case/hậu tố → rơi vào fallback cứng `{lng:106.0, lat:16.0}` (ngoài khơi, không phải vị trí thật của bất kỳ dự án nào) — ảnh hưởng **3/4 cụm vùng, không riêng Harmonie**.
+2. Tồn tại 2 hàm `citySlug()` độc lập, không đồng bộ (`lib/home-content.ts` vs `vendor/library/lib/data/region-slug.ts`) — khớp nhau đúng 1 trường hợp duy nhất (“Bắc Ninh”), khiến bấm pin/thẻ vùng ở Home tạo query `khu-vuc=...` mà bộ lọc `/du-an` tính slug khác đi → **11/12 dự án bấm vào ra 0 kết quả**.
+
+**Đã sửa (A2, xác nhận qua diff bởi A4):**
+- 1 hàm `citySlug()` duy nhất, chuẩn hoá dấu + ký tự đặc biệt, đặt trong `vendor/library/lib/data/region-slug.ts` (đúng ranh giới vendoring — không import ngược `/lib` app); `lib/home-content.ts` re-export, không giữ bản riêng.
+- `buildProjectPins()` — pin theo TỪNG dự án có `coordinates.lat`+`lng` hữu hạn, không fallback đoán mò; dự án chưa có tọa độ thì không có pin (không bịa số).
+- Bấm pin → thẳng `/du-an/{slug}`. Bấm thẻ vùng: nhóm chỉ 1 dự án → thẳng trang chi tiết; nhóm ≥2 → `/du-an?khu-vuc=<slug thống nhất>` (đã verify ra kết quả thật, không rỗng).
+- `project-explorer.tsx` dùng chung `citySlug`/`cityOrRegion`; dropdown lọc vùng build từ dữ liệu catalog thật thay vì list cứng thiếu “Đồng Nai”/”Bình Dương”.
+- CMS: đổi nhãn “Lat”/”Lng” → “Vĩ độ (Latitude)”/”Kinh độ (Longitude)” (ngoại lệ duy nhất cho phép trong phạm vi CMS-giữ-tiếng-Việt).
+- Test mới: `lib/home-content.test.ts`, 1 case round-trip tọa độ thật trong `firestore-codec.test.ts`, 2 case `e2e/map.spec.ts` (solo-region → thẳng dự án; multi-region → catalog không rỗng).
+
+**Verify (A3 + A4 độc lập, MCP thật, không đoán mò):** 12/12 marker hiện đúng tọa độ (khớp tuyệt đối với giá trị CMS/Firestore, delta 0, đọc qua React fiber props — không suy luận từ vị trí màn hình); không còn pin nào rơi vào điểm fallback cũ; bấm cả 3 dự án mẫu + cả 4 thẻ vùng (gồm đúng thẻ “Tp. HCM (Bình Dương cũ)” — trường hợp Harmonie bị báo lỗi ban đầu) đều dẫn đúng nơi; vùng “Tp. HCM” (9 dự án) lọc ra đúng 9 kết quả thay vì rỗng; mobile 375 không overflow; `tsc --noEmit` sạch; `vitest run` 80/80; lint không phát sinh lỗi mới (vẫn đúng baseline 6 lỗi cũ).
+
+**Phát hiện phụ (không phải lỗi của round này):** dữ liệu phục vụ live tại thời điểm test đến từ `data/runtime/catalog.json` (mirror cục bộ sau mỗi lần lưu CMS thành công), không phải bản Firestore A1 đọc trực tiếp — 4 dự án A1 thấy tọa độ null hoá ra đã được nhập thật qua CMS ngay trong lúc agent đang chạy (A4 truy vết timestamp `updatedBy`/`updatedAt` xác nhận đây là người dùng thật đang nhập liệu song song, không phải dữ liệu bịa).
+
+**Còn nợ (ngoài phạm vi round này):** dự án chưa từng có tọa độ vẫn không có pin cho tới khi nhập qua CMS (đúng thiết kế, không phải bug); marker 9 dự án cụm “Tp. HCM” chồng lên nhau ở zoom toàn quốc (hạn chế UX ở mức zoom, không phải lỗi routing — mỗi marker vẫn dẫn đúng dự án khi bấm được).
+
+Không commit/push — chờ yêu cầu tường minh.
+
+## Round 12 (2026-09-12) — Home Hero Premium (copy + design + i18n VI/EN)
+
+Nâng cấp **chỉ Home Hero** (`variant` mặc định, không đụng `variant=”detail”`) theo `.claude/skills/frontend-design/SKILL.md` — sửa 5 AI-tell/bug đã chẩn đoán đúng bằng cách đọc code trước khi viết prompt (không đoán mò):
+
+1. `home.titleWords` (mảng từ rời, `flex flex-wrap` mỗi từ 1 `motion.span`) → 1 chuỗi `home.headline` duy nhất, không còn nguy cơ vỡ dòng giữa từ (“Dự”/”án” tách nhau).
+2. Kicker `uppercase tracking-wide` + middle-dot (“DED · Phú Mỹ Hưng”) → **cắt bỏ hoàn toàn** — trùng lặp thông tin đã có trong H1, đúng loại “nhãn không cần thiết phía trên nội dung” mà skill cảnh báo.
+3. Lede dùng thẳng prop `brandStatementVi` (cứng tiếng Việt, EN Home hiện sai ngôn ngữ) → đọc qua `t(“home.lede”)`, đúng locale 2 chiều. Prop `brandStatementVi` bỏ khỏi `HomeHeroProps`/lời gọi `<Hero>` (vẫn giữ nguyên cho JSON-LD description ở `app/page.tsx` — không đụng).
+4. 4 cascade Framer rời rạc (kicker/từng từ H1/lede/CTA) → 1 `motion.div` bọc cả khối copy, dùng preset `revealUp` có sẵn — đúng “một khoảnh khắc”, Ken Burns nền giữ nguyên (không xung đột vì khác lớp: ambient nền vs. một entrance duy nhất cho nội dung).
+5. Ảnh hero khi không có `heroAsset` trước đây chỉ là `bg-muted` trống — thêm `BlueprintFallback` (component dùng chung đã có ở detail hero/location.tsx) cho nhất quán.
+
+**Copy mới (VI ‖ EN, cả hai đọc qua `home.headline`/`home.lede`/`home.ctaExplore`):**
+- Headline: “Trung tâm dữ liệu dự án DED-PMH” ‖ “DED-PMH project data hub”
+- Lede: “Tra cứu pháp lý, tiến độ và quy mô dự án — dữ liệu đã xác minh, một nguồn duy nhất.” ‖ “Look up legal status, progress, and scale for every project — verified, from one source.”
+- CTA: “Xem danh mục dự án” ‖ “View project catalog” (đổi từ “Khám phá dự án”/”Explore projects” — echo đúng heading trang đích `/du-an` thay vì động từ mang tính bán hàng)
+
+Cập nhật theo: `e2e/home.spec.ts`, `e2e/locale-switch.spec.ts` (6 chỗ assert CTA text cũ), comment `i18n/request.ts` (hết ví dụ `home.titleWords` vì key đã xoá).
+
+**Test:** `verify-i18n-keys.mjs` sạch (214 key dùng, khớp cả 2 file 277 key), `tsc --noEmit` sạch, `vitest run` 80/80. MCP thật 6 trạng thái (không Pass bằng đọc code): VI-light-1440, EN-light-1440, VI-dark-1440, VI-light-375, EN-light-375 — H1/lede/CTA đúng locale, không overflow, 0 console error; CTA bấm ra đúng `/du-an`; spot-check `/du-an/hong-hac` xác nhận hero `variant=”detail”` không đổi visual.
+
+**Không tự chấm 100/100:** đây là fix trong khuôn khổ hệ thống thiết kế hiện có (không đổi font/palette/layout tổng thể theo đúng phạm vi được giao) — đã hết AI-tell cụ thể đã chẩn đoán, chưa phải “nhận diện thị giác độc nhất” ở mức tham vọng nhất của skill.
+
+Không commit/push — chờ yêu cầu tường minh.
+
+## Round 13 (2026-09-12) — Fix hover-zoom ảnh “chớp/nháy” (mất transition do tailwind-merge)
+
+Người dùng báo hiệu ứng zoom-khi-rê-chuột trên ảnh project card bị “chớp nháy” thay vì mượt, so với 1 dự án khác dùng đúng công thức `overflow-hidden` + `transition-transform duration-700 ease-out group-hover:scale-105`. Code của ta trông giống hệt công thức đó — nhưng verify bằng computed style thật (không đoán) phát hiện `transition-transform` bị **âm thầm biến mất**.
+
+**Nguyên nhân gốc:** `components/shared/image-with-fallback.tsx` (component dùng chung, bọc mọi `<Image>` để có fade-in-on-load) ghép class bằng `cn(className, “transition-opacity duration-300”, ...)` — class cố định của component đứng SAU class do caller truyền vào. `tailwind-merge` coi `transition-opacity`/`transition-transform` là cùng 1 nhóm xung đột (`transition-property`) và chỉ giữ class đứng sau — nghĩa là `transition-opacity duration-300` của component LUÔN thắng, xoá mất `transition-transform` mà `project-card.tsx` truyền vào. Kết quả: scale áp dụng tức thời, không transition — đúng cảm giác “chớp nháy”.
+
+**Phát hiện phụ trong lúc verify:** Tailwind v4 dùng CSS property `scale` riêng (không phải `transform`) cho utility `scale-*`/`group-hover:scale-*` (CSS Transforms Level 2) — xác nhận qua `getComputedStyle().scale` khác `getComputedStyle().transform`. Lần sửa đầu chỉ khai `transition-[opacity,transform]` vẫn thiếu — phải là `transition-[opacity,scale]`.
+
+**Đã sửa (1 chỗ gốc, không patch từng nơi gọi):**
+- `image-with-fallback.tsx`: đổi thứ tự `cn()` — default của component đứng TRƯỚC, `className` của caller đứng SAU — để caller ghi đè đúng ý thay vì luôn thua; đổi property list thành `transition-[opacity,scale]` cho khớp Tailwind v4 thật.
+- `project-card.tsx` (2 chỗ, catalog + featured layout): bỏ `transition-transform` (không cần nữa, base đã khai), đổi `duration-300/400` → `duration-700 ease-out` theo đúng “chậm, nhẹ nhàng” người dùng yêu cầu.
+
+**Tác dụng phụ tốt tự phát hiện:** cùng lỗi merge-order này khiến `gallery.tsx`'s hover-dim (`transition-opacity duration-200 group-hover:opacity-95`) trước đó cũng bị ép về `duration-300` của component thay vì `duration-200` caller khai — nay tự động đúng lại sau khi sửa thứ tự merge, không cần sửa riêng.
+
+**Verify (MCP thật, không Pass bằng đọc code):** `getComputedStyle(img).transitionProperty` = `”opacity, scale”`, `transitionDuration` = `”0.7s”`, `transitionTimingFunction` = `ease-out` — xác nhận trên toàn bộ 12/12 card catalog + card featured trên Home. Gallery thumbnail xác nhận đúng lại `duration-200`. `tsc --noEmit` sạch, `vitest run` 80/80, lint đúng baseline 6 lỗi cũ, 0 console error mới.
+
+Không commit/push — chờ yêu cầu tường minh.
+

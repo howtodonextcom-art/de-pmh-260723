@@ -1,16 +1,18 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { SiteHeader } from "@/components/shared/site-header";
 import { getCatalogFromLibrary } from "@/lib/library-bridge";
-import { t } from "@/lib/i18n/t";
 
-export const metadata: Metadata = {
-  title: "404 — DED-PMH",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("notFoundTitle") };
+}
 
 /** W2 — branded 404, replaces Next.js's stock white error page. */
 export default async function NotFound() {
+  const t = await getTranslations();
   const { headerProjects, thumbBySlug } = await getCatalogFromLibrary();
 
   return (

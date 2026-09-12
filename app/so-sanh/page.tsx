@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { CatalogPageShell } from "@/components/shared/catalog-page-shell";
 import { CompareTable } from "@/components/project/compare-table";
 import { CompareTableSkeleton } from "@/components/project/compare-table-skeleton";
 import { getCatalogFromLibrary, getCompareProjects } from "@/lib/library-bridge";
-import { t } from "@/lib/i18n/t";
 import { buildTitle } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: buildTitle("So sánh dự án"),
-  description:
-    "So sánh dự án Phú Mỹ Hưng theo vùng (Phía Bắc / Phía Nam), nhóm Site A / Outsite — tối đa 4 cột mỗi lần.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return {
+    title: buildTitle(t("compareTitle")),
+    description: t("compareDescription"),
+  };
+}
 
 export default async function ComparePage() {
+  const t = await getTranslations();
   const [{ headerProjects, thumbBySlug }, { projects }] = await Promise.all([
     getCatalogFromLibrary(),
     getCompareProjects(),

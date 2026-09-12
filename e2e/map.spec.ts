@@ -22,4 +22,30 @@ test.describe("home H6 — region map", () => {
     await page.goto("/");
     await expect(page.getByTestId("sa-ban-hh-cta")).toHaveCount(0);
   });
+
+  test("a region card resolving to exactly one project (Bắc Ninh → Hồng Hạc) links straight to that project", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const card = page.getByTestId("region-card-bac-ninh");
+    await card.scrollIntoViewIfNeeded();
+    await card.getByRole("button").click();
+    await page.waitForURL("**/du-an/hong-hac");
+    await expect(page).toHaveURL(/\/du-an\/hong-hac$/);
+  });
+
+  test("a region card resolving to multiple projects (Tp. HCM) links to a non-empty catalog filter, never an empty result", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const card = page.getByTestId("region-card-tp-hcm");
+    await card.scrollIntoViewIfNeeded();
+    await card.getByRole("button").click();
+    await page.waitForURL("**/du-an?khu-vuc=tp-hcm");
+    await expect(page).toHaveURL(/khu-vuc=tp-hcm/);
+    // Regression guard for the bug this fix closes: the Home slug and the
+    // Explorer filter's slug used to diverge for every city except "Bắc
+    // Ninh", so this exact click used to land on a 0-result catalog page.
+    await expect(page.getByText("Không dự án nào khớp bộ lọc.")).toHaveCount(0);
+  });
 });

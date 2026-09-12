@@ -6,6 +6,7 @@
     "soSanh": "So sánh",
     "phapLy": "Pháp lý",
     "search": "Tìm kiếm",
+    "searchOpen": "Mở tìm kiếm (Ctrl+K)",
     "searchShortcut": "⌘K",
     "langSwitcherLabel": "Chuyển ngôn ngữ",
     "themeSwitcherLabel": "Đổi giao diện",
@@ -26,12 +27,12 @@
     "viewAllSiteA": "Xem tất cả Site A & lọc",
     "viewAllOutsite": "Xem tất cả Outsite & lọc",
     "browseCatalogShort": "Mở danh mục",
-    "previewMore": "còn {{count}} mục trên trang danh mục"
+    "previewMore": "còn {count} mục trên trang danh mục"
   },
   "home": {
-    "kicker": "DED · Phú Mỹ Hưng",
-    "titleWords": ["Trung", "tâm", "Thông", "tin", "Dự", "án", "DED-PMH"],
-    "ctaExplore": "Khám phá dự án",
+    "headline": "Trung tâm dữ liệu dự án DED-PMH",
+    "lede": "Tra cứu pháp lý, tiến độ và quy mô dự án — dữ liệu đã xác minh, một nguồn duy nhất.",
+    "ctaExplore": "Xem danh mục dự án",
     "featuredHeading": "Dự án nổi bật",
     "explorerHeading": "Danh mục dự án",
     "explorerCta": "Xem tất cả & bộ lọc",
@@ -52,13 +53,76 @@
   "footer": {
     "brandStatementFallback": "Cổng thông tin nội bộ tra cứu dữ liệu dự án Phú Mỹ Hưng.",
     "disclaimer": "Thông tin nội bộ, số liệu căn cứ nguồn công bố chính thức.",
-    "copyright": "© {{year}} DED-PMH"
+    "copyright": "© {year} DED-PMH"
   },
   "projectStatus": {
     "dang-trien-khai": "Đang triển khai",
     "dang-ban": "Đang mở bán",
     "da-ban-giao": "Đã bàn giao",
-    "sap-mo-ban": "Sắp mở bán"
+    "sap-mo-ban": "Sắp mở bán",
+    "da-hoan-thanh": "Đã hoàn thành",
+    "chuan-bi-mo-ban": "Chuẩn bị mở bán"
+  },
+  "fieldStatus": {
+    "da-co-du-lieu": "Đã có dữ liệu",
+    "chua-xac-thuc": "Chưa xác thực",
+    "mau-thuan": "Mâu thuẫn",
+    "chua-co-du-lieu": "Chưa có dữ liệu",
+    "bao-mat": "Bảo mật"
+  },
+  "projectType": {
+    "do-thi-sinh-thai": "Đô thị sinh thái",
+    "can-ho-hang-sang": "Căn hộ hạng sang",
+    "can-ho-premium": "Căn hộ premium",
+    "can-ho": "Căn hộ",
+    "thap-tang": "Thấp tầng",
+    "cao-tang": "Cao tầng"
+  },
+  "galleryCategory": {
+    "all": "Tất cả",
+    "hero": "Hero",
+    "masterplan": "Masterplan",
+    "overview": "Tổng quan",
+    "location": "Vị trí",
+    "amenities": "Tiện ích",
+    "architecture": "Kiến trúc",
+    "completed-project": "Thực tế",
+    "interior": "Nội thất",
+    "floorplans": "Mặt bằng",
+    "logos": "Logo",
+    "product": "Sản phẩm"
+  },
+  "legalGroup": {
+    "investmentApproval": "Chấp thuận chủ trương đầu tư",
+    "landAllocation": "Giao đất / cho thuê đất",
+    "detailedPlanning": "Quy hoạch chi tiết 1/500",
+    "constructionPermits": "Giấy phép xây dựng",
+    "constructionPermitsNote": "Ghi chú GPXD",
+    "salesEligibility": "Đủ điều kiện bán",
+    "designUnit": "Đơn vị thiết kế",
+    "mainContractor": "Tổng thầu thi công",
+    "disputes": "Tranh chấp / cảnh báo"
+  },
+  "factGrid": {
+    "location": "Vị trí",
+    "type": "Loại hình",
+    "scale": "Quy mô",
+    "units": "Số căn",
+    "siteArea": "Diện tích đất",
+    "conceptArchitect": "Đơn vị concept KT",
+    "status": "Trạng thái",
+    "updated": "Cập nhật"
+  },
+  "compareFields": {
+    "lo-dat": "Lô đất",
+    "khu-vuc": "Khu vực",
+    "loai-hinh": "Loại hình",
+    "quy-mo-dat": "Diện tích đất",
+    "gfa": "GFA",
+    "so-can": "Số căn",
+    "don-vi-thiet-ke": "Đơn vị thiết kế",
+    "tong-thau": "Tổng thầu thi công",
+    "tinh-trang-ban": "Tình trạng"
   },
   "notFound": {
     "kicker": "404",
@@ -74,7 +138,12 @@
     "ctaHome": "Về trang chủ"
   },
   "common": {
-    "xemChiTiet": "Xem chi tiết"
+    "xemChiTiet": "Xem chi tiết",
+    "empty": "Chưa có",
+    "unpublished": "Chưa công bố",
+    "updated": "Cập nhật",
+    "fieldCount": "{count} trường",
+    "printPage": "In trang này"
   },
   "duAn": {
     "pageTitle": "Danh mục dự án",
@@ -94,7 +163,10 @@
     "noMatch": "Không dự án nào khớp bộ lọc.",
     "emptyCatalog": "Chưa có dự án trong danh mục.",
     "clearFilters": "Xóa bộ lọc",
-    "matchSuffix": "khớp bộ lọc"
+    "matchSuffix": "khớp bộ lọc",
+    "sortName": "Tên A-Z",
+    "sortArea": "Quy mô đất giảm dần",
+    "sortUpdated": "Cập nhật mới nhất"
   },
   "detail": {
     "architecturePartners": "Kiến trúc & đối tác",
@@ -109,7 +181,23 @@
     "closeImage": "Đóng",
     "prevImage": "Ảnh trước",
     "nextImage": "Ảnh tiếp theo",
-    "lightboxLabel": "Xem ảnh lớn"
+    "lightboxLabel": "Xem ảnh lớn",
+    "architectUnit": "Đơn vị thiết kế kiến trúc",
+    "deliveryPartner": "Đối tác triển khai",
+    "legalAddress": "Địa chỉ pháp lý",
+    "locationMapAlt": "Bản đồ vị trí",
+    "salesEligibility": "Đủ điều kiện bán",
+    "constructionStatus": "Tình trạng thi công",
+    "viewFull": "Xem đầy đủ",
+    "viewDocDetails": "Xem chi tiết từng văn bản",
+    "masterplanUnpublished": "Chưa công bố chi tiết",
+    "unitType": "Loại căn",
+    "unitCount": "Số căn",
+    "unitArea": "Diện tích",
+    "galleryRender": "Phối cảnh minh họa",
+    "galleryPhoto": "Ảnh thực tế",
+    "galleryOpen": "Mở ảnh: {alt}",
+    "galleryMore": "Xem thêm ({count} ảnh)"
   },
   "flipbook": {
     "allPages": "Tất cả ảnh",
@@ -136,13 +224,13 @@
     "selectedHint": "dự án đang so sánh",
     "inScope": "trong phạm vi",
     "selectAllInScope": "Chọn tất cả trong phạm vi",
-    "selectFirstCap": "Chọn {{count}} đầu",
+    "selectFirstCap": "Chọn {count} đầu",
     "hideIdentical": "Ẩn hàng giống nhau",
     "showAllRows": "Hiện tất cả hàng",
     "emptyScope": "Không có dự án đã công bố trong phạm vi này.",
     "emptySelection": "Chọn ít nhất một dự án để so sánh.",
     "pickProjects": "Phạm vi có nhiều hơn giới hạn cột — hãy chọn tối đa 4 dự án bên trên.",
-    "capNote": "Bảng so sánh tối đa {{count}} cột để đọc được trên desktop. Thu hẹp vùng hoặc bỏ chọn bớt dự án.",
+    "capNote": "Bảng so sánh tối đa {count} cột để đọc được trên desktop. Thu hẹp vùng hoặc bỏ chọn bớt dự án.",
     "fieldCol": "Hạng mục"
   },
   "legal": {
@@ -175,6 +263,7 @@
     "docDate": "Ngày"
   },
   "cmdk": {
+    "description": "Tìm dự án, trang hoặc thực hiện hành động",
     "placeholder": "Tìm kiếm…",
     "groupProjects": "Dự án",
     "groupPages": "Trang",
@@ -210,5 +299,31 @@
     "viewFullLegal": "Xem hồ sơ pháp lý đầy đủ",
     "viewOfficialSite": "Xem website chính thức dự án",
     "exportPdf": "Xuất PDF"
+  },
+  "passcode": {
+    "brand": "DED-PMH",
+    "title": "Nhập mã truy cập",
+    "lockedTitle": "Trình duyệt đã bị khóa",
+    "lockedBody": "Bạn đã nhập sai mã quá 5 lần. Vui lòng thử lại sau 24 giờ, hoặc liên hệ quản trị viên.",
+    "placeholder": "Mã truy cập",
+    "submit": "Tiếp tục",
+    "checking": "Đang kiểm tra…",
+    "wrong": "Mã không đúng.",
+    "attemptsLeft": "Còn {count} lần thử.",
+    "error": "Có lỗi xảy ra, vui lòng thử lại.",
+    "metaTitle": "Nhập mã truy cập"
+  },
+  "meta": {
+    "homeTitle": "DED-PMH — Trung tâm Thông tin Dự án",
+    "homeDescription": "Tra cứu, so sánh và xác minh dữ liệu công khai của các dự án từ một nguồn duy nhất.",
+    "layoutTitle": "DED-PMH — Hồ sơ dự án",
+    "layoutDescription": "Tra cứu pháp lý và thư viện ảnh các dự án đang quản lý",
+    "catalogTitle": "Danh mục dự án",
+    "catalogDescription": "Tra cứu, lọc và so sánh nhanh các dự án theo khu vực, loại hình và trạng thái dữ liệu.",
+    "compareTitle": "So sánh dự án",
+    "compareDescription": "So sánh dự án Phú Mỹ Hưng theo vùng (Phía Bắc / Phía Nam), nhóm Site A / Outsite — tối đa 4 cột mỗi lần.",
+    "legalTitle": "Hồ sơ pháp lý",
+    "legalDescription": "Hồ sơ pháp lý theo vùng / dự án — từng văn bản một dòng, xem nội dung text; bản scan ký số khi có trong kho.",
+    "notFoundTitle": "404 — DED-PMH"
   }
 }

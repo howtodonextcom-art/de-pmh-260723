@@ -1,3 +1,7 @@
+"use client"
+
+import { useTranslations } from "next-intl"
+
 import { cn } from "@/lib/utils"
 import type { FieldStatus } from "@library/types/project"
 
@@ -25,6 +29,8 @@ export function StatusBadge({
   status: FieldStatus
   className?: string
 }) {
+  const t = useTranslations("fieldStatus")
+  const label = t(status)
   return (
     <span
       className={cn(
@@ -33,7 +39,7 @@ export function StatusBadge({
         className
       )}
     >
-      {STATUS_LABEL[status]}
+      {label}
     </span>
   )
 }
@@ -48,10 +54,12 @@ const STATUS_DOT_CLASS: Record<FieldStatus, string> = {
 
 /** Compact status indicator for card summaries (SPEC §3.3 card anatomy). */
 export function StatusDot({ status }: { status: FieldStatus }) {
+  const t = useTranslations("fieldStatus")
+  const label = t(status)
   return (
     <span
-      aria-label={STATUS_LABEL[status]}
-      title={STATUS_LABEL[status]}
+      aria-label={label}
+      title={label}
       className={cn("inline-block size-2 rounded-full", STATUS_DOT_CLASS[status])}
     />
   )

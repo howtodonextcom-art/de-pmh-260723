@@ -1,12 +1,7 @@
-export const PROJECT_STATUS_LABEL: Record<string, string> = {
-  "dang-trien-khai": "Đang triển khai",
-  "dang-ban": "Đang mở bán",
-  "da-ban-giao": "Đã bàn giao",
-  "sap-mo-ban": "Sắp mở bán",
-  "da-hoan-thanh": "Đã hoàn thành",
-  "chuan-bi-mo-ban": "Chuẩn bị mở bán",
-};
+import { PROJECT_STATUS_LABELS, projectStatusLabel, type CopyLocale } from "../../lib/i18n-copy";
 
-export function projectStatusLabel(status: string): string {
-  return PROJECT_STATUS_LABEL[status] ?? status;
-}
+/** VI-only map kept for CMS / snapshots that have not been locale-threaded. */
+export const PROJECT_STATUS_LABEL: Record<string, string> = PROJECT_STATUS_LABELS.vi;
+
+export { PROJECT_STATUS_LABELS, projectStatusLabel };
+export type { CopyLocale };

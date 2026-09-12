@@ -1,4 +1,5 @@
-import { t } from "@/lib/i18n/t";
+import { getTranslations } from "next-intl/server";
+
 import type { Project as FullProject } from "@library/types/project";
 import type { V0ImageAsset } from "@/lib/library-bridge";
 
@@ -8,7 +9,7 @@ import type { V0ImageAsset } from "@/lib/library-bridge";
  * so this section renders nothing once photo coverage exists to avoid
  * duplicating the same images twice on the page.
  */
-export function DetailAmenities({
+export async function DetailAmenities({
   project,
   amenityAssets,
 }: {
@@ -18,6 +19,7 @@ export function DetailAmenities({
   const amenities = project.amenities ?? [];
   if (amenityAssets.length > 0 || amenities.length === 0) return null;
 
+  const t = await getTranslations();
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <h2 className="mb-8 text-2xl font-bold text-foreground">{t("detail.amenities")}</h2>
